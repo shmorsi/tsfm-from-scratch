@@ -34,7 +34,7 @@ def _load_commands() -> None:
     # Imported lazily so `tsfm docs` works without torch installed.
     import importlib
 
-    for mod in ("tsfm.data.cli", "tsfm.train.cli", "tsfm.eval.cli"):
+    for mod in ("tsfm.data.cli", "tsfm.train.cli", "tsfm.eval.cli", "tsfm.pipeline"):
         try:
             importlib.import_module(mod)
         except ModuleNotFoundError as e:
@@ -47,7 +47,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
     _docs(sub)
     _load_commands()
-    for fn in _REGISTRY:
+    # Use the registry of the importable module even when run as `python -m tsfm.cli`.
+    import tsfm.cli as registry
+
+    for fn in registry._REGISTRY:
         fn(sub)
     args = parser.parse_args(argv)
     func: Handler = args.func

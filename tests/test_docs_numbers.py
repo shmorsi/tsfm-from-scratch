@@ -107,3 +107,9 @@ def test_docs_only_cite_committed_results():
         for ref in re.findall(r"\{\{\s*(results/[^#|}\s]+)", tpl.read_text()):
             if (root / ref).exists():
                 assert ref in tracked, f"{tpl.name} cites untracked {ref}"
+
+
+def test_bracket_keys(tmp_path: Path):
+    (tmp_path / "results").mkdir()
+    (tmp_path / "results" / "r.json").write_text(json.dumps({"files": {"a/b.parquet": {"n": 7}}}))
+    assert render("{{ results/r.json#files.[a/b.parquet].n | int }}", tmp_path) == "7"

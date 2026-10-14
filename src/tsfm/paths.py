@@ -35,4 +35,6 @@ def gifteval_dir() -> Path:
 
 
 def results_dir() -> Path:
-    return repo_root() / "results"
+    """Committed results. ``TSFM_RESULTS`` redirects writes (used by the CI pipeline so a
+    smoke run never touches the real results)."""
+    return Path(os.environ.get("TSFM_RESULTS", repo_root() / "results")).expanduser()

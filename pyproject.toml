@@ -84,6 +84,14 @@ files = ["src/tsfm"]
 exclude = ["src/tsfm/eval/_vendor/"]
 ignore_missing_imports = true
 warn_unused_ignores = false
+# Bare np.ndarray annotations are fine here; dtype/shape are documented in docstrings.
+disallow_any_generics = false
+
+[[tool.mypy.overrides]]
+# torch's stubs return Any from nn.Module.__call__ and leave Tensor.backward untyped.
+module = ["tsfm.model", "tsfm.forecast", "tsfm.tokenizers", "tsfm.train.*", "tsfm.data.synthetic", "tsfm.data.leakage"]
+warn_return_any = false
+disallow_untyped_calls = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

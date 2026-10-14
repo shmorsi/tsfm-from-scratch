@@ -1,0 +1,58 @@
+# Pretraining corpus selection. Changing anything here changes the corpus hash.
+#
+# Source: Salesforce/GiftEvalPretrain (Apache-2.0), described upstream as the
+# "non-leaking" pretraining corpus for GIFT-Eval. We do not take that on trust:
+# `tsfm data leakage` checks every selected series against every GIFT-Eval series.
+
+pretrain:
+  repo: Salesforce/GiftEvalPretrain
+  revision: 6830b624de7ed2b3d3e5b85bb6959d81dcc5d874
+  # Every dataset whose directory is at most this size is taken whole...
+  include_all_below_mb: 1800
+  # ...except these families, which are handled by `sampled_shards` below.
+  exclude_prefixes: [cmip6_, era5_, largest_]
+  exclude: [alibaba_cluster_trace_2018, azure_vm_traces_2017, borg_cluster_data_2011, buildings_900k]
+  # Very large families: take a few shards only (shard index, 0-based).
+  sampled_shards:
+    largest_2021: [0, 1]
+    alibaba_cluster_trace_2018: [0, 1, 2]
+    azure_vm_traces_2017: [0, 1]
+    borg_cluster_data_2011: [0, 1]
+    buildings_900k: [0, 1]
+    cmip6_2010: [0]
+    era5_2018: [0]
+  # Per-dataset cap on observed points after splitting multivariate series into
+  # univariate ones, so no single dataset dominates. Series are sampled with `seed`.
+  max_points_per_dataset: 50_000_000
+  seed: 20261014
+
+# Whole datasets held out from pretraining and used ONLY for validation: model
+# selection, early stopping, scaling fits. GIFT-Eval train/val splits are never used,
+# so trained models remain "zero-shot" under the GIFT-Eval leaderboard definition.
+validation_datasets:
+  - m1_monthly
+  - tourism_quarterly
+  - monash_m3_yearly
+  - nn5_daily_with_missing
+  - uber_tlc_daily
+  - traffic_weekly
+  - pedestrian_counts
+  - bdg-2_bear
+  - australian_electricity_demand
+  - kdd2022
+
+# Series-level validation rules applied during conversion.
+validation_rules:
+  min_observed: 12          # drop series with fewer observed (non-NaN) points
+                            # (low on purpose: yearly/quarterly series are short)
+  max_abs_value: 1.0e+12    # drop series containing larger magnitudes
+  drop_constant: true       # drop series whose observed values are all equal
+  max_nan_fraction: 0.9     # drop series that are mostly missing
+
+synthetic:
+  # Gaussian-process kernel mixtures (KernelSynth-style, Ansari et al. 2024).
+  n_series: 100_000
+  length: 1024
+  max_kernels: 5
+  seed: 20261015
+  val_series: 2_000

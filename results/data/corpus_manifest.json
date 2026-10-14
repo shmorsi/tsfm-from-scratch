@@ -1,0 +1,1406 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-14T20:34:08+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "e0b6bedd1717df73b8ef88aa9ebea3023a011027",
+    "label": "M1-corpus",
+    "split": "none"
+  },
+  "files": {
+    "pretrain/BEIJING_SUBWAY_30MIN.parquet": {
+      "dataset": "BEIJING_SUBWAY_30MIN",
+      "dropped": {},
+      "freqs": {
+        "30T": 552
+      },
+      "points_kept": 867744,
+      "points_valid": 867744,
+      "series_in": 552,
+      "series_kept": 552,
+      "series_truncated": 0,
+      "series_valid": 552,
+      "sha256": "0261a6b14410dd17cb0ab6f85f9309fdda0ae7413fd49970382fa78afc255bf2",
+      "split": "pretrain"
+    },
+    "pretrain/HZMETRO.parquet": {
+      "dataset": "HZMETRO",
+      "dropped": {},
+      "freqs": {
+        "15T": 160
+      },
+      "points_kept": 380320,
+      "points_valid": 380320,
+      "series_in": 160,
+      "series_kept": 160,
+      "series_truncated": 0,
+      "series_valid": 160,
+      "sha256": "30ae174095d358317d1e025901feac9f0e448a96c7e2e900cdd9282517bba85c",
+      "split": "pretrain"
+    },
+    "pretrain/LOS_LOOP.parquet": {
+      "dataset": "LOS_LOOP",
+      "dropped": {},
+      "freqs": {
+        "5T": 207
+      },
+      "points_kept": 7094304,
+      "points_valid": 7094304,
+      "series_in": 207,
+      "series_kept": 207,
+      "series_truncated": 0,
+      "series_valid": 207,
+      "sha256": "4624b851c6794cc340eca9f9a915d4982216172c83944a8ad23239f031069052",
+      "split": "pretrain"
+    },
+    "pretrain/PEMS03.parquet": {
+      "dataset": "PEMS03",
+      "dropped": {},
+      "freqs": {
+        "5T": 358
+      },
+      "points_kept": 9382464,
+      "points_valid": 9382464,
+      "series_in": 358,
+      "series_kept": 358,
+      "series_truncated": 0,
+      "series_valid": 358,
+      "sha256": "d2b37b4c0070dabee4bde391c045a5332ce95391910cae441c9a4ee06b08a108",
+      "split": "pretrain"
+    },
+    "pretrain/PEMS04.parquet": {
+      "dataset": "PEMS04",
+      "dropped": {},
+      "freqs": {
+        "5T": 921
+      },
+      "points_kept": 15649632,
+      "points_valid": 15649632,
+      "series_in": 921,
+      "series_kept": 921,
+      "series_truncated": 0,
+      "series_valid": 921,
+      "sha256": "d5f3e33a6ea856f870552c8a877cba50f5d2814e8196f75d84717786b749023d",
+      "split": "pretrain"
+    },
+    "pretrain/PEMS07.parquet": {
+      "dataset": "PEMS07",
+      "dropped": {},
+      "freqs": {
+        "5T": 883
+      },
+      "points_kept": 24921792,
+      "points_valid": 24921792,
+      "series_in": 883,
+      "series_kept": 883,
+      "series_truncated": 0,
+      "series_valid": 883,
+      "sha256": "eb8b4f25bb64e7aff7ce10a9ac897d618d80e221c6904717b1cfec8a3750baf6",
+      "split": "pretrain"
+    },
+    "pretrain/PEMS08.parquet": {
+      "dataset": "PEMS08",
+      "dropped": {},
+      "freqs": {
+        "5T": 510
+      },
+      "points_kept": 9106560,
+      "points_valid": 9106560,
+      "series_in": 510,
+      "series_kept": 510,
+      "series_truncated": 0,
+      "series_valid": 510,
+      "sha256": "5fd7da35a7ef46abd4887016c73996491d9ff7b7cb7c7699d658c6b1221a4ff9",
+      "split": "pretrain"
+    },
+    "pretrain/PEMS_BAY.parquet": {
+      "dataset": "PEMS_BAY",
+      "dropped": {},
+      "freqs": {
+        "5T": 325
+      },
+      "points_kept": 16941600,
+      "points_valid": 16941600,
+      "series_in": 325,
+      "series_kept": 325,
+      "series_truncated": 0,
+      "series_valid": 325,
+      "sha256": "01fca9cc94310e806affe749ec459fdc21fea27e2bd17c21bf6caecc958cf0fc",
+      "split": "pretrain"
+    },
+    "pretrain/Q-TRAFFIC.parquet": {
+      "dataset": "Q-TRAFFIC",
+      "dropped": {},
+      "freqs": {
+        "15T": 8539
+      },
+      "points_kept": 50000000,
+      "points_valid": 264386688,
+      "series_in": 45148,
+      "series_kept": 8539,
+      "series_truncated": 1,
+      "series_valid": 45148,
+      "sha256": "d0a36fa973f2c09e6b91fda12275e6155e026689790097e8a2ae7ca9d4aa2c9d",
+      "split": "pretrain"
+    },
+    "pretrain/SHMETRO.parquet": {
+      "dataset": "SHMETRO",
+      "dropped": {},
+      "freqs": {
+        "15T": 576
+      },
+      "points_kept": 5073984,
+      "points_valid": 5073984,
+      "series_in": 576,
+      "series_kept": 576,
+      "series_truncated": 0,
+      "series_valid": 576,
+      "sha256": "552eb76709153d62ffe3b566a1d9b1d3f0764d403bbdc63eb6c0a8a90e5b1b01",
+      "split": "pretrain"
+    },
+    "pretrain/alibaba_cluster_trace_2018.parquet": {
+      "dataset": "alibaba_cluster_trace_2018",
+      "dropped": {
+        "constant": 4
+      },
+      "freqs": {
+        "5T": 30685
+      },
+      "points_kept": 50000000,
+      "points_valid": 57118774,
+      "series_in": 35046,
+      "series_kept": 30685,
+      "series_truncated": 1,
+      "series_valid": 35042,
+      "sha256": "ed814d6b39507b9767b59d93647abff1dc5dbf689a62fcafd37fbc04ad840bc9",
+      "split": "pretrain"
+    },
+    "pretrain/azure_vm_traces_2017.parquet": {
+      "dataset": "azure_vm_traces_2017",
+      "dropped": {},
+      "freqs": {
+        "5T": 8970
+      },
+      "points_kept": 50000000,
+      "points_valid": 80585136,
+      "series_in": 14498,
+      "series_kept": 8970,
+      "series_truncated": 1,
+      "series_valid": 14498,
+      "sha256": "5e828c05c2dd9c23cff5fa1e1d2d013bf56ba27549541d59c60f0c682322acd1",
+      "split": "pretrain"
+    },
+    "pretrain/bdg-2_fox.parquet": {
+      "dataset": "bdg-2_fox",
+      "dropped": {
+        "leakage": 9
+      },
+      "freqs": {
+        "H": 126
+      },
+      "points_kept": 2166672,
+      "points_valid": 2324568,
+      "series_in": 135,
+      "series_kept": 126,
+      "series_truncated": 0,
+      "series_valid": 135,
+      "sha256": "9b63ed51a2088e2358c2bcbdcb9dd90b45e8a06fd63a277fa34732c4da4317d2",
+      "split": "pretrain"
+    },
+    "pretrain/bdg-2_panther.parquet": {
+      "dataset": "bdg-2_panther",
+      "dropped": {
+        "leakage": 4
+      },
+      "freqs": {
+        "H": 101
+      },
+      "points_kept": 884760,
+      "points_valid": 919800,
+      "series_in": 105,
+      "series_kept": 101,
+      "series_truncated": 0,
+      "series_valid": 105,
+      "sha256": "957d1b05830b581266eae4837a95777d67e4e42a6caff297b222294e57a04893",
+      "split": "pretrain"
+    },
+    "pretrain/bdg-2_rat.parquet": {
+      "dataset": "bdg-2_rat",
+      "dropped": {
+        "leakage": 37
+      },
+      "freqs": {
+        "H": 243
+      },
+      "points_kept": 4105440,
+      "points_valid": 4728288,
+      "series_in": 280,
+      "series_kept": 243,
+      "series_truncated": 0,
+      "series_valid": 280,
+      "sha256": "4c78fd8d7f6dc198b29c79fcab0d2907e6e98e9020f1b6ff83600af61e99bf96",
+      "split": "pretrain"
+    },
+    "pretrain/beijing_air_quality.parquet": {
+      "dataset": "beijing_air_quality",
+      "dropped": {
+        "leakage": 59
+      },
+      "freqs": {
+        "H": 73
+      },
+      "points_kept": 2559672,
+      "points_valid": 4628448,
+      "series_in": 132,
+      "series_kept": 73,
+      "series_truncated": 0,
+      "series_valid": 132,
+      "sha256": "4bb311b07c88a7836b840e57f34e029b4c5c3466b6501e3015894799fcf6abf1",
+      "split": "pretrain"
+    },
+    "pretrain/bitcoin_with_missing.parquet": {
+      "dataset": "bitcoin_with_missing",
+      "dropped": {
+        "too_large": 3
+      },
+      "freqs": {
+        "D": 15
+      },
+      "points_kept": 68265,
+      "points_valid": 68265,
+      "series_in": 18,
+      "series_kept": 15,
+      "series_truncated": 0,
+      "series_valid": 15,
+      "sha256": "9dca30ab5e1d33fae5f4cbac7b9fdbd798558d4f0163827d1d78d349d4f40039",
+      "split": "pretrain"
+    },
+    "pretrain/borealis.parquet": {
+      "dataset": "borealis",
+      "dropped": {
+        "leakage": 8
+      },
+      "freqs": {
+        "H": 7
+      },
+      "points_kept": 36805,
+      "points_valid": 83269,
+      "series_in": 15,
+      "series_kept": 7,
+      "series_truncated": 0,
+      "series_valid": 15,
+      "sha256": "efcb5062a9278ce7da5658ac7ef573775d3e4fa20115c1afa42285f438453d85",
+      "split": "pretrain"
+    },
+    "pretrain/borg_cluster_data_2011.parquet": {
+      "dataset": "borg_cluster_data_2011",
+      "dropped": {},
+      "freqs": {
+        "5T": 7538
+      },
+      "points_kept": 50000000,
+      "points_valid": 122758086,
+      "series_in": 18504,
+      "series_kept": 7538,
+      "series_truncated": 1,
+      "series_valid": 18504,
+      "sha256": "c7fda643f79e14db38e7b178a36edca27887d0d10619f906db66d8b25bb6f95f",
+      "split": "pretrain"
+    },
+    "pretrain/buildings_900k.parquet": {
+      "dataset": "buildings_900k",
+      "dropped": {},
+      "freqs": {
+        "H": 5708
+      },
+      "points_kept": 50000000,
+      "points_valid": 247690992,
+      "series_in": 28272,
+      "series_kept": 5708,
+      "series_truncated": 1,
+      "series_valid": 28272,
+      "sha256": "dcf01917e7888519586e958ddd68c8b0a77d2be8e6fcd3264d0a946f53bce367",
+      "split": "pretrain"
+    },
+    "pretrain/bull.parquet": {
+      "dataset": "bull",
+      "dropped": {
+        "leakage": 16
+      },
+      "freqs": {
+        "H": 25
+      },
+      "points_kept": 438600,
+      "points_valid": 719304,
+      "series_in": 41,
+      "series_kept": 25,
+      "series_truncated": 0,
+      "series_valid": 41,
+      "sha256": "f6d2e3748e23496f49d8098fecc22882040dbd75233674ee09c2c60338e4f50e",
+      "split": "pretrain"
+    },
+    "pretrain/cdc_fluview_ilinet.parquet": {
+      "dataset": "cdc_fluview_ilinet",
+      "dropped": {
+        "mostly_missing": 2,
+        "too_short": 57
+      },
+      "freqs": {
+        "W": 316
+      },
+      "points_kept": 281948,
+      "points_valid": 281948,
+      "series_in": 375,
+      "series_kept": 316,
+      "series_truncated": 0,
+      "series_valid": 316,
+      "sha256": "4f89f0ad084644532e56cbbb898e0758b0c8dc7e943f6dd16d1cc3f28a70ad19",
+      "split": "pretrain"
+    },
+    "pretrain/cdc_fluview_who_nrevss.parquet": {
+      "dataset": "cdc_fluview_who_nrevss",
+      "dropped": {
+        "constant": 46
+      },
+      "freqs": {
+        "W": 250
+      },
+      "points_kept": 146997,
+      "points_valid": 146997,
+      "series_in": 296,
+      "series_kept": 250,
+      "series_truncated": 0,
+      "series_valid": 250,
+      "sha256": "dec6e54e6ef961e6f85f878f0d18180b5340e7b06b0eae24ece09c8a691baecf",
+      "split": "pretrain"
+    },
+    "pretrain/china_air_quality.parquet": {
+      "dataset": "china_air_quality",
+      "dropped": {
+        "mostly_missing": 36,
+        "too_short": 17
+      },
+      "freqs": {
+        "H": 2569
+      },
+      "points_kept": 19982501,
+      "points_valid": 19982501,
+      "series_in": 2622,
+      "series_kept": 2569,
+      "series_truncated": 0,
+      "series_valid": 2569,
+      "sha256": "843742423c42e20e29f59e0361012684dbeaa878b55787d6a7bb54b14ab3e87c",
+      "split": "pretrain"
+    },
+    "pretrain/cif_2016_12.parquet": {
+      "dataset": "cif_2016_12",
+      "dropped": {},
+      "freqs": {
+        "M": 57
+      },
+      "points_kept": 5701,
+      "points_valid": 5701,
+      "series_in": 57,
+      "series_kept": 57,
+      "series_truncated": 0,
+      "series_valid": 57,
+      "sha256": "e03bec5de6679e322d432f5b4f6909961244c9935b3c8afe315e10bac8611879",
+      "split": "pretrain"
+    },
+    "pretrain/cif_2016_6.parquet": {
+      "dataset": "cif_2016_6",
+      "dropped": {},
+      "freqs": {
+        "M": 15
+      },
+      "points_kept": 633,
+      "points_valid": 633,
+      "series_in": 15,
+      "series_kept": 15,
+      "series_truncated": 0,
+      "series_valid": 15,
+      "sha256": "40cce0cf8d6652d536abda82d5aa3a92f95a3296ae82c2e16d97b39c4dbb2e3c",
+      "split": "pretrain"
+    },
+    "pretrain/cmip6_2010.parquet": {
+      "dataset": "cmip6_2010",
+      "dropped": {},
+      "freqs": {
+        "6H": 4558
+      },
+      "points_kept": 33273400,
+      "points_valid": 33273400,
+      "series_in": 4558,
+      "series_kept": 4558,
+      "series_truncated": 0,
+      "series_valid": 4558,
+      "sha256": "408955209466c64683f1dced99972a709201c31f15b0b11d787f0f6363ae3a30",
+      "split": "pretrain"
+    },
+    "pretrain/cockatoo.parquet": {
+      "dataset": "cockatoo",
+      "dropped": {
+        "leakage": 1
+      },
+      "freqs": {},
+      "points_kept": 0,
+      "points_valid": 17544,
+      "series_in": 1,
+      "series_kept": 0,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "1807ce85c82d50cf824b16f9dc8a800790765dc8628b45aa2bfcacdbab9c335c",
+      "split": "pretrain"
+    },
+    "pretrain/covid19_energy.parquet": {
+      "dataset": "covid19_energy",
+      "dropped": {},
+      "freqs": {
+        "H": 1
+      },
+      "points_kept": 31912,
+      "points_valid": 31912,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "a1af8917f10fab1c41841bade9465624b5e1d7c7db4a4c1d1db77a9d5531d99c",
+      "split": "pretrain"
+    },
+    "pretrain/covid_mobility.parquet": {
+      "dataset": "covid_mobility",
+      "dropped": {},
+      "freqs": {
+        "D": 362
+      },
+      "points_kept": 148602,
+      "points_valid": 148602,
+      "series_in": 362,
+      "series_kept": 362,
+      "series_truncated": 0,
+      "series_valid": 362,
+      "sha256": "caf02faa3a819a68c223b10022fe4096abc344d39c9e172f4434a10a1a505e88",
+      "split": "pretrain"
+    },
+    "pretrain/elecdemand.parquet": {
+      "dataset": "elecdemand",
+      "dropped": {},
+      "freqs": {
+        "30T": 1
+      },
+      "points_kept": 17520,
+      "points_valid": 17520,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "0af50c5ab0631e5220d1c0b24adc70e96de298d6e8ad122f266a53a6e401b056",
+      "split": "pretrain"
+    },
+    "pretrain/elf.parquet": {
+      "dataset": "elf",
+      "dropped": {},
+      "freqs": {
+        "H": 1
+      },
+      "points_kept": 21792,
+      "points_valid": 21792,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "bf806b0f7d2d1d3b405bc025eb0e6e4185aeaae0e8f2074e6571f545f3a5eb22",
+      "split": "pretrain"
+    },
+    "pretrain/era5_2018.parquet": {
+      "dataset": "era5_2018",
+      "dropped": {},
+      "freqs": {
+        "H": 3870
+      },
+      "points_kept": 33808320,
+      "points_valid": 33808320,
+      "series_in": 3870,
+      "series_kept": 3870,
+      "series_truncated": 0,
+      "series_valid": 3870,
+      "sha256": "77e5effc809563c970c9c896c32741e48eb5ab00f6ed210371f498c7b9f497c7",
+      "split": "pretrain"
+    },
+    "pretrain/extended_web_traffic_with_missing.parquet": {
+      "dataset": "extended_web_traffic_with_missing",
+      "dropped": {
+        "constant": 12,
+        "mostly_missing": 1030,
+        "too_short": 42
+      },
+      "freqs": {
+        "D": 19555
+      },
+      "points_kept": 50000000,
+      "points_valid": 368154303,
+      "series_in": 145063,
+      "series_kept": 19555,
+      "series_truncated": 1,
+      "series_valid": 143979,
+      "sha256": "ffb302118052fcf9303d5fda2b4d527135420aeff032d630819793ae9806bb46",
+      "split": "pretrain"
+    },
+    "pretrain/favorita_sales.parquet": {
+      "dataset": "favorita_sales",
+      "dropped": {},
+      "freqs": {
+        "D": 40226
+      },
+      "points_kept": 50000000,
+      "points_valid": 139179538,
+      "series_in": 111840,
+      "series_kept": 40226,
+      "series_truncated": 1,
+      "series_valid": 111840,
+      "sha256": "e35fe94ea5afc1e9468153ab808ad7a0fa1216f78cf9391aaa156157c3a1ae3b",
+      "split": "pretrain"
+    },
+    "pretrain/favorita_transactions.parquet": {
+      "dataset": "favorita_transactions",
+      "dropped": {},
+      "freqs": {
+        "D": 54
+      },
+      "points_kept": 84408,
+      "points_valid": 84408,
+      "series_in": 54,
+      "series_kept": 54,
+      "series_truncated": 0,
+      "series_valid": 54,
+      "sha256": "9ccc3ff113572f1addef95a02ad60ea9fe9d7d3d486d8923497668045bed37d3",
+      "split": "pretrain"
+    },
+    "pretrain/fred_md.parquet": {
+      "dataset": "fred_md",
+      "dropped": {
+        "leakage": 8
+      },
+      "freqs": {
+        "M": 99
+      },
+      "points_kept": 70884,
+      "points_valid": 76612,
+      "series_in": 107,
+      "series_kept": 99,
+      "series_truncated": 0,
+      "series_valid": 107,
+      "sha256": "6cc9d51b77da514f65f3ce64a2e0de38c87cbcf3081c0deed7d95d43b06fcc73",
+      "split": "pretrain"
+    },
+    "pretrain/gfc12_load.parquet": {
+      "dataset": "gfc12_load",
+      "dropped": {},
+      "freqs": {
+        "H": 20
+      },
+      "points_kept": 788280,
+      "points_valid": 788280,
+      "series_in": 20,
+      "series_kept": 20,
+      "series_truncated": 0,
+      "series_valid": 20,
+      "sha256": "ee1d09b7383374d25be7e730cc81fe9f86b45bc66b2a97bb98e07302798f24b8",
+      "split": "pretrain"
+    },
+    "pretrain/gfc14_load.parquet": {
+      "dataset": "gfc14_load",
+      "dropped": {},
+      "freqs": {
+        "H": 1
+      },
+      "points_kept": 17520,
+      "points_valid": 17520,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "09c067224f2d3a267120f980e0888413148af0f8c14049f4e2b8add56033b302",
+      "split": "pretrain"
+    },
+    "pretrain/gfc17_load.parquet": {
+      "dataset": "gfc17_load",
+      "dropped": {},
+      "freqs": {
+        "H": 8
+      },
+      "points_kept": 140352,
+      "points_valid": 140352,
+      "series_in": 8,
+      "series_kept": 8,
+      "series_truncated": 0,
+      "series_valid": 8,
+      "sha256": "1128541184970caceedb0bebaae29aefbae4690fd9ca7412727db34904e4ed6d",
+      "split": "pretrain"
+    },
+    "pretrain/godaddy.parquet": {
+      "dataset": "godaddy",
+      "dropped": {},
+      "freqs": {
+        "MS": 6270
+      },
+      "points_kept": 257070,
+      "points_valid": 257070,
+      "series_in": 6270,
+      "series_kept": 6270,
+      "series_truncated": 0,
+      "series_valid": 6270,
+      "sha256": "1624409d6c6b47b09ae66d77c1de86c04dfce4c0d56448b43dbcb68f10d2cf4d",
+      "split": "pretrain"
+    },
+    "pretrain/hog.parquet": {
+      "dataset": "hog",
+      "dropped": {
+        "leakage": 12
+      },
+      "freqs": {
+        "H": 12
+      },
+      "points_kept": 210528,
+      "points_valid": 421056,
+      "series_in": 24,
+      "series_kept": 12,
+      "series_truncated": 0,
+      "series_valid": 24,
+      "sha256": "8370a64f0db6533a55be5f3a6a747efa131835b20c741b10e5abd1187e625c18",
+      "split": "pretrain"
+    },
+    "pretrain/ideal.parquet": {
+      "dataset": "ideal",
+      "dropped": {
+        "leakage": 34
+      },
+      "freqs": {
+        "H": 183
+      },
+      "points_kept": 996205,
+      "points_valid": 1255253,
+      "series_in": 217,
+      "series_kept": 183,
+      "series_truncated": 0,
+      "series_valid": 217,
+      "sha256": "4869cf7d85b2ee9f45e9adee6ce477cdba68202706689b7f864f50e5ebc508e7",
+      "split": "pretrain"
+    },
+    "pretrain/kaggle_web_traffic_weekly.parquet": {
+      "dataset": "kaggle_web_traffic_weekly",
+      "dropped": {
+        "constant": 28
+      },
+      "freqs": {
+        "W-SUN": 145035
+      },
+      "points_kept": 16533990,
+      "points_valid": 16533990,
+      "series_in": 145063,
+      "series_kept": 145035,
+      "series_truncated": 0,
+      "series_valid": 145035,
+      "sha256": "88c8e83fba435de26b9586814aff9d26f21a0422a65d8bf2035129f7e4aafd7c",
+      "split": "pretrain"
+    },
+    "pretrain/largest_2021.parquet": {
+      "dataset": "largest_2021",
+      "dropped": {
+        "mostly_missing": 6
+      },
+      "freqs": {
+        "5T": 476
+      },
+      "points_kept": 50000000,
+      "points_valid": 224115840,
+      "series_in": 2138,
+      "series_kept": 476,
+      "series_truncated": 1,
+      "series_valid": 2132,
+      "sha256": "f747267c40a3ea9e7f66e951d4e1806a0200d2d8f43ec3c86e9961445f08263c",
+      "split": "pretrain"
+    },
+    "pretrain/lcl.parquet": {
+      "dataset": "lcl",
+      "dropped": {
+        "leakage": 27
+      },
+      "freqs": {
+        "H": 686
+      },
+      "points_kept": 9167718,
+      "points_valid": 9543553,
+      "series_in": 713,
+      "series_kept": 686,
+      "series_truncated": 0,
+      "series_valid": 713,
+      "sha256": "87f3201e6616a168c5c4c551a1cc76d8017a5d02f2886a760b9a8e39159ba4b4",
+      "split": "pretrain"
+    },
+    "pretrain/london_smart_meters_with_missing.parquet": {
+      "dataset": "london_smart_meters_with_missing",
+      "dropped": {
+        "constant": 1
+      },
+      "freqs": {
+        "30T": 1665
+      },
+      "points_kept": 50000000,
+      "points_valid": 166208064,
+      "series_in": 5520,
+      "series_kept": 1665,
+      "series_truncated": 1,
+      "series_valid": 5519,
+      "sha256": "83d9ab4006025640e9f179cefb96b99a6ee5c7f8f2a0fc2d3492d879fce7351a",
+      "split": "pretrain"
+    },
+    "pretrain/m1_quarterly.parquet": {
+      "dataset": "m1_quarterly",
+      "dropped": {},
+      "freqs": {
+        "Q-DEC": 198
+      },
+      "points_kept": 9854,
+      "points_valid": 9854,
+      "series_in": 198,
+      "series_kept": 198,
+      "series_truncated": 0,
+      "series_valid": 198,
+      "sha256": "f5d6c5fa92119071d01e7c6314cd0fc0b81662bff777a279418c3f2057235750",
+      "split": "pretrain"
+    },
+    "pretrain/m1_yearly.parquet": {
+      "dataset": "m1_yearly",
+      "dropped": {},
+      "freqs": {
+        "A-DEC": 106
+      },
+      "points_kept": 3136,
+      "points_valid": 3136,
+      "series_in": 106,
+      "series_kept": 106,
+      "series_truncated": 0,
+      "series_valid": 106,
+      "sha256": "140417b9dbb5060169f7ab083a6fbdfcee3882a8e0443cf0298abce01bd37e51",
+      "split": "pretrain"
+    },
+    "pretrain/m5.parquet": {
+      "dataset": "m5",
+      "dropped": {},
+      "freqs": {
+        "D": 26137
+      },
+      "points_kept": 50000000,
+      "points_valid": 58327370,
+      "series_in": 30490,
+      "series_kept": 26137,
+      "series_truncated": 1,
+      "series_valid": 30490,
+      "sha256": "5937e256dd09128578cc06d407c1ba375227e3e5d17362ec8604c1be7c6054fe",
+      "split": "pretrain"
+    },
+    "pretrain/monash_m3_monthly.parquet": {
+      "dataset": "monash_m3_monthly",
+      "dropped": {
+        "leakage": 8
+      },
+      "freqs": {
+        "M": 1420
+      },
+      "points_kept": 140917,
+      "points_valid": 141858,
+      "series_in": 1428,
+      "series_kept": 1420,
+      "series_truncated": 0,
+      "series_valid": 1428,
+      "sha256": "b50bd5474cfee8a7480f3ad27b47c5ab96d94add09938497bfa9c9b9da2b284f",
+      "split": "pretrain"
+    },
+    "pretrain/monash_m3_other.parquet": {
+      "dataset": "monash_m3_other",
+      "dropped": {},
+      "freqs": {
+        "Q-DEC": 174
+      },
+      "points_kept": 11933,
+      "points_valid": 11933,
+      "series_in": 174,
+      "series_kept": 174,
+      "series_truncated": 0,
+      "series_valid": 174,
+      "sha256": "f0bfc84a05124898248dd478876c54c6d3a2d0670faf3ca2624aeea4b44e2f9c",
+      "split": "pretrain"
+    },
+    "pretrain/monash_m3_quarterly.parquet": {
+      "dataset": "monash_m3_quarterly",
+      "dropped": {},
+      "freqs": {
+        "Q-DEC": 756
+      },
+      "points_kept": 37004,
+      "points_valid": 37004,
+      "series_in": 756,
+      "series_kept": 756,
+      "series_truncated": 0,
+      "series_valid": 756,
+      "sha256": "1b74bbe4c67ef3933906ffd7e6dbeb4c2520aeba6077ce1553d2577b38a42c22",
+      "split": "pretrain"
+    },
+    "pretrain/nn5_weekly.parquet": {
+      "dataset": "nn5_weekly",
+      "dropped": {},
+      "freqs": {
+        "W-SUN": 111
+      },
+      "points_kept": 11655,
+      "points_valid": 11655,
+      "series_in": 111,
+      "series_kept": 111,
+      "series_truncated": 0,
+      "series_valid": 111,
+      "sha256": "365d8566bafefeb14f445448dcf83658d535bd84ca08286cddccfd31bed9e18e",
+      "split": "pretrain"
+    },
+    "pretrain/oikolab_weather.parquet": {
+      "dataset": "oikolab_weather",
+      "dropped": {},
+      "freqs": {
+        "H": 8
+      },
+      "points_kept": 800456,
+      "points_valid": 800456,
+      "series_in": 8,
+      "series_kept": 8,
+      "series_truncated": 0,
+      "series_valid": 8,
+      "sha256": "861aeffb0da0cd8dd2fe3484e210d468ba5ecec942fd7793563de39f84b442bf",
+      "split": "pretrain"
+    },
+    "pretrain/pdb.parquet": {
+      "dataset": "pdb",
+      "dropped": {},
+      "freqs": {
+        "H": 1
+      },
+      "points_kept": 17520,
+      "points_valid": 17520,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "f1b78a819813998bdcbc9beb6dcdb20bc7f7071bc18e7eeabfa23312d57557e1",
+      "split": "pretrain"
+    },
+    "pretrain/project_tycho.parquet": {
+      "dataset": "project_tycho",
+      "dropped": {
+        "constant": 89
+      },
+      "freqs": {
+        "W": 1169
+      },
+      "points_kept": 1356108,
+      "points_valid": 1356108,
+      "series_in": 1258,
+      "series_kept": 1169,
+      "series_truncated": 0,
+      "series_valid": 1169,
+      "sha256": "6d5c489742ec7ebe2814301b586de0ec8023dae2119995fd6683eb88c586e2ee",
+      "split": "pretrain"
+    },
+    "pretrain/residential_load_power.parquet": {
+      "dataset": "residential_load_power",
+      "dropped": {
+        "mostly_missing": 3
+      },
+      "freqs": {
+        "T": 90
+      },
+      "points_kept": 50000000,
+      "points_valid": 437151684,
+      "series_in": 813,
+      "series_kept": 90,
+      "series_truncated": 1,
+      "series_valid": 810,
+      "sha256": "b9b12dc92990dbd30c738779a58cf1016a5c6361056165c2324b81b5fefaeb89",
+      "split": "pretrain"
+    },
+    "pretrain/residential_pv_power.parquet": {
+      "dataset": "residential_pv_power",
+      "dropped": {
+        "constant": 10
+      },
+      "freqs": {
+        "T": 93
+      },
+      "points_kept": 50000000,
+      "points_valid": 373369395,
+      "series_in": 699,
+      "series_kept": 93,
+      "series_truncated": 1,
+      "series_valid": 689,
+      "sha256": "a997535fb2d1064c87eb14456743023288f148e428e092dd80b85a2cd130bbcc",
+      "split": "pretrain"
+    },
+    "pretrain/rideshare_with_missing.parquet": {
+      "dataset": "rideshare_with_missing",
+      "dropped": {
+        "constant": 341
+      },
+      "freqs": {
+        "H": 1963
+      },
+      "points_kept": 732199,
+      "points_valid": 732199,
+      "series_in": 2304,
+      "series_kept": 1963,
+      "series_truncated": 0,
+      "series_valid": 1963,
+      "sha256": "d16745f7d907c35c84bcc22a67582cee622faf81252bba21deb215b50393db51",
+      "split": "pretrain"
+    },
+    "pretrain/sceaux.parquet": {
+      "dataset": "sceaux",
+      "dropped": {
+        "leakage": 1
+      },
+      "freqs": {},
+      "points_kept": 0,
+      "points_valid": 34223,
+      "series_in": 1,
+      "series_kept": 0,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "1807ce85c82d50cf824b16f9dc8a800790765dc8628b45aa2bfcacdbab9c335c",
+      "split": "pretrain"
+    },
+    "pretrain/smart.parquet": {
+      "dataset": "smart",
+      "dropped": {},
+      "freqs": {
+        "H": 5
+      },
+      "points_kept": 95709,
+      "points_valid": 95709,
+      "series_in": 5,
+      "series_kept": 5,
+      "series_truncated": 0,
+      "series_valid": 5,
+      "sha256": "12c52e347ee58ad6cf2f4c203e48a1408d70897216539d9c681c5a8f434691d0",
+      "split": "pretrain"
+    },
+    "pretrain/solar_power.parquet": {
+      "dataset": "solar_power",
+      "dropped": {},
+      "freqs": {
+        "4S": 1
+      },
+      "points_kept": 7397222,
+      "points_valid": 7397222,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "dbdaa750d1aa93992934b90c9da1292080227412143d06b04e27f9dac9763d5d",
+      "split": "pretrain"
+    },
+    "pretrain/spain.parquet": {
+      "dataset": "spain",
+      "dropped": {},
+      "freqs": {
+        "H": 1
+      },
+      "points_kept": 35064,
+      "points_valid": 35064,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "8d3543480b8673c2a062c1fc702786bea36109fe5634346773588d2c7a5e87ca",
+      "split": "pretrain"
+    },
+    "pretrain/subseasonal.parquet": {
+      "dataset": "subseasonal",
+      "dropped": {},
+      "freqs": {
+        "D": 3036
+      },
+      "points_kept": 50000000,
+      "points_valid": 56788560,
+      "series_in": 3448,
+      "series_kept": 3036,
+      "series_truncated": 1,
+      "series_valid": 3448,
+      "sha256": "f16ef96257de3fcafff204e98e3581db91bfc4f3c6296d5d489ef577f108a96e",
+      "split": "pretrain"
+    },
+    "pretrain/subseasonal_precip.parquet": {
+      "dataset": "subseasonal_precip",
+      "dropped": {},
+      "freqs": {
+        "D": 862
+      },
+      "points_kept": 9760426,
+      "points_valid": 9760426,
+      "series_in": 862,
+      "series_kept": 862,
+      "series_truncated": 0,
+      "series_valid": 862,
+      "sha256": "0faa026bcc53a8ffa823678c15f7f6220feabf9fb69c7268b65f2e34fd790f1e",
+      "split": "pretrain"
+    },
+    "pretrain/sunspot_with_missing.parquet": {
+      "dataset": "sunspot_with_missing",
+      "dropped": {},
+      "freqs": {
+        "D": 1
+      },
+      "points_kept": 73894,
+      "points_valid": 73894,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "14a260142bcf98c764a2984d65ada33e1e7a2350d14e2a4b132c4df9775cf37e",
+      "split": "pretrain"
+    },
+    "pretrain/taxi_30min.parquet": {
+      "dataset": "taxi_30min",
+      "dropped": {},
+      "freqs": {
+        "30T": 61834
+      },
+      "points_kept": 50000000,
+      "points_valid": 54999056,
+      "series_in": 67984,
+      "series_kept": 61834,
+      "series_truncated": 1,
+      "series_valid": 67984,
+      "sha256": "8253763d7b21eb900c3380657d92712cf0021b020fe6c2cb8a911efea45fcb28",
+      "split": "pretrain"
+    },
+    "pretrain/tourism_monthly.parquet": {
+      "dataset": "tourism_monthly",
+      "dropped": {
+        "leakage": 28
+      },
+      "freqs": {
+        "M": 338
+      },
+      "points_kept": 95596,
+      "points_valid": 100496,
+      "series_in": 366,
+      "series_kept": 338,
+      "series_truncated": 0,
+      "series_valid": 366,
+      "sha256": "d10a345bbb0e85f3785ade4b4cff7fc45ed775161c94f877e51ec61b6790211d",
+      "split": "pretrain"
+    },
+    "pretrain/tourism_yearly.parquet": {
+      "dataset": "tourism_yearly",
+      "dropped": {},
+      "freqs": {
+        "A-DEC": 419
+      },
+      "points_kept": 11198,
+      "points_valid": 11198,
+      "series_in": 419,
+      "series_kept": 419,
+      "series_truncated": 0,
+      "series_valid": 419,
+      "sha256": "01ffbfc74c5a4feca407a9ffd323f426ed8a69f83d69913f32968762cc6921ff",
+      "split": "pretrain"
+    },
+    "pretrain/traffic_hourly.parquet": {
+      "dataset": "traffic_hourly",
+      "dropped": {},
+      "freqs": {
+        "H": 862
+      },
+      "points_kept": 14978112,
+      "points_valid": 14978112,
+      "series_in": 862,
+      "series_kept": 862,
+      "series_truncated": 0,
+      "series_valid": 862,
+      "sha256": "a121315a166700bcbb5de70623f669206c89df3de1b83dced2ea34a40f17d924",
+      "split": "pretrain"
+    },
+    "pretrain/uber_tlc_hourly.parquet": {
+      "dataset": "uber_tlc_hourly",
+      "dropped": {},
+      "freqs": {
+        "H": 262
+      },
+      "points_kept": 1129444,
+      "points_valid": 1129444,
+      "series_in": 262,
+      "series_kept": 262,
+      "series_truncated": 0,
+      "series_valid": 262,
+      "sha256": "3a310fa4e6013148f0681d945ae839db91cc776177d6591113e1d85a4e937f0d",
+      "split": "pretrain"
+    },
+    "pretrain/vehicle_trips_with_missing.parquet": {
+      "dataset": "vehicle_trips_with_missing",
+      "dropped": {
+        "constant": 7,
+        "too_short": 8
+      },
+      "freqs": {
+        "D": 314
+      },
+      "points_kept": 31459,
+      "points_valid": 31459,
+      "series_in": 329,
+      "series_kept": 314,
+      "series_truncated": 0,
+      "series_valid": 314,
+      "sha256": "214236924c2deea61959f1df82940e7e60d36d5cf4275956e19ecf24a954efe2",
+      "split": "pretrain"
+    },
+    "pretrain/weather.parquet": {
+      "dataset": "weather",
+      "dropped": {
+        "leakage": 499
+      },
+      "freqs": {
+        "D": 2511
+      },
+      "points_kept": 36608216,
+      "points_valid": 42941700,
+      "series_in": 3010,
+      "series_kept": 2511,
+      "series_truncated": 0,
+      "series_valid": 3010,
+      "sha256": "de3f9bbac3b5330f7dcc93969bb532817e4c8671e0f758a1d8cfe094c356c63f",
+      "split": "pretrain"
+    },
+    "pretrain/wiki-rolling_nips.parquet": {
+      "dataset": "wiki-rolling_nips",
+      "dropped": {},
+      "freqs": {
+        "D": 47675
+      },
+      "points_kept": 40619100,
+      "points_valid": 40619100,
+      "series_in": 47675,
+      "series_kept": 47675,
+      "series_truncated": 0,
+      "series_valid": 47675,
+      "sha256": "c271d06738cdb358247df41467d2fdc9ae1a9bf4b86d59d322e7b3911c02c231",
+      "split": "pretrain"
+    },
+    "pretrain/wind_farms_with_missing.parquet": {
+      "dataset": "wind_farms_with_missing",
+      "dropped": {
+        "constant": 9
+      },
+      "freqs": {
+        "T": 98
+      },
+      "points_kept": 50000000,
+      "points_valid": 168631710,
+      "series_in": 337,
+      "series_kept": 98,
+      "series_truncated": 1,
+      "series_valid": 328,
+      "sha256": "3acaddb0b59340c471eb963a627ca52750b96558e4eeb4d18a343f33632179bf",
+      "split": "pretrain"
+    },
+    "pretrain/wind_power.parquet": {
+      "dataset": "wind_power",
+      "dropped": {},
+      "freqs": {
+        "4S": 1
+      },
+      "points_kept": 7397147,
+      "points_valid": 7397147,
+      "series_in": 1,
+      "series_kept": 1,
+      "series_truncated": 0,
+      "series_valid": 1,
+      "sha256": "8a2e3c2532bedb776abd31b654589ed069186aa3c6372753f7d8396e3ec80e23",
+      "split": "pretrain"
+    },
+    "val/australian_electricity_demand.parquet": {
+      "dataset": "australian_electricity_demand",
+      "dropped": {},
+      "freqs": {
+        "30T": 5
+      },
+      "points_kept": 1153584,
+      "points_valid": 1153584,
+      "series_in": 5,
+      "series_kept": 5,
+      "series_truncated": 0,
+      "series_valid": 5,
+      "sha256": "324d58acf3d6a82e844e7e0b6c83dc62a401f7409aa1dcbe42257d15f5f2eb91",
+      "split": "val"
+    },
+    "val/bdg-2_bear.parquet": {
+      "dataset": "bdg-2_bear",
+      "dropped": {
+        "leakage": 2
+      },
+      "freqs": {
+        "H": 89
+      },
+      "points_kept": 1447224,
+      "points_valid": 1482312,
+      "series_in": 91,
+      "series_kept": 89,
+      "series_truncated": 0,
+      "series_valid": 91,
+      "sha256": "434b346c94a8eea39f8d1a0c5cedb3de6483b9830fe9647f60ff37d8ea6356b6",
+      "split": "val"
+    },
+    "val/kdd2022.parquet": {
+      "dataset": "kdd2022",
+      "dropped": {},
+      "freqs": {
+        "10T": 134
+      },
+      "points_kept": 4727519,
+      "points_valid": 4727519,
+      "series_in": 134,
+      "series_kept": 134,
+      "series_truncated": 0,
+      "series_valid": 134,
+      "sha256": "e85eb3e592787e188ad7883a68e5455d6cb2fff0ac1e1a1260a2996836298d11",
+      "split": "val"
+    },
+    "val/m1_monthly.parquet": {
+      "dataset": "m1_monthly",
+      "dropped": {
+        "leakage": 2
+      },
+      "freqs": {
+        "M": 615
+      },
+      "points_kept": 44640,
+      "points_valid": 44892,
+      "series_in": 617,
+      "series_kept": 615,
+      "series_truncated": 0,
+      "series_valid": 617,
+      "sha256": "98402d7a8565413816f8b81c7b19a63ad4f3e52bb6381139d0ab176064d4a4e9",
+      "split": "val"
+    },
+    "val/monash_m3_yearly.parquet": {
+      "dataset": "monash_m3_yearly",
+      "dropped": {},
+      "freqs": {
+        "A-DEC": 645
+      },
+      "points_kept": 18319,
+      "points_valid": 18319,
+      "series_in": 645,
+      "series_kept": 645,
+      "series_truncated": 0,
+      "series_valid": 645,
+      "sha256": "dcb187a84ab1586418b4024a57c72a2ec807d2fb84e41a342f9cc8f112fd40c5",
+      "split": "val"
+    },
+    "val/nn5_daily_with_missing.parquet": {
+      "dataset": "nn5_daily_with_missing",
+      "dropped": {},
+      "freqs": {
+        "D": 111
+      },
+      "points_kept": 81585,
+      "points_valid": 81585,
+      "series_in": 111,
+      "series_kept": 111,
+      "series_truncated": 0,
+      "series_valid": 111,
+      "sha256": "88843240956be3be4c24106fa06f06207a2f246bae8f108caa38aa235cd1b18a",
+      "split": "val"
+    },
+    "val/pedestrian_counts.parquet": {
+      "dataset": "pedestrian_counts",
+      "dropped": {
+        "leakage": 46
+      },
+      "freqs": {
+        "H": 20
+      },
+      "points_kept": 269624,
+      "points_valid": 3130762,
+      "series_in": 66,
+      "series_kept": 20,
+      "series_truncated": 0,
+      "series_valid": 66,
+      "sha256": "304d11b7a6b7d8d49b0d8876277625723ccafc01a7482511395bdb9d5e3470e4",
+      "split": "val"
+    },
+    "val/tourism_quarterly.parquet": {
+      "dataset": "tourism_quarterly",
+      "dropped": {},
+      "freqs": {
+        "Q-DEC": 427
+      },
+      "points_kept": 39128,
+      "points_valid": 39128,
+      "series_in": 427,
+      "series_kept": 427,
+      "series_truncated": 0,
+      "series_valid": 427,
+      "sha256": "cda4186f590732a669476fc5632fc46332ab219c55cc3abb2f74289e69cb7cad",
+      "split": "val"
+    },
+    "val/traffic_weekly.parquet": {
+      "dataset": "traffic_weekly",
+      "dropped": {},
+      "freqs": {
+        "W-SUN": 862
+      },
+      "points_kept": 82752,
+      "points_valid": 82752,
+      "series_in": 862,
+      "series_kept": 862,
+      "series_truncated": 0,
+      "series_valid": 862,
+      "sha256": "b3d802552f2ea8825170ec777b13bc2146b6537f7fa4c1c2a8d6f55fae2e1c5d",
+      "split": "val"
+    },
+    "val/uber_tlc_daily.parquet": {
+      "dataset": "uber_tlc_daily",
+      "dropped": {},
+      "freqs": {
+        "D": 262
+      },
+      "points_kept": 47087,
+      "points_valid": 47087,
+      "series_in": 262,
+      "series_kept": 262,
+      "series_truncated": 0,
+      "series_valid": 262,
+      "sha256": "0844f72e84dd0b903e9ed8ae7a054ccbb71cda9d2d7fc103f8170459ce45d230",
+      "split": "val"
+    }
+  },
+  "schema": "item_id: string\ndataset: string\nfreq: string\nstart: timestamp[ms]\ntarget: list<element: float>\n  child 0, element: float",
+  "totals": {
+    "pretrain": {
+      "datasets": 77,
+      "points": 1087018264,
+      "series": 443258
+    },
+    "val": {
+      "datasets": 10,
+      "points": 7911462,
+      "series": 3170
+    }
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-14T21:15:13+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "e0b6bedd1717df73b8ef88aa9ebea3023a011027",
+    "label": "M1-leakage-inspection",
+    "split": "none"
+  },
+  "pairs": [
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 2.4472747884528507,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 2,
+      "series_with_test_window_hits": 2,
+      "source": "bdg-2_bear",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.3116775481022169,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 9,
+      "series_with_test_window_hits": 9,
+      "source": "bdg-2_fox",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.5599066016203705,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 4,
+      "series_with_test_window_hits": 4,
+      "source": "bdg-2_panther",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.40967347559771405,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 37,
+      "series_with_test_window_hits": 37,
+      "source": "bdg-2_rat",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 230,
+      "agree_len_median": 143,
+      "alpha_median": 0.9999999999999999,
+      "gifteval": "kdd_cup_2018_with_missing/H",
+      "linear_fraction_median": 0.0967741935483871,
+      "series": 59,
+      "series_with_test_window_hits": 0,
+      "source": "beijing_air_quality",
+      "verdict": "copy"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 11.378238326248182,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 8,
+      "series_with_test_window_hits": 8,
+      "source": "borealis",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.20119062964755371,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 16,
+      "series_with_test_window_hits": 16,
+      "source": "bull",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.022665340570986417,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 1,
+      "series_with_test_window_hits": 1,
+      "source": "cockatoo",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "gifteval": "m4_daily",
+      "series": 1,
+      "series_with_test_window_hits": 1,
+      "source": "cockatoo",
+      "verdict": "daily-aggregate hits only"
+    },
+    {
+      "agree_len_max": 692,
+      "agree_len_median": 648,
+      "alpha_median": 10.000000000000018,
+      "gifteval": "m4_monthly",
+      "linear_fraction_median": 0.03225806451612903,
+      "series": 8,
+      "series_with_test_window_hits": 3,
+      "source": "fred_md",
+      "verdict": "copy"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.10484976520745064,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 12,
+      "series_with_test_window_hits": 12,
+      "source": "hog",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 80,
+      "alpha_median": 34.849647607165835,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 34,
+      "series_with_test_window_hits": 34,
+      "source": "ideal",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 73,
+      "alpha_median": 63.44542313541122,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 27,
+      "series_with_test_window_hits": 27,
+      "source": "lcl",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 126,
+      "agree_len_median": 126,
+      "alpha_median": 1.0,
+      "gifteval": "m4_monthly",
+      "linear_fraction_median": 0.016129032258064516,
+      "series": 2,
+      "series_with_test_window_hits": 0,
+      "source": "m1_monthly",
+      "verdict": "copy"
+    },
+    {
+      "agree_len_max": 120,
+      "agree_len_median": 85,
+      "alpha_median": 0.19999999999999996,
+      "gifteval": "m4_monthly",
+      "linear_fraction_median": 0.016129032258064516,
+      "series": 8,
+      "series_with_test_window_hits": 0,
+      "source": "monash_m3_monthly",
+      "verdict": "uncertain (short non-linear overlap)"
+    },
+    {
+      "agree_len_max": 748,
+      "agree_len_median": 748,
+      "alpha_median": 1.0,
+      "gifteval": "m4_hourly",
+      "linear_fraction_median": 0.08064516129032258,
+      "series": 46,
+      "series_with_test_window_hits": 46,
+      "source": "pedestrian_counts",
+      "verdict": "copy"
+    },
+    {
+      "agree_len_max": 86,
+      "agree_len_median": 86,
+      "alpha_median": 0.8323738271505771,
+      "gifteval": "SZ_TAXI/15T",
+      "linear_fraction_median": 1.0,
+      "series": 1,
+      "series_with_test_window_hits": 1,
+      "source": "sceaux",
+      "verdict": "coincidence (straight-line windows)"
+    },
+    {
+      "agree_len_max": 175,
+      "agree_len_median": 162,
+      "alpha_median": 0.9999999999999997,
+      "gifteval": "m4_monthly",
+      "linear_fraction_median": 0.03225806451612903,
+      "series": 28,
+      "series_with_test_window_hits": 0,
+      "source": "tourism_monthly",
+      "verdict": "copy"
+    },
+    {
+      "agree_len_max": 689,
+      "agree_len_median": 140,
+      "alpha_median": 1.0,
+      "gifteval": "temperature_rain_with_missing",
+      "linear_fraction_median": 0.016129032258064516,
+      "series": 499,
+      "series_with_test_window_hits": 129,
+      "source": "weather",
+      "verdict": "copy"
+    }
+  ]
+}

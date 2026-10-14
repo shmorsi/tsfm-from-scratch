@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-14T20:26:52+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "e0b6bedd1717df73b8ef88aa9ebea3023a011027",
+    "label": "M1-synthetic",
+    "split": "none"
+  },
+  "files": {
+    "pretrain/kernelsynth.parquet": {
+      "dataset": "kernelsynth",
+      "n_kernels_histogram": {
+        "1": 19917,
+        "2": 19826,
+        "3": 20139,
+        "4": 20126,
+        "5": 19992
+      },
+      "points_kept": 102400000,
+      "seed": 20261015,
+      "series_kept": 100000,
+      "sha256": "7fc016edf1cdb236ccb6379821ba564e7bcfc2a09d8b6ba66f44e0f763df4950",
+      "split": "pretrain"
+    },
+    "val/kernelsynth.parquet": {
+      "dataset": "kernelsynth",
+      "n_kernels_histogram": {
+        "1": 374,
+        "2": 383,
+        "3": 429,
+        "4": 399,
+        "5": 415
+      },
+      "points_kept": 2048000,
+      "seed": 20261015,
+      "series_kept": 2000,
+      "sha256": "0b7a61d594e854f5361d18920ec516c877b94fdbc872683f177d093355f41c19",
+      "split": "val"
+    }
+  }
+}

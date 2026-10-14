@@ -1,0 +1,1686 @@
+{
+ "repo": "Salesforce/GiftEvalPretrain",
+ "revision": "6830b624de7ed2b3d3e5b85bb6959d81dcc5d874",
+ "files": [
+  {
+   "path": "BEIJING_SUBWAY_30MIN/data-00000-of-00001.arrow",
+   "size": 22583264,
+   "sha256": "3438697f6f76a2998be6b691dd6b00f5339e3572e959fe5ce4e245c66ab034a2",
+   "git_oid": "d808cddacd38951a68daef65324975b8d44c8c83"
+  },
+  {
+   "path": "BEIJING_SUBWAY_30MIN/dataset_info.json",
+   "size": 1212,
+   "sha256": null,
+   "git_oid": "3f51f0e251f00fb2106ecbe32dffe244ec4b3eeb"
+  },
+  {
+   "path": "BEIJING_SUBWAY_30MIN/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "b30ece53f5c10d45109feeba1ef6b4ddfb49e458"
+  },
+  {
+   "path": "HZMETRO/data-00000-of-00001.arrow",
+   "size": 1524752,
+   "sha256": "8b8e905d38abf439a6eb132f367b9156f39c978e69de122af216420d6f5117db",
+   "git_oid": "0cab67f13e34bf29e690567c13c3372fd6ef40c7"
+  },
+  {
+   "path": "HZMETRO/dataset_info.json",
+   "size": 965,
+   "sha256": null,
+   "git_oid": "1eeb01bcea70b3989b6a8437331e488ee61675ef"
+  },
+  {
+   "path": "HZMETRO/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "d674782267494e551673452ce120c5f5a15f4983"
+  },
+  {
+   "path": "LOS_LOOP/data-00000-of-00001.arrow",
+   "size": 28384032,
+   "sha256": "b5d3354f327a07644110d640dbb9056b2d5609c49b693e1cbf38996ae73dae0f",
+   "git_oid": "287d1da60f3d8130de20b1ff5717f491ded3775b"
+  },
+  {
+   "path": "LOS_LOOP/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "2cda2ecca4b57747435f91efb7ab384aff0e4cff"
+  },
+  {
+   "path": "LOS_LOOP/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "5f94641a829e06881606ba4dc8207d7b3e91c5bd"
+  },
+  {
+   "path": "PEMS03/data-00000-of-00001.arrow",
+   "size": 37540912,
+   "sha256": "02e0e6f9a317ae0d8588993f6f716c57c3b7609bd370dbb3af67aac6a5336e6b",
+   "git_oid": "995a13cd547cd4ed4632455f8c1be42b1086b6c4"
+  },
+  {
+   "path": "PEMS03/dataset_info.json",
+   "size": 885,
+   "sha256": null,
+   "git_oid": "1d2ed90e2b9675d5b02f3188019aa45b3a722c4a"
+  },
+  {
+   "path": "PEMS03/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "8bcce143dabcac999ac8190d04593682638a484b"
+  },
+  {
+   "path": "PEMS04/data-00000-of-00001.arrow",
+   "size": 62609704,
+   "sha256": "c6efc9ec7403e1bb860570dad84a18b38c910ff48bae074dc6cad178cdbfe78e",
+   "git_oid": "9ba7035413284029f79f57ed6e9f252c4a8b3b53"
+  },
+  {
+   "path": "PEMS04/dataset_info.json",
+   "size": 968,
+   "sha256": null,
+   "git_oid": "258e626eb2e5e12b19215a416b03adafaf3be593"
+  },
+  {
+   "path": "PEMS04/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "5151440553b915ce4695328ce5caa8aa63bfc41c"
+  },
+  {
+   "path": "PEMS07/data-00000-of-00001.arrow",
+   "size": 99710152,
+   "sha256": "8236985c82a4519bb275ba16593e7662e19ba7976fb73b9c0bb9017864517de6",
+   "git_oid": "b2333556262004145788e58a9a845c7441f683c9"
+  },
+  {
+   "path": "PEMS07/dataset_info.json",
+   "size": 885,
+   "sha256": null,
+   "git_oid": "467e0678a0675b44f19e57b76896328f66a93aad"
+  },
+  {
+   "path": "PEMS07/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "5da43f0f69907b0ce7ebbe5f4e041d4e8cf6fca8"
+  },
+  {
+   "path": "PEMS08/data-00000-of-00001.arrow",
+   "size": 36432904,
+   "sha256": "c105169dc431ad32ed5cb3c5de30f88e1669058b33287544a3d17be87bc28f2e",
+   "git_oid": "fe4a8ce4d76a5a81d2c06775c3d68c6de3d997c6"
+  },
+  {
+   "path": "PEMS08/dataset_info.json",
+   "size": 968,
+   "sha256": null,
+   "git_oid": "3400d895c93282cb99c2b69c7a93d49c74130026"
+  },
+  {
+   "path": "PEMS08/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "83d224d8ec9148aa19a536e9443bc1eab6cd3889"
+  },
+  {
+   "path": "PEMS_BAY/data-00000-of-00001.arrow",
+   "size": 67776520,
+   "sha256": "c055b01f05f3e29c80c03e95c8769554e864d3edf2ce4767521ff8807c691965",
+   "git_oid": "2f9b61496eaa9fe27ddc017f3eb2404a289305fb"
+  },
+  {
+   "path": "PEMS_BAY/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "f69e200fb7eedf9f82892b55969697730f0b7e7c"
+  },
+  {
+   "path": "PEMS_BAY/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "25b65f5785d779a84e922911fe7ef15407d73f88"
+  },
+  {
+   "path": "Q-TRAFFIC/data-00000-of-00003.arrow",
+   "size": 353034808,
+   "sha256": "2784b7c01bc2b056da135dd6cdf05624c75f02691bf09a98cb92a5de692d094a",
+   "git_oid": "7ecb3f03fe844000754e69c08ea10b6da1ea0543"
+  },
+  {
+   "path": "Q-TRAFFIC/data-00001-of-00003.arrow",
+   "size": 353011352,
+   "sha256": "fe41590bb7d07db7c29f0e92a2339508fd7c052e88aea9ce7838c4fe5f402f9f",
+   "git_oid": "d3f47496122c7fda827303a61d02d31ae3140d9d"
+  },
+  {
+   "path": "Q-TRAFFIC/data-00002-of-00003.arrow",
+   "size": 353011296,
+   "sha256": "d6c9ee36356d1aae9eb08f7021517704a356b78298a253f7ff12a05622bd0e17",
+   "git_oid": "8d9b71fb25b2706834033bdefc8c28a34cb7d949"
+  },
+  {
+   "path": "Q-TRAFFIC/dataset_info.json",
+   "size": 973,
+   "sha256": null,
+   "git_oid": "86ec751f2e6463d6272876b61f65e54c6e48c1d7"
+  },
+  {
+   "path": "Q-TRAFFIC/state.json",
+   "size": 368,
+   "sha256": null,
+   "git_oid": "742e83dadc4325a2d1677d7616bad8e396cdc3ad"
+  },
+  {
+   "path": "SHMETRO/data-00000-of-00001.arrow",
+   "size": 20305632,
+   "sha256": "2a82c8721e2731057203347e5d54226175c7d95c36f5cf51fa726129cefb9e9a",
+   "git_oid": "39a8bd2ca9144381b58e77c3e7f887432076039b"
+  },
+  {
+   "path": "SHMETRO/dataset_info.json",
+   "size": 969,
+   "sha256": null,
+   "git_oid": "688a3c6e8ec77a219abd22f4e8420dbf8b8e7bbf"
+  },
+  {
+   "path": "SHMETRO/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "6fb151c566eac4528f0921632218ae3854059247"
+  },
+  {
+   "path": "alibaba_cluster_trace_2018/data-00000-of-00010.arrow",
+   "size": 305138608,
+   "sha256": "20ec0f87beb70c2f0cbf46313e0832c9e4384b2c6f552b19f7125247b43bcf80",
+   "git_oid": "ddf2da41a01e197569b214165d3041a78afa0f1a"
+  },
+  {
+   "path": "alibaba_cluster_trace_2018/data-00001-of-00010.arrow",
+   "size": 305776184,
+   "sha256": "e6c16cc8625f9d0de904a92fc75940ca9a722d1daa8ba071da7626afb00c4b43",
+   "git_oid": "27d2cfbf601f3a23f0d7468cb86acf3d35e45f24"
+  },
+  {
+   "path": "alibaba_cluster_trace_2018/data-00002-of-00010.arrow",
+   "size": 304046168,
+   "sha256": "9370f05b79ea10a16b3d0ef06f3df4f9302b6f7f197ba3cc5425579a9caa49e1",
+   "git_oid": "d52951e83235b7a08877fe14ff4abea781822d23"
+  },
+  {
+   "path": "alibaba_cluster_trace_2018/dataset_info.json",
+   "size": 2090,
+   "sha256": null,
+   "git_oid": "b53731eb3a94b57e7922f6b0501855ac33c2757b"
+  },
+  {
+   "path": "alibaba_cluster_trace_2018/state.json",
+   "size": 781,
+   "sha256": null,
+   "git_oid": "51474b7a4e358ec15dd6abbc1f8a584207ad9613"
+  },
+  {
+   "path": "australian_electricity_demand/data-00000-of-00001.arrow",
+   "size": 4615480,
+   "sha256": "31fbcc1b224df0d6a220ba2a45404a6ec52ba63b2cb4d6ab5d8cc843eb4dd4b9",
+   "git_oid": "1903cca6f2f57bf6eac7ede55f3bef97c6406399"
+  },
+  {
+   "path": "australian_electricity_demand/dataset_info.json",
+   "size": 903,
+   "sha256": null,
+   "git_oid": "db810d22fd4d07ba395486d76ab044ec301d2b79"
+  },
+  {
+   "path": "australian_electricity_demand/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "158c5a1e94aa61ea6a8c0a4bc9c5377671259943"
+  },
+  {
+   "path": "azure_vm_traces_2017/data-00000-of-00022.arrow",
+   "size": 484331560,
+   "sha256": "7ebecc19e4308bc00e44b30c4255ade939791991e9ed6474114aae89496acdca",
+   "git_oid": "d3016c3256e625dcee95da0ee02786dc68bda65d"
+  },
+  {
+   "path": "azure_vm_traces_2017/data-00001-of-00022.arrow",
+   "size": 483215152,
+   "sha256": "b4384343e57ce09cfb07f87bf27b68058b4fa0edcefae528a1d330abdf6b7aee",
+   "git_oid": "18e56c7cd041511f185c1aa55ccce8b4ab885ca8"
+  },
+  {
+   "path": "azure_vm_traces_2017/dataset_info.json",
+   "size": 2069,
+   "sha256": null,
+   "git_oid": "7947367d89ad772d4d074aa87830f6637b85f9cb"
+  },
+  {
+   "path": "azure_vm_traces_2017/state.json",
+   "size": 1489,
+   "sha256": null,
+   "git_oid": "ffaaf386505d08f4848c4a9f1db9562ca0b59d95"
+  },
+  {
+   "path": "bdg-2_bear/data-00000-of-00001.arrow",
+   "size": 5934008,
+   "sha256": "09cfed140154b84c41fa9b7798cca1bcde6e8e9528cb88550f732fb65830458e",
+   "git_oid": "1aa7a7b1ef9d35b0eba9db5771d33537852cbd14"
+  },
+  {
+   "path": "bdg-2_bear/dataset_info.json",
+   "size": 885,
+   "sha256": null,
+   "git_oid": "d0323a3c4903e086ad5095a70fc47754639aef30"
+  },
+  {
+   "path": "bdg-2_bear/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "73f974c80f62964447f0630ee5fccfa832c7741f"
+  },
+  {
+   "path": "bdg-2_fox/data-00000-of-00001.arrow",
+   "size": 9304680,
+   "sha256": "5031c82517042b1733062688680eb514c98a7129ad1d8a8d8575065cf9612a10",
+   "git_oid": "f6bbdaf4fb53670771440ba1b9b852d51ffc2492"
+  },
+  {
+   "path": "bdg-2_fox/dataset_info.json",
+   "size": 885,
+   "sha256": null,
+   "git_oid": "0438dfc32f587e428aaa31480189bdbfa88e4f34"
+  },
+  {
+   "path": "bdg-2_fox/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "83cd2688851e320dc5dac6a4a6090557b7ec0d70"
+  },
+  {
+   "path": "bdg-2_panther/data-00000-of-00001.arrow",
+   "size": 3684768,
+   "sha256": "34b1cd011dde108be877fd24e264364a669ea62bd9cf39e92d353a3c0f671b14",
+   "git_oid": "94cb643f6f3e10079b33f9f1aff0a9ae59fd84d6"
+  },
+  {
+   "path": "bdg-2_panther/dataset_info.json",
+   "size": 889,
+   "sha256": null,
+   "git_oid": "93c43fdb871b6d9ac95e0b832f5de4ed60d9398a"
+  },
+  {
+   "path": "bdg-2_panther/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "32061f154d835829931a15e1b733718c0714bbe0"
+  },
+  {
+   "path": "bdg-2_rat/data-00000-of-00001.arrow",
+   "size": 18925168,
+   "sha256": "005708a63ceb6be265dd026325ea81e32ed6c5b94c399dd3ff14d67669aedfc9",
+   "git_oid": "1cd1e1d09cb6f28191e930bdd6076d3f32ca6d40"
+  },
+  {
+   "path": "bdg-2_rat/dataset_info.json",
+   "size": 888,
+   "sha256": null,
+   "git_oid": "3c9ca501de821c4c1921b6420ae98d0c31e01786"
+  },
+  {
+   "path": "bdg-2_rat/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "845d2bb308c5b2e9731b05844f3ed97bccbef499"
+  },
+  {
+   "path": "beijing_air_quality/data-00000-of-00001.arrow",
+   "size": 18516128,
+   "sha256": "3e2ccf8d3fe08d0dd12e6c24a83531cbc9cdda1d11edc9c15087b5022ea2266f",
+   "git_oid": "eb352ea2bd770e8c074696eb43f55cb05fd3e848"
+  },
+  {
+   "path": "beijing_air_quality/dataset_info.json",
+   "size": 981,
+   "sha256": null,
+   "git_oid": "30637c88c45aad218bb25a2337ba467846276f34"
+  },
+  {
+   "path": "beijing_air_quality/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "98cab213fa2c74f84270c1b2291cd0de2d6796fe"
+  },
+  {
+   "path": "bitcoin_with_missing/data-00000-of-00001.arrow",
+   "size": 329328,
+   "sha256": "11d61bc2d0db36aa8ffc67876a074900594d50f88e41b8fb93e4855d0ee50304",
+   "git_oid": "90a87b87a81c02c56406b96b05e157fe94a84f6a"
+  },
+  {
+   "path": "bitcoin_with_missing/dataset_info.json",
+   "size": 892,
+   "sha256": null,
+   "git_oid": "87cec0b8ffff0bd78e2a04b9ad0e1544f6cb688e"
+  },
+  {
+   "path": "bitcoin_with_missing/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "3a88f8c57849daab7c7b3e93a7d64fea03d19e42"
+  },
+  {
+   "path": "borealis/data-00000-of-00001.arrow",
+   "size": 334496,
+   "sha256": "557c29f380cd44fe047637ed8fbafdddf52fc9ea806b66b40d2a7a2470117814",
+   "git_oid": "e99b719450ac1ab762140cc4852bd7f6b5446770"
+  },
+  {
+   "path": "borealis/dataset_info.json",
+   "size": 880,
+   "sha256": null,
+   "git_oid": "f73e6afe92837a0af3d1e01eb0aedd906ca8bed3"
+  },
+  {
+   "path": "borealis/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "7afce4ebf09b73043d5107a4ea72fff0c33f269b"
+  },
+  {
+   "path": "borg_cluster_data_2011/data-00000-of-00031.arrow",
+   "size": 877903056,
+   "sha256": "be58ffbced64ee48ecb6be4467423fe82ffae16feb4ce3b894bb687c2cf82d56",
+   "git_oid": "7fd8a01ef01c15c8cafbbf901c01c86658c1e9a4"
+  },
+  {
+   "path": "borg_cluster_data_2011/data-00001-of-00031.arrow",
+   "size": 841193272,
+   "sha256": "071202e458213fa7de5f35d74c40b2fab5898f1eaf6153a81dcb29549c4d0376",
+   "git_oid": "bf34f0f6f32c85677fba7815da0b6f94715cd2a3"
+  },
+  {
+   "path": "borg_cluster_data_2011/dataset_info.json",
+   "size": 2154,
+   "sha256": null,
+   "git_oid": "79b083b086d6c98d55057be57ec25695b7b2949d"
+  },
+  {
+   "path": "borg_cluster_data_2011/state.json",
+   "size": 2020,
+   "sha256": null,
+   "git_oid": "b0b1df8f4eb64f19dac95ec5b04c663ef063fccb"
+  },
+  {
+   "path": "buildings_900k/data-00000-of-00127.arrow",
+   "size": 496260528,
+   "sha256": "b92d9fe97e79d4ef4730ace5e11681dc6abd7978e39f36a19303f8f515bde59a",
+   "git_oid": "7f1c391258a4224e54f9fdd33da6536309b7109e"
+  },
+  {
+   "path": "buildings_900k/data-00001-of-00127.arrow",
+   "size": 496260624,
+   "sha256": "f56adf7aa42b7e7d85982f49d0926f346d24ee7706f5729196d73353ae4a95de",
+   "git_oid": "2819726702d6530ae0f73cfa5ceab6a9bc1924c6"
+  },
+  {
+   "path": "buildings_900k/dataset_info.json",
+   "size": 3275,
+   "sha256": null,
+   "git_oid": "15fae720a4326019cea68caf851b7bb46737cf69"
+  },
+  {
+   "path": "buildings_900k/state.json",
+   "size": 7684,
+   "sha256": null,
+   "git_oid": "576caea77371cfa8ce971fa4ef7dc3c116e9d01e"
+  },
+  {
+   "path": "bull/data-00000-of-00001.arrow",
+   "size": 11512712,
+   "sha256": "a32212541720c7b2d3e53f2335ba39dbc4cf95df8ffd9a7a4a5535931ecb37e0",
+   "git_oid": "10a39f9fc9d5b540113e0ecb500bea3c12a80d30"
+  },
+  {
+   "path": "bull/dataset_info.json",
+   "size": 1111,
+   "sha256": null,
+   "git_oid": "913897f4a8ba2a71cf723cd176471b62b1e9c956"
+  },
+  {
+   "path": "bull/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "eee9ce3def832392707c36877c1dc5c4e0ce2221"
+  },
+  {
+   "path": "cdc_fluview_ilinet/data-00000-of-00001.arrow",
+   "size": 1283224,
+   "sha256": "feced2ce7f54344dc046060442fc9326d756164c840f7c0dc46042904807262c",
+   "git_oid": "e22e8ad70e305dca6dc490615446a1f65ca7d48d"
+  },
+  {
+   "path": "cdc_fluview_ilinet/dataset_info.json",
+   "size": 976,
+   "sha256": null,
+   "git_oid": "0c151130569ac275356cf9486cfb4f25653e5c2d"
+  },
+  {
+   "path": "cdc_fluview_ilinet/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "95080129c5e87e8a42a8eb9eef1defeb097ab2fe"
+  },
+  {
+   "path": "cdc_fluview_who_nrevss/data-00000-of-00001.arrow",
+   "size": 672944,
+   "sha256": "4f79e64996cbb96e30b7de59cfdc29348d55eaaf4871cc36b51fd160c2571dbd",
+   "git_oid": "28f138318a61dc7139cee7d51d9654955d8bd72f"
+  },
+  {
+   "path": "cdc_fluview_who_nrevss/dataset_info.json",
+   "size": 977,
+   "sha256": null,
+   "git_oid": "56a9d0b912485275bded55620f473b3dcd834808"
+  },
+  {
+   "path": "cdc_fluview_who_nrevss/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "4cc2bad0a1bc04d5b05bb6a1b33b350795b197ef"
+  },
+  {
+   "path": "china_air_quality/data-00000-of-00001.arrow",
+   "size": 137762824,
+   "sha256": "a67d437b652230836a02a7b66b1120d559aa26e1dafc3407943bb0fa42f9aa63",
+   "git_oid": "4d560c62201d7e81b92e57ac4272de282bebfb94"
+  },
+  {
+   "path": "china_air_quality/dataset_info.json",
+   "size": 982,
+   "sha256": null,
+   "git_oid": "e4aae8b2858169aa53f6b8a4f79357995b8e646e"
+  },
+  {
+   "path": "china_air_quality/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "9626d8d55da32119e7af33c97c010790744a4029"
+  },
+  {
+   "path": "cif_2016_12/data-00000-of-00001.arrow",
+   "size": 25192,
+   "sha256": "dc660346e03be3cd9ea417a6d0cd530f592ee77bbafa130b599af64b3917986b",
+   "git_oid": "30587c9ad5c60167cc4e9be06e7611991bd951bf"
+  },
+  {
+   "path": "cif_2016_12/dataset_info.json",
+   "size": 880,
+   "sha256": null,
+   "git_oid": "bb4c499d81229547d1403d78ccc050a0be1602b5"
+  },
+  {
+   "path": "cif_2016_12/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "319da292d25374662c8d0dc658446d92916fc453"
+  },
+  {
+   "path": "cif_2016_6/data-00000-of-00001.arrow",
+   "size": 3912,
+   "sha256": "da02af127fa31fcab469c56b415efd4b1c6b3dad896980c5f15473e69277d4af",
+   "git_oid": "313a0353f50034871e24ccac8e4a62210e5038a1"
+  },
+  {
+   "path": "cif_2016_6/dataset_info.json",
+   "size": 876,
+   "sha256": null,
+   "git_oid": "ab68f67de2a6d7519ca94da0566f9e982875c602"
+  },
+  {
+   "path": "cif_2016_6/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "0d8c0acb73e3514c484dccb13147f259361d49e5"
+  },
+  {
+   "path": "cmip6_2010/data-00000-of-00096.arrow",
+   "size": 133115312,
+   "sha256": "25ee028cd50de6105766a3782f9bc4b9ba363ee3c1a15ae1a09deee3fc4d83c6",
+   "git_oid": "d6fdddfb102afdc125d5e911d5b3bb1a80a1590d"
+  },
+  {
+   "path": "cmip6_2010/dataset_info.json",
+   "size": 2168,
+   "sha256": null,
+   "git_oid": "2be2af21c0ebe4930a9b3b574e83269a61cb5b88"
+  },
+  {
+   "path": "cmip6_2010/state.json",
+   "size": 5855,
+   "sha256": null,
+   "git_oid": "885eaae7488a9c4064a32b49778ddf32c6fe227a"
+  },
+  {
+   "path": "cockatoo/data-00000-of-00001.arrow",
+   "size": 422592,
+   "sha256": "23a37a80777a3c43bd009d70745c1c846798b6a80f971a6a216d1c5106a9d836",
+   "git_oid": "2e747ff172f1e85675f5969de0c395ebf24aaeba"
+  },
+  {
+   "path": "cockatoo/dataset_info.json",
+   "size": 1108,
+   "sha256": null,
+   "git_oid": "deb702435eb4e11cff2190c6b6bea386b378fd1f"
+  },
+  {
+   "path": "cockatoo/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "48b14480dfa432b664108b2cc7c7e291629c5b81"
+  },
+  {
+   "path": "covid19_energy/data-00000-of-00001.arrow",
+   "size": 895064,
+   "sha256": "f70dc0f84d9e22f424642eaba1ba644ccad594181422aa1e265b9907b863e60c",
+   "git_oid": "9738a88219a41250ee24debc0fc79a077badd93d"
+  },
+  {
+   "path": "covid19_energy/dataset_info.json",
+   "size": 1114,
+   "sha256": null,
+   "git_oid": "23f28ea04e2b3363fd62ada220edfad6ae9ca5c2"
+  },
+  {
+   "path": "covid19_energy/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "3db3ab7093d31ea73ab9cdda4d6652bbb337f7ea"
+  },
+  {
+   "path": "covid_mobility/data-00000-of-00001.arrow",
+   "size": 604432,
+   "sha256": "64b2f4a99b615f5bc0508880929d2b6e207ff3c44333545124ceb6dc977e3720",
+   "git_oid": "b589ee9243ecb2b81733429ea63a68c80541d22b"
+  },
+  {
+   "path": "covid_mobility/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "c1b5c707bcfcf2786ad63bbc04c3e66485064283"
+  },
+  {
+   "path": "covid_mobility/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "2e26d84a1272c788cde2c7320bb3998aa7e12710"
+  },
+  {
+   "path": "elecdemand/data-00000-of-00001.arrow",
+   "size": 71128,
+   "sha256": "5b96d3d195ffb22a6799780985b22c64e5ae936bb22e1051296457a5933003c9",
+   "git_oid": "d28da1765777bcd2f83d20ca997e5370ef001531"
+  },
+  {
+   "path": "elecdemand/dataset_info.json",
+   "size": 878,
+   "sha256": null,
+   "git_oid": "ab4f98ea51b1c429bbc78f0692bd7fc46861cbb8"
+  },
+  {
+   "path": "elecdemand/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "c856ae0ca3803fae6b4badb66fabbb23f222dffc"
+  },
+  {
+   "path": "elf/data-00000-of-00001.arrow",
+   "size": 88216,
+   "sha256": "d3fa4145073cc0622116a0f1530586f0459063e32e07456928b99bc82a5299a2",
+   "git_oid": "1cf6e06cc84351a09782cd152c7023a53dc12536"
+  },
+  {
+   "path": "elf/dataset_info.json",
+   "size": 871,
+   "sha256": null,
+   "git_oid": "4a9f8c144bbea4bf078d1be921f32c9439890bc6"
+  },
+  {
+   "path": "elf/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "b16ca0c85b8e9690c3015a6f50e8eea2430032df"
+  },
+  {
+   "path": "era5_2018/data-00000-of-00096.arrow",
+   "size": 135252152,
+   "sha256": "3223289ac500e2e70d0c045b5d4279f20a2d0ac935baf2a138e0ee3064165649",
+   "git_oid": "847d08b18341d9a04f188c56ab59d856622337c1"
+  },
+  {
+   "path": "era5_2018/dataset_info.json",
+   "size": 2167,
+   "sha256": null,
+   "git_oid": "edfafd717d5737a92b13232744f9ec6376d81ceb"
+  },
+  {
+   "path": "era5_2018/state.json",
+   "size": 5855,
+   "sha256": null,
+   "git_oid": "c4df282afba0daf8c42305263b077a43f16118cc"
+  },
+  {
+   "path": "extended_web_traffic_with_missing/data-00000-of-00003.arrow",
+   "size": 495889336,
+   "sha256": "57d98ccb6a0e0a46117a8aaa90cc729d9e86ac3cc648f5a31227529f38d21b76",
+   "git_oid": "0980511f13f1edd0f0067fb9a839dd51938f63f6"
+  },
+  {
+   "path": "extended_web_traffic_with_missing/data-00001-of-00003.arrow",
+   "size": 495890192,
+   "sha256": "cba41395ad194f94a195aa3f151b31a6ce515877b015f8ccb47fb0cefe00ade8",
+   "git_oid": "9aeac55da2dade9e10213fd76a27247a0599785b"
+  },
+  {
+   "path": "extended_web_traffic_with_missing/data-00002-of-00003.arrow",
+   "size": 495935184,
+   "sha256": "ba43f6e4a76ae788654bc78173895d2aaf430540f8fd971092c5585c6a497f4d",
+   "git_oid": "7a6dd9db9060ad1038156706797e9336a1b4e75f"
+  },
+  {
+   "path": "extended_web_traffic_with_missing/dataset_info.json",
+   "size": 999,
+   "sha256": null,
+   "git_oid": "0f3e95c91b264eeedfdf431d5b4b2090a8dc96b2"
+  },
+  {
+   "path": "extended_web_traffic_with_missing/state.json",
+   "size": 368,
+   "sha256": null,
+   "git_oid": "b3f61c5fe1cb26073e023a57ae463ee93e20f3c9"
+  },
+  {
+   "path": "favorita_sales/data-00000-of-00002.arrow",
+   "size": 295029528,
+   "sha256": "280d3915c595da747210c9e2230e4ad6276ed9cc66057d4780f1eaa16a3faef4",
+   "git_oid": "2ee6bb4d1ccd2596465c6b1eac0d726cb0f756fd"
+  },
+  {
+   "path": "favorita_sales/data-00001-of-00002.arrow",
+   "size": 265132480,
+   "sha256": "df07d7ae43f182713bd94d3a61ea13ac3e5f28da92b8376e6a1696570bf9d6a0",
+   "git_oid": "ec2d44611885a8c27f45443320180841d68164ca"
+  },
+  {
+   "path": "favorita_sales/dataset_info.json",
+   "size": 962,
+   "sha256": null,
+   "git_oid": "267642539f16865b36bcefd6689e1915f553b521"
+  },
+  {
+   "path": "favorita_sales/state.json",
+   "size": 309,
+   "sha256": null,
+   "git_oid": "55888a2d026ac1aa710276fd38af75f7b62fbbdd"
+  },
+  {
+   "path": "favorita_transactions/data-00000-of-00001.arrow",
+   "size": 339896,
+   "sha256": "fe303de4e49461a0982967521156cfde288b9aca38128bf684b9595296001d8d",
+   "git_oid": "00cb6528cd0bbbf027dcd09e5ea864f479741260"
+  },
+  {
+   "path": "favorita_transactions/dataset_info.json",
+   "size": 893,
+   "sha256": null,
+   "git_oid": "3c1941e4e2d2cf8f0edb929ccdacfe72735cce13"
+  },
+  {
+   "path": "favorita_transactions/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "df56ae9cba4ee33e428aa6f671ec3b8d7d064134"
+  },
+  {
+   "path": "fred_md/data-00000-of-00001.arrow",
+   "size": 310032,
+   "sha256": "8c305db38e89a9fffed67a1f85a96a04ab15e54954566ef43fa0ceb213303564",
+   "git_oid": "183379867752598bbaae42279cd271176a313937"
+  },
+  {
+   "path": "fred_md/dataset_info.json",
+   "size": 880,
+   "sha256": null,
+   "git_oid": "463d5b708c5d5ed16cd39c2ffb2fb61026466435"
+  },
+  {
+   "path": "fred_md/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "d17eb153c69163b61221e45b77dd881ec0a6e3ae"
+  },
+  {
+   "path": "gfc12_load/data-00000-of-00001.arrow",
+   "size": 6308336,
+   "sha256": "ff3f19d34c6faef4513080f21e194f1fcb3a6efb2d53d11f91a86824aae36b28",
+   "git_oid": "604fef6d078ca5ca3fd4b67315e05a1739192a86"
+  },
+  {
+   "path": "gfc12_load/dataset_info.json",
+   "size": 1031,
+   "sha256": null,
+   "git_oid": "2e7d1b010dcdd1b7ae2f021e787e4deb5c5287fa"
+  },
+  {
+   "path": "gfc12_load/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "19db9ce8389a398540bfb3529022cf01085db4e3"
+  },
+  {
+   "path": "gfc14_load/data-00000-of-00001.arrow",
+   "size": 71136,
+   "sha256": "9d04f693fdc311385b63a445916a35a42747de8e379a0bae54dd17d04138fd11",
+   "git_oid": "8e36e2cee558a3e4e13ac6a18ade9c5688515463"
+  },
+  {
+   "path": "gfc14_load/dataset_info.json",
+   "size": 878,
+   "sha256": null,
+   "git_oid": "c28a3fe94311dd1431672ff03d4523ae4fcbf825"
+  },
+  {
+   "path": "gfc14_load/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "7a63b678f4f92234a7e61e54e376b5fbb52e2cea"
+  },
+  {
+   "path": "gfc17_load/data-00000-of-00001.arrow",
+   "size": 1124472,
+   "sha256": "e541cb5ddc31dbe0cc274007cbbda0fe4f682bef4d95af8a9d7233160e9a10ba",
+   "git_oid": "08c4a441ede93d7766b24005353f6e0d450f9dd1"
+  },
+  {
+   "path": "gfc17_load/dataset_info.json",
+   "size": 1030,
+   "sha256": null,
+   "git_oid": "d54ca6d5e393a5d19ca3a19258d18209b5b75a5a"
+  },
+  {
+   "path": "gfc17_load/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "1b63577d410e97d230f4eb3f16eb6d6a65bff23b"
+  },
+  {
+   "path": "godaddy/data-00000-of-00001.arrow",
+   "size": 1127584,
+   "sha256": "2dae2972e105e180b9baf1b8f1f0d67f4196c455f3ba1adf2d6d61efcd1622cf",
+   "git_oid": "3913a1ff0493d0d375b8e8783c739d836d6855d9"
+  },
+  {
+   "path": "godaddy/dataset_info.json",
+   "size": 967,
+   "sha256": null,
+   "git_oid": "5de70521e10fe8a3914d09eece42cfda71d47e17"
+  },
+  {
+   "path": "godaddy/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "4ed9a9e98c4e773abb52fba5db5b7c46c94f67f6"
+  },
+  {
+   "path": "hog/data-00000-of-00001.arrow",
+   "size": 10108320,
+   "sha256": "348b371a49753768a8cb970370e3b0845ae11c10ed40260d40ed5dc731fe4b4c",
+   "git_oid": "a9cbe4d5c055656b39d4530d69278d7010ee49cd"
+  },
+  {
+   "path": "hog/dataset_info.json",
+   "size": 1110,
+   "sha256": null,
+   "git_oid": "fcf12e8e5f51c6f86e98ba6a51afd499c6f9244b"
+  },
+  {
+   "path": "hog/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "3efd9f9f27ee030334bfa507bf2be97c96d08699"
+  },
+  {
+   "path": "ideal/data-00000-of-00001.arrow",
+   "size": 5028080,
+   "sha256": "18f187e836adbac65aae52ca867100d21938e3e590c27c84baf3916e88dc6ac3",
+   "git_oid": "8cd775b31b127fde102b82ba230e49c6344e82cb"
+  },
+  {
+   "path": "ideal/dataset_info.json",
+   "size": 881,
+   "sha256": null,
+   "git_oid": "fb2ccdbcdc0dc065a48badb0c23a61e07d9d6d15"
+  },
+  {
+   "path": "ideal/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "e69ac8ae1c7883fa31d4144fc35501006a17f767"
+  },
+  {
+   "path": "kaggle_web_traffic_weekly/data-00000-of-00001.arrow",
+   "size": 70737520,
+   "sha256": "7ae24fc5412ea1d249daeab6c39e2e7976281c2d3abfa9c85b712bf822227884",
+   "git_oid": "7b767d728f7584a8579ae7edc88096cd0690bd6f"
+  },
+  {
+   "path": "kaggle_web_traffic_weekly/dataset_info.json",
+   "size": 907,
+   "sha256": null,
+   "git_oid": "aff8a959be84ffdaebb9851c86295fb82bc29bae"
+  },
+  {
+   "path": "kaggle_web_traffic_weekly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "f3ecf1b6aa1db9966f5d599fcad91528997f62df"
+  },
+  {
+   "path": "kdd2022/data-00000-of-00001.arrow",
+   "size": 189110448,
+   "sha256": "01ef4808b8f221b1469b0f9991a24da4f87943d2623b9ec5d1b31eb5c27fea47",
+   "git_oid": "00efacb798b7fd2f1f6ec8e74046443f0c096f3b"
+  },
+  {
+   "path": "kdd2022/dataset_info.json",
+   "size": 1118,
+   "sha256": null,
+   "git_oid": "0afab115ea519ae6d6e7c3767df76ecea05b08f2"
+  },
+  {
+   "path": "kdd2022/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "ed47ad95df990f40e74c12b260d775aa6506dbd7"
+  },
+  {
+   "path": "largest_2021/data-00000-of-00008.arrow",
+   "size": 449524528,
+   "sha256": "bb1a8849557cf3111252115ed104f13db501cd7703fa7b4e4e8bd58ec6b5f866",
+   "git_oid": "76e65429099e80c4356b8ba2c710e4dca3a7251a"
+  },
+  {
+   "path": "largest_2021/data-00001-of-00008.arrow",
+   "size": 449524528,
+   "sha256": "d73a96fbd190e1ead4b939ad5c66599ffdd91fddd192d1a9c749f9e607b073fc",
+   "git_oid": "927ac12c76081bd0027f07a5b7e27f4b6339d6f3"
+  },
+  {
+   "path": "largest_2021/dataset_info.json",
+   "size": 1763,
+   "sha256": null,
+   "git_oid": "c96cd70c0bd40ef576eb6fe4d1ab77167f759514"
+  },
+  {
+   "path": "largest_2021/state.json",
+   "size": 663,
+   "sha256": null,
+   "git_oid": "d7739909b81c888598ceffe74ab33ef35bd4a83b"
+  },
+  {
+   "path": "lcl/data-00000-of-00001.arrow",
+   "size": 38196632,
+   "sha256": "7e1aa65d59ae1244dcb4bebe6cb81526ed8804c68e03f4a3ea3e7c9ff3735401",
+   "git_oid": "d292e680b61946855653c70aa3e739bbed4f499d"
+  },
+  {
+   "path": "lcl/dataset_info.json",
+   "size": 882,
+   "sha256": null,
+   "git_oid": "049f136da93da5d63d348965b82006027db3e627"
+  },
+  {
+   "path": "lcl/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "8e57ff4703b81b170b4fe293e5a8e577bd418478"
+  },
+  {
+   "path": "london_smart_meters_with_missing/data-00000-of-00002.arrow",
+   "size": 339858152,
+   "sha256": "dedecd47dd7858fa125cc8d115f3d36ba621e11b76433adcc1b8bce8d70fd219",
+   "git_oid": "5a230a7add32a1be292278aeee49bb819915e210"
+  },
+  {
+   "path": "london_smart_meters_with_missing/data-00001-of-00002.arrow",
+   "size": 325254512,
+   "sha256": "dfc968846bf37b2558e875a1a888163ca1bb43f1f07ed60c3d8d1781995206f6",
+   "git_oid": "9e3d4701d3259add579b585ed75707155ab14ac7"
+  },
+  {
+   "path": "london_smart_meters_with_missing/dataset_info.json",
+   "size": 975,
+   "sha256": null,
+   "git_oid": "c5e4b38eeebd7302cf59506f65bdd9d262a5ed15"
+  },
+  {
+   "path": "london_smart_meters_with_missing/state.json",
+   "size": 309,
+   "sha256": null,
+   "git_oid": "676ba56e5bb976bb52de1fa35f13e447e718d473"
+  },
+  {
+   "path": "m1_monthly/data-00000-of-00001.arrow",
+   "size": 195904,
+   "sha256": "978dd8d17b70ae17cf477b86711f963e58dc8ede1b4d00b53c76d17a95bac63f",
+   "git_oid": "699b3d02417a38ae1f02033b0d54a30a52a32f34"
+  },
+  {
+   "path": "m1_monthly/dataset_info.json",
+   "size": 883,
+   "sha256": null,
+   "git_oid": "6e0dfb7a2d23a8b3b8d5e113c110ec17f35707ad"
+  },
+  {
+   "path": "m1_monthly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "ce4f9bef2f2bd9d62b5174b1a59827bfa9a6f5ec"
+  },
+  {
+   "path": "m1_quarterly/data-00000-of-00001.arrow",
+   "size": 46088,
+   "sha256": "1aaa7fa7bdbe6798a9c49f75b36ff1f0aa393cb75cf56faf90cc75a405716ba5",
+   "git_oid": "70e25e40e9dc2072054b3ca10df8b33d96c964ec"
+  },
+  {
+   "path": "m1_quarterly/dataset_info.json",
+   "size": 882,
+   "sha256": null,
+   "git_oid": "9e41c4185086fff07ef796332ee2e2dacdbcbc98"
+  },
+  {
+   "path": "m1_quarterly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "d773fe8363df2d465360fc5e0b4215717165fdc5"
+  },
+  {
+   "path": "m1_yearly/data-00000-of-00001.arrow",
+   "size": 16576,
+   "sha256": "9800d78811d85b7a0534c35ae55213760e00e1beaa3c62c1985d5cb0e835c356",
+   "git_oid": "68cea9c2da1fbb8e1e288f2bb12cd0d4038f5c7f"
+  },
+  {
+   "path": "m1_yearly/dataset_info.json",
+   "size": 879,
+   "sha256": null,
+   "git_oid": "d24cd276bed34229f6dd39628c2ad88fd8ca6ae7"
+  },
+  {
+   "path": "m1_yearly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "64b812385b4e94eecdf4149b4e2628b3373435b0"
+  },
+  {
+   "path": "m5/data-00000-of-00001.arrow",
+   "size": 234839032,
+   "sha256": "99be76eb30f0a91426beb8df5663bfd49b2deefd090839ca0e3515c00476ae6f",
+   "git_oid": "da0ef342cc749d61b9c195c5786e3f0f9ca30d52"
+  },
+  {
+   "path": "m5/dataset_info.json",
+   "size": 886,
+   "sha256": null,
+   "git_oid": "d7098a0fa8553cc1fbc33f4d7b1bf6089832c6ac"
+  },
+  {
+   "path": "m5/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "28d584fecf85119e6ee2d142d9ceea089d5e08ff"
+  },
+  {
+   "path": "monash_m3_monthly/data-00000-of-00001.arrow",
+   "size": 604880,
+   "sha256": "f477cc8b9f67b53dd0d71399761f62d8498defae4d6f6f735f8f1ba1eeec1f09",
+   "git_oid": "c088eb1a1f7fac6cd4d043b987a98f1a46527736"
+  },
+  {
+   "path": "monash_m3_monthly/dataset_info.json",
+   "size": 891,
+   "sha256": null,
+   "git_oid": "661580f71dd3adda8991376daa6e48ab8eae9fde"
+  },
+  {
+   "path": "monash_m3_monthly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "63838801298818172c525008bbff68271818d318"
+  },
+  {
+   "path": "monash_m3_other/data-00000-of-00001.arrow",
+   "size": 53704,
+   "sha256": "8cafa14fd1c4ea1c15473fb59fb62738a8f450d7e5e214494f0c73ea826cee0d",
+   "git_oid": "ab0b355e940d50fb40805c94664a0849a6bd4886"
+  },
+  {
+   "path": "monash_m3_other/dataset_info.json",
+   "size": 885,
+   "sha256": null,
+   "git_oid": "16c9699b27f4760416ef93fbd9c1514d590999d7"
+  },
+  {
+   "path": "monash_m3_other/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "13bcac2b3a2aeeb20a7e83ec14c3fb95a03d2c6e"
+  },
+  {
+   "path": "monash_m3_quarterly/data-00000-of-00001.arrow",
+   "size": 170864,
+   "sha256": "83d2b125adf41c1f5870e734635f512d865fcc84ef92ac8abfb34b3c507e29c4",
+   "git_oid": "dc40a1f383f5a9d9e0341761735de39b280442c4"
+  },
+  {
+   "path": "monash_m3_quarterly/dataset_info.json",
+   "size": 892,
+   "sha256": null,
+   "git_oid": "87af7a0960b24e252ad1483cd7f712689ff082bb"
+  },
+  {
+   "path": "monash_m3_quarterly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "e7fa162fe011330043c7abaf3cd02659abceb748"
+  },
+  {
+   "path": "monash_m3_yearly/data-00000-of-00001.arrow",
+   "size": 92896,
+   "sha256": "ef05939221b4cdb3996403eb20bc1b1f71efddc61ca24df960e6e10140dc93b5",
+   "git_oid": "10c09895245743e09ef8cd2f307e79c89318c8ac"
+  },
+  {
+   "path": "monash_m3_yearly/dataset_info.json",
+   "size": 886,
+   "sha256": null,
+   "git_oid": "9e13d453643a3254d1c22883a821c18d40fa85f2"
+  },
+  {
+   "path": "monash_m3_yearly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "82484541b843bec7b929e530df867bee13999e44"
+  },
+  {
+   "path": "nn5_daily_with_missing/data-00000-of-00001.arrow",
+   "size": 330024,
+   "sha256": "06f9d0f2efeb9edc6e034e9e6b611dffd7d9b202fb155ca23a53cc8d66c9dea9",
+   "git_oid": "8e972b8edc0a9e3ff943bc5c3fa90f5a56196012"
+  },
+  {
+   "path": "nn5_daily_with_missing/dataset_info.json",
+   "size": 895,
+   "sha256": null,
+   "git_oid": "9cf7d82fe162a2205e01e7727f5f8cbd08edeceb"
+  },
+  {
+   "path": "nn5_daily_with_missing/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "17311f27d5ef4929b3ceaac195ef370b7bacb743"
+  },
+  {
+   "path": "nn5_weekly/data-00000-of-00001.arrow",
+   "size": 50752,
+   "sha256": "c849f326a7095ec21f96295550b0162ca7cd3d90e83dccd9f01065a9643f5ab0",
+   "git_oid": "491cc0c125a0d047ed034fa0bff71c8618de639c"
+  },
+  {
+   "path": "nn5_weekly/dataset_info.json",
+   "size": 880,
+   "sha256": null,
+   "git_oid": "414e76ee4ebdf2306447e321586133af7a794da3"
+  },
+  {
+   "path": "nn5_weekly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "da6070392d3dc2473143c1eac66a71e7796e2145"
+  },
+  {
+   "path": "oikolab_weather/data-00000-of-00001.arrow",
+   "size": 3203032,
+   "sha256": "3e27904bbaf61243a95fc30a5566b266f7bbca282233710d40ae95014efa0991",
+   "git_oid": "107a8ee7dc98f8b8f2f3eb74fd3598202719e1d9"
+  },
+  {
+   "path": "oikolab_weather/dataset_info.json",
+   "size": 889,
+   "sha256": null,
+   "git_oid": "dd8c6b2db559be8da7563717717834ae1ec75dc9"
+  },
+  {
+   "path": "oikolab_weather/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "aa4ba49338beb3ec65cac188ff58452a44136117"
+  },
+  {
+   "path": "pdb/data-00000-of-00001.arrow",
+   "size": 141520,
+   "sha256": "e0938f46e432c232185802f7296136d7f537d8412502495505ef1d49678f4cc7",
+   "git_oid": "7e29ea3357dc6241f5e7cf5ff6b8f7f9c4b8600f"
+  },
+  {
+   "path": "pdb/dataset_info.json",
+   "size": 1020,
+   "sha256": null,
+   "git_oid": "eb08fd76956ff6a792d585adbc41433569c02666"
+  },
+  {
+   "path": "pdb/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "3c17226f82a7b297ea4e007536ba2fddbbd8b9cd"
+  },
+  {
+   "path": "pedestrian_counts/data-00000-of-00001.arrow",
+   "size": 12525656,
+   "sha256": "de78f2fb96ba11815b92bd4f472a38dd65afc45ea1d9850f2a16f826176fb11b",
+   "git_oid": "2fbc11797c5256f25f1635d63f808582b9730f0f"
+  },
+  {
+   "path": "pedestrian_counts/dataset_info.json",
+   "size": 895,
+   "sha256": null,
+   "git_oid": "c24941cb6ed0c0acecb20bc8eda7e59a7008acd9"
+  },
+  {
+   "path": "pedestrian_counts/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "eb29c1c497f5a4219ad4e32663c37f62cd075e91"
+  },
+  {
+   "path": "project_tycho/data-00000-of-00001.arrow",
+   "size": 5586752,
+   "sha256": "aa96c17d668589a8ef0be88f9b1816d28643dd9910754fa5bd410be880585aa9",
+   "git_oid": "563436584daa2b036242f3f2c50aaeb48709a7ae"
+  },
+  {
+   "path": "project_tycho/dataset_info.json",
+   "size": 890,
+   "sha256": null,
+   "git_oid": "e498d306241bbd00747bbeac72590ad7a91b8dd3"
+  },
+  {
+   "path": "project_tycho/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "bd2a47c3fd639bc59226eb93db6637a52015e4be"
+  },
+  {
+   "path": "residential_load_power/data-00000-of-00004.arrow",
+   "size": 416934936,
+   "sha256": "0958c67d802b13061343087d075b1cb8b975ecb99f41aef1a035bb1a58e416df",
+   "git_oid": "46954cb3a0d3019e3757e223beaff1858f5637ed"
+  },
+  {
+   "path": "residential_load_power/data-00001-of-00004.arrow",
+   "size": 447428520,
+   "sha256": "0340e7a964473a598730384c852893c48a43dec89b75158f276d58e550e56af4",
+   "git_oid": "ee096b238e2ff3c5be51d8305c6ca6f1c73c2a39"
+  },
+  {
+   "path": "residential_load_power/data-00002-of-00004.arrow",
+   "size": 454465080,
+   "sha256": "cc047c87fc302d21738a146ba887a004170375f99038fc68e0c5f8fc9ed42986",
+   "git_oid": "a9aff45343a86df1b9de338c11dc1e7ce04f7d0f"
+  },
+  {
+   "path": "residential_load_power/data-00003-of-00004.arrow",
+   "size": 433123944,
+   "sha256": "81ad3a5e2a4b309fd7aa93fe3f10c2eaeac275ce40339ebe17830e43695d20a4",
+   "git_oid": "9f23a5aeca70e5d71ae9710fceba9254ba50d9cd"
+  },
+  {
+   "path": "residential_load_power/dataset_info.json",
+   "size": 990,
+   "sha256": null,
+   "git_oid": "54c78882e60fe433b5bc7476cfd1967d0729d269"
+  },
+  {
+   "path": "residential_load_power/state.json",
+   "size": 427,
+   "sha256": null,
+   "git_oid": "ddfda04343bbd1e72d29159a3d47915f8af37838"
+  },
+  {
+   "path": "residential_pv_power/data-00000-of-00004.arrow",
+   "size": 390973240,
+   "sha256": "52d251e967cebb29b50c3348908167f8d327dbe15567399f28af733c417c9baf",
+   "git_oid": "66e9515b6b93264185fd83c690a4ce454aa8a4eb"
+  },
+  {
+   "path": "residential_pv_power/data-00001-of-00004.arrow",
+   "size": 365585912,
+   "sha256": "199d0f1b5acae42c23f3cd72bb4ef3153d56ba5528b6525cc405436f9d7c765d",
+   "git_oid": "eebd2ec565faddcb800df9f62f19c759524340e8"
+  },
+  {
+   "path": "residential_pv_power/data-00002-of-00004.arrow",
+   "size": 380904896,
+   "sha256": "d92f93a5282db4613c8e319d0fd1f0bb30a25aba24ce36bbb719c7478bf64b80",
+   "git_oid": "527d7666671898b150ca2a5675d9937b376670a6"
+  },
+  {
+   "path": "residential_pv_power/data-00003-of-00004.arrow",
+   "size": 366618808,
+   "sha256": "af5a7f319c5aff04b6e1bd44d37fcef7cd616425dc7aabdcd9203101977fff98",
+   "git_oid": "f41a7e6b3550a55ad983fc33e960b5f246f16d19"
+  },
+  {
+   "path": "residential_pv_power/dataset_info.json",
+   "size": 988,
+   "sha256": null,
+   "git_oid": "e8edbceee2771b1f39a54788092f0239b32aa372"
+  },
+  {
+   "path": "residential_pv_power/state.json",
+   "size": 427,
+   "sha256": null,
+   "git_oid": "3379fd2574c217dc4f3bcbc146b75fbb2b663acc"
+  },
+  {
+   "path": "rideshare_with_missing/data-00000-of-00001.arrow",
+   "size": 3498256,
+   "sha256": "f6b2debac3806bc910f9316130a9e0b7ae158625f1e6f2246c7c9615a61d9ac1",
+   "git_oid": "6f828be2bc993bcb2b04615ac539ed71b5607aaf"
+  },
+  {
+   "path": "rideshare_with_missing/dataset_info.json",
+   "size": 899,
+   "sha256": null,
+   "git_oid": "06fe108baba2ef9c5c3e6ea0f1f33a9df848b6ae"
+  },
+  {
+   "path": "rideshare_with_missing/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "755683c4b188f8ba139970ed243bd59b12b8e6e4"
+  },
+  {
+   "path": "sceaux/data-00000-of-00001.arrow",
+   "size": 137944,
+   "sha256": "76c66e589cb9e3fb3a2ff0c35f0a3886da258190b0e6e42c6e3bc8916a8bf6ad",
+   "git_oid": "5a2459a89cccd4e16b200a2a566f47797e0a4793"
+  },
+  {
+   "path": "sceaux/dataset_info.json",
+   "size": 877,
+   "sha256": null,
+   "git_oid": "ca3f07c2af62411e768147a148a032ac57fcd95a"
+  },
+  {
+   "path": "sceaux/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "2d6b59c82e402ed4e837d4f7b8eeb42bcac8a34d"
+  },
+  {
+   "path": "smart/data-00000-of-00001.arrow",
+   "size": 383992,
+   "sha256": "597fb667578255ad7d2eb17e5bfc798c6a31f5d8d405771db389e2d1e4bdb3ea",
+   "git_oid": "8c94704045fb9a621713bc08734ae61be0fef067"
+  },
+  {
+   "path": "smart/dataset_info.json",
+   "size": 876,
+   "sha256": null,
+   "git_oid": "c7f3b906b654e4e35ff9aa50d5fedeae054d3319"
+  },
+  {
+   "path": "smart/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "be305a5bd16befade27b9d85ca6af507d9e32fbd"
+  },
+  {
+   "path": "solar_power/data-00000-of-00001.arrow",
+   "size": 29589936,
+   "sha256": "dc6dc4179c1a652be124abbae9d62e464db2947cf06eb90e653fa2fb299ac54e",
+   "git_oid": "bb8dc5c3d7af48f81357e5ead6e8ad14cec5f7c2"
+  },
+  {
+   "path": "solar_power/dataset_info.json",
+   "size": 888,
+   "sha256": null,
+   "git_oid": "32672f860ab3cc5e845f3c9a95ed7711aee809f6"
+  },
+  {
+   "path": "solar_power/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "14a913418d89f4a0e4cf7dd1e975019d16b947ba"
+  },
+  {
+   "path": "spain/data-00000-of-00001.arrow",
+   "size": 281872,
+   "sha256": "04ec8ff81a16f7194487d4849baca5ac284c5a8cd39052183e2b2cb28d6d226e",
+   "git_oid": "6716855fa966ec7139cda86a980d1656d90c2a98"
+  },
+  {
+   "path": "spain/dataset_info.json",
+   "size": 1022,
+   "sha256": null,
+   "git_oid": "fc7ee197b5da9725dd852049bc14d4aa62b30087"
+  },
+  {
+   "path": "spain/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "6a0180bb20cd8e28021d8700ef36b1f4369875d2"
+  },
+  {
+   "path": "subseasonal/data-00000-of-00001.arrow",
+   "size": 227192472,
+   "sha256": "6e9d99197a4a5958fc0470bfe86ed4ad65c19f31b5f4585c0b300231dfc138fd",
+   "git_oid": "ac5f2d49b8ea3d2332e5682d87de14e122b77c28"
+  },
+  {
+   "path": "subseasonal/dataset_info.json",
+   "size": 976,
+   "sha256": null,
+   "git_oid": "7fb5e130f529e5510d1301ab4eaedce769665097"
+  },
+  {
+   "path": "subseasonal/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "5f66a7aeb5aff7421afdc886a81f54f4659c9bd5"
+  },
+  {
+   "path": "subseasonal_precip/data-00000-of-00001.arrow",
+   "size": 39069456,
+   "sha256": "5020f4e9db72e92787b4c130bc660c9e166e25c5cfed4cb1a603889c4a6dd08f",
+   "git_oid": "a59b4233424c01af984f649b3b23ab0026beea47"
+  },
+  {
+   "path": "subseasonal_precip/dataset_info.json",
+   "size": 897,
+   "sha256": null,
+   "git_oid": "769e1e95b479d0cf72ffb369b60abc505609c2e9"
+  },
+  {
+   "path": "subseasonal_precip/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "0af5c5a7fb99ca4c02596a17cbb3c14bbb1879dc"
+  },
+  {
+   "path": "sunspot_with_missing/data-00000-of-00001.arrow",
+   "size": 296624,
+   "sha256": "adb179d55ba298f5dbeda4a131c5bc5883540435d392a6456bf7ea12ede85f05",
+   "git_oid": "da85aff55b098322fcfe6e251a15194108c12a7e"
+  },
+  {
+   "path": "sunspot_with_missing/dataset_info.json",
+   "size": 891,
+   "sha256": null,
+   "git_oid": "ebbc237835311cd509546d10b9565c9fbc131648"
+  },
+  {
+   "path": "sunspot_with_missing/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "efbe617c53a8c72438533c2285cc5e9104efd7ca"
+  },
+  {
+   "path": "taxi_30min/data-00000-of-00001.arrow",
+   "size": 221915960,
+   "sha256": "06a1ce3573cd436992cf35d04eb7bf92053a014a87124e71ffbed483c8d2faa8",
+   "git_oid": "18a7d09aedb5f32fa90c75e5e5acb1d57fdfa141"
+  },
+  {
+   "path": "taxi_30min/dataset_info.json",
+   "size": 894,
+   "sha256": null,
+   "git_oid": "b233c2f44f428687640446e65be6c4a2d11d77b5"
+  },
+  {
+   "path": "taxi_30min/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "58142d167fc0068f5bd281566db11b104a48aeba"
+  },
+  {
+   "path": "tourism_monthly/data-00000-of-00001.arrow",
+   "size": 412056,
+   "sha256": "6a88626918dcf959d43256099395419c1a7b50899c2149f33763dc26b9951b65",
+   "git_oid": "d49478093c8dcfa51f996e789f245a43a16ff69b"
+  },
+  {
+   "path": "tourism_monthly/dataset_info.json",
+   "size": 888,
+   "sha256": null,
+   "git_oid": "1627853b344786dbfec99d2a04cd5b9bbcad6401"
+  },
+  {
+   "path": "tourism_monthly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "4108442af6a75f69d05142912912c7863fb6986c"
+  },
+  {
+   "path": "tourism_quarterly/data-00000-of-00001.arrow",
+   "size": 169800,
+   "sha256": "dc8424e7be32098afd42e621f3b772e44b7554756f1d6088bdc4762b3277ed4e",
+   "git_oid": "8e448d819eaeec0a1091c21c738e7816448210a6"
+  },
+  {
+   "path": "tourism_quarterly/dataset_info.json",
+   "size": 890,
+   "sha256": null,
+   "git_oid": "3f7ba2341faf2ddd838ba14e3dad50b8bc401c93"
+  },
+  {
+   "path": "tourism_quarterly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "03677c97ce7935c154b90b221dac682b51a23bdf"
+  },
+  {
+   "path": "tourism_yearly/data-00000-of-00001.arrow",
+   "size": 57872,
+   "sha256": "e68596683379b98d80cb1bb8589248e607aac7fb676aa5b1a761c76d46a2175b",
+   "git_oid": "ffdf473d066b459b4583f3b50c399a2ad6b32839"
+  },
+  {
+   "path": "tourism_yearly/dataset_info.json",
+   "size": 884,
+   "sha256": null,
+   "git_oid": "6daa695447c21c4a4e27008fb6026513f26693e3"
+  },
+  {
+   "path": "tourism_yearly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "240ccc06e7b3c96473dc854cfdaefecb7a7e2219"
+  },
+  {
+   "path": "traffic_hourly/data-00000-of-00001.arrow",
+   "size": 59934920,
+   "sha256": "45b629b6ab752c076a8995bd92d7e787894848f372a5ef3fe77972e50b0af024",
+   "git_oid": "c162856b6c6c9f0fac39f0c74a467611a0a1fc40"
+  },
+  {
+   "path": "traffic_hourly/dataset_info.json",
+   "size": 893,
+   "sha256": null,
+   "git_oid": "87684ba87a589a80ca3816bc31f759273df83742"
+  },
+  {
+   "path": "traffic_hourly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "531bfbc70dfc7c23cbeef5b37f557aa6f0c528a8"
+  },
+  {
+   "path": "traffic_weekly/data-00000-of-00001.arrow",
+   "size": 356928,
+   "sha256": "52fb1df16d5b591d50438e67a658168beb8b86bc7ebdb4a488dd02505eb36f3d",
+   "git_oid": "3fbb6127b22a81c4764665ddb341ba4c40a4f687"
+  },
+  {
+   "path": "traffic_weekly/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "28bf290e2a1c9ed362dabdd739bc408ef60fe2a6"
+  },
+  {
+   "path": "traffic_weekly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "0d0b701351a86b230484b11ab1cef965d8d2ed05"
+  },
+  {
+   "path": "uber_tlc_daily/data-00000-of-00001.arrow",
+   "size": 195560,
+   "sha256": "76bd69c7e85d6d42176776faf1e584bf6c372e2dd14f8ef2835e0e83ef9537e7",
+   "git_oid": "f429a328a55410120c3376424c47848cc164c34c"
+  },
+  {
+   "path": "uber_tlc_daily/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "dd6f55595d8ae2e8964f6ca062776cee6a3e4166"
+  },
+  {
+   "path": "uber_tlc_daily/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "65f4522d597740f494254beffd5e8ca029138594"
+  },
+  {
+   "path": "uber_tlc_hourly/data-00000-of-00001.arrow",
+   "size": 4524984,
+   "sha256": "cf7437a59ba236c46cbe0ed89561de4364092e6aef3e248f1077cb8d7c4a0b9a",
+   "git_oid": "85e37cb8de1380a0f6565f0f2dc33e6a7dba9494"
+  },
+  {
+   "path": "uber_tlc_hourly/dataset_info.json",
+   "size": 891,
+   "sha256": null,
+   "git_oid": "98857c33a6448580abb42c2c41dfa704a25bfa18"
+  },
+  {
+   "path": "uber_tlc_hourly/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "96044fc2b188ad3e92212f8d28c5e68b32cba19a"
+  },
+  {
+   "path": "vehicle_trips_with_missing/data-00000-of-00001.arrow",
+   "size": 139184,
+   "sha256": "d11e83c2192b05f25cb2be1228f5862b86ec131d32837f2793087919f7889215",
+   "git_oid": "603bfca35f13af3b0d0bc2c54df0a331a9673292"
+  },
+  {
+   "path": "vehicle_trips_with_missing/dataset_info.json",
+   "size": 899,
+   "sha256": null,
+   "git_oid": "bca1bd6792ee24a9871631f6fefc717c79985a7a"
+  },
+  {
+   "path": "vehicle_trips_with_missing/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "a15268a47334d3e0e878656d4c93a3425b3fc882"
+  },
+  {
+   "path": "weather/data-00000-of-00001.arrow",
+   "size": 171846176,
+   "sha256": "3a07cb464bbc224ba53fb228c9f46cdf2b7f36a3e236b87a2c77edb9e419d53e",
+   "git_oid": "173a2efa380328acde3b6b4fd316f92267bc40f4"
+  },
+  {
+   "path": "weather/dataset_info.json",
+   "size": 890,
+   "sha256": null,
+   "git_oid": "0729ffb949080a1bbb558bed7e3999cfbad0d236"
+  },
+  {
+   "path": "weather/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "0ec5c1ac0208c91a9003e6304a97d60bf507a645"
+  },
+  {
+   "path": "wiki-rolling_nips/data-00000-of-00001.arrow",
+   "size": 163724288,
+   "sha256": "642ac3c0b7722d480fa1cdb5d3e16a36d2133f457e2a716d4ca13103ddc7dbfa",
+   "git_oid": "e7cb8c86dac07d25151e58cad3e22cdd5f2f2b17"
+  },
+  {
+   "path": "wiki-rolling_nips/dataset_info.json",
+   "size": 901,
+   "sha256": null,
+   "git_oid": "086a3b71ebec2931fe4b1a61a18b528fb3785674"
+  },
+  {
+   "path": "wiki-rolling_nips/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "1dc739a7ff68043d8dffd3a35f05787e473d20b7"
+  },
+  {
+   "path": "wind_farms_with_missing/data-00000-of-00002.arrow",
+   "size": 356284200,
+   "sha256": "2c6199369c6d70eafabb6cfbf6f8729c33304b9128cd244e271b176440e4181e",
+   "git_oid": "5de208225354a741f5e229127bbad94f0603795b"
+  },
+  {
+   "path": "wind_farms_with_missing/data-00001-of-00002.arrow",
+   "size": 332387664,
+   "sha256": "250e7332587b8ed9dfa57f5ac8631d2b6db81daf5b893559c377ae136e8252e7",
+   "git_oid": "b3d2173d9d5236016e00a755d55af16cd06e7089"
+  },
+  {
+   "path": "wind_farms_with_missing/dataset_info.json",
+   "size": 905,
+   "sha256": null,
+   "git_oid": "f30c69df17dca239e0d24de869f68083abc9f7cf"
+  },
+  {
+   "path": "wind_farms_with_missing/state.json",
+   "size": 309,
+   "sha256": null,
+   "git_oid": "cd489b8471c714bb8b91aba3b2ad994cfcd1bae1"
+  },
+  {
+   "path": "wind_power/data-00000-of-00001.arrow",
+   "size": 29589640,
+   "sha256": "4707acbd5d1d691ff438de231b987d4c4948eb7122166959f7e0774ed7a10ad5",
+   "git_oid": "fb152a7ed06a5a17256b032ebcacd343e62a0edd"
+  },
+  {
+   "path": "wind_power/dataset_info.json",
+   "size": 887,
+   "sha256": null,
+   "git_oid": "7af99ab85c900e56e3492df1ecdf8cdedc83ce93"
+  },
+  {
+   "path": "wind_power/state.json",
+   "size": 250,
+   "sha256": null,
+   "git_oid": "2e68be3064315fc3859ae95fc17f63b842846f05"
+  }
+ ]
+}

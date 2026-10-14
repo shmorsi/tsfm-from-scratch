@@ -13,3 +13,4 @@
 10          # "checkpoint every <=10 minutes" (design target)
 4,096       # tokenizer (a) vocabulary size (design choice)
 97          # number of GIFT-Eval configurations (benchmark definition)
+1.8         # include_all_below_mb in configs/data.yaml, shown as GB (design choice)
