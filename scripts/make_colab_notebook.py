@@ -91,7 +91,9 @@ need = ["pretrain", "val", "synthetic", "synthetic_val"]
 if not all(os.path.exists(f"{DRIVE_PACKED}/{n}/meta.json") for n in need):
     !uv run tsfm data download --which both --workers 16
     !uv run tsfm data build
-    !uv run tsfm data synth
+    # Synthetic series: the exact committed files from the GitHub release (SHA-256 checked);
+    # regenerating them would take hours on Colab's CPUs.
+    !GITHUB_TOKEN={token} uv run python scripts/fetch_synthetic.py --repo {REPO} --tag data-v1
     !uv run tsfm pack
     shutil.copytree("/content/tsfm_home/processed/packed", DRIVE_PACKED, dirs_exist_ok=True)
 for n in need:

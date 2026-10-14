@@ -136,15 +136,19 @@ class MixtureSampler:
         for b, g in enumerate(gs):
             ci, _, ids, cum = self._groups[g]
             j = int(np.searchsorted(cum, rng.integers(0, cum[-1]), side="right"))
-            x = self.corpora[ci].series(int(ids[j]))
-            n = x.size
+            c = self.corpora[ci]
+            sid = int(ids[j])
+            off = int(c.offsets[sid])
+            n = int(c.offsets[sid + 1]) - off
+            # Slice the window straight from the memory map (never copy a whole series:
+            # some are millions of points long).
             if n <= length:
-                # Short series: use a random-length suffix so the end is not always the last point.
+                # Short series: a random-length prefix, so the end is not always the last point.
                 end = int(rng.integers(min(self.min_points, n), n + 1))
-                w = x[:end]
+                w = c.values[off : off + end]
             else:
                 end = int(rng.integers(length, n + 1))
-                w = x[end - length : end]
+                w = c.values[off + end - length : off + end]
             out[b, length - w.size :] = w
         return out
 
