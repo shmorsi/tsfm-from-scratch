@@ -33,7 +33,7 @@ Sections whose results do not exist yet say *pending*.
 
 ## Results
 
-### Reference points (reported by upstream, not run by us)
+### Reference points (test split)
 
 {{ table:reported_reference | default:*pending* }}
 

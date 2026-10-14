@@ -5,11 +5,11 @@ name: tiny_cpu
 seed: 0
 pipeline:
   pretrain_datasets: [cif_2016_12, tourism_monthly, nn5_weekly, m1_quarterly]
-  val_datasets: [m1_monthly, tourism_quarterly]
+  val_datasets: [tourism_quarterly]
   synthetic_series: 200
   synthetic_val_series: 50
   synthetic_length: 256
-  eval_configs: [hospital/M/short, covid_deaths/D/short, us_births/M/short]
+  eval_configs: [us_births/M/short, covid_deaths/D/short, saugeen/M/short]
 model:
   tokenizer: patch
   d_model: 64
@@ -26,7 +26,7 @@ data:
   val_batches: 2
   val_batch_size: 32
 train:
-  steps: 150
+  steps: 100
   batch_size: 32
   micro_batch: 16
   lr: 3.0e-3

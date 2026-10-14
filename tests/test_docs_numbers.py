@@ -113,3 +113,13 @@ def test_bracket_keys(tmp_path: Path):
     (tmp_path / "results").mkdir()
     (tmp_path / "results" / "r.json").write_text(json.dumps({"files": {"a/b.parquet": {"n": 7}}}))
     assert render("{{ results/r.json#files.[a/b.parquet].n | int }}", tmp_path) == "7"
+
+
+def test_templates_have_no_numbered_headings():
+    """Section numbers are not results; keep them out of generated docs entirely (a
+    number like 4.1 could otherwise slip through by matching an unrelated value)."""
+    import re
+
+    for tpl in (repo_root() / TEMPLATE_DIR).glob("*.md"):
+        for ln in tpl.read_text().splitlines():
+            assert not re.match(r"^#+\s+\d", ln), f"{tpl.name}: {ln}"

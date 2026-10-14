@@ -34,9 +34,18 @@ Sections whose results do not exist yet say *pending*.
 
 ## Results
 
-### Reference points (reported by upstream, not run by us)
+### Reference points (test split)
 
-*pending*
+Geometric mean over the 97 configurations of each metric divided by Seasonal Naive; rank = mean CRPS rank among the models in this table. Upstream rows are computed by us from upstream's committed result files (`src/tsfm/eval/_vendor/upstream_results`); coverage needs quantiles that those files do not contain.
+
+| model | MASE | CRPS | rank | 80% coverage |
+|---|---|---|---|---|
+| TimesFM-2.5 | 0.705 | 0.490 | 1.59 | n/a |
+| FlowState-9.1M | 0.726 | 0.502 | 1.74 | n/a |
+| Auto_Arima | 1.074 | 0.912 | 3.84 | n/a |
+| Auto_Theta | 1.090 | 1.244 | 4.77 | n/a |
+| Auto_ETS | 1.212 | 7.489 | 4.73 | n/a |
+| Seasonal Naive (run by us; equals upstream on all metrics) | 1.000 | 1.000 | 4.33 | 0.899 |
 
 ### Headline comparison (test split, pre-registered)
 
