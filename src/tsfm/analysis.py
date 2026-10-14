@@ -86,7 +86,10 @@ FREQ_NAMES = {
 def freq_group(cfg: str) -> str:
     """Frequency label without the multiplier, as upstream's leaderboard groups it
     (``15T`` and ``5T`` are both minutely)."""
-    letters = re.sub(r"\d", "", cfg.split("/")[1]).upper()
+    letters = re.sub(r"\d", "", cfg.split("/")[1]).upper().split("-")[0]  # A-DEC -> A
+    letters = {"MS": "M", "QS": "Q", "AS": "A", "YS": "A", "Y": "A", "MIN": "T"}.get(
+        letters, letters
+    )
     return FREQ_NAMES.get(letters, letters)
 
 

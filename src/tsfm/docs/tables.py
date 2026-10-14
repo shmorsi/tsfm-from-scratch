@@ -193,3 +193,22 @@ def tokenizers_table(root: Path) -> str:
     if len(names) < 2:
         raise MissingResult("tokenizer comparison")
     return md_table(["model", "MASE", "CRPS", "rank", "80% coverage"], _model_rows(s, names))
+
+
+@table("val_models")
+def val_models(root: Path) -> str:
+    s = _load(root, "results/analysis/val_summary.json")
+    names = sorted(s["models"], key=lambda n: s["models"][n]["crps_gmean"])
+    rows = _model_rows(s, names)
+    for r, n in zip(rows, names, strict=True):
+        cov = s["models"][n]["coverage_mean"]
+        r.insert(4, f"{cov['50']:.3f}" if cov.get("50") is not None else "n/a")
+        r.append(f"{cov['90']:.3f}" if cov.get("90") is not None else "n/a")
+    note = f"Validation split ({s['n_configs']} configurations from datasets held out of pretraining); geometric means of scores divided by Seasonal Naive."
+    return (
+        note
+        + "\n\n"
+        + md_table(
+            ["model", "MASE", "CRPS", "rank", "50% coverage", "80% coverage", "90% coverage"], rows
+        )
+    )

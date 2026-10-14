@@ -1,0 +1,149 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-14T22:44:11+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
+    "label": "eval-seasonal_naive",
+    "partial": false,
+    "split": "val"
+  },
+  "model": "seasonal_naive",
+  "model_info": {
+    "fallback": "SeasonalNaive",
+    "kind": "statsforecast",
+    "leaderboard": {
+      "model": "Seasonal_Naive",
+      "model_type": "statistical",
+      "replication_code_available": "Yes",
+      "testdata_leakage": "No"
+    },
+    "max_length": null,
+    "model": "seasonal_naive"
+  },
+  "model_info_hash": "aea287d248b305f0",
+  "per_config": {
+    "australian_electricity_demand/30T/long": {
+      "coverage_50": 0.8264583333333333,
+      "coverage_80": 0.951125,
+      "coverage_90": 0.9733472222222223,
+      "n_instances": 100,
+      "seconds": 10.878241062164307
+    },
+    "australian_electricity_demand/30T/short": {
+      "coverage_50": 0.6583333333333333,
+      "coverage_80": 0.8166666666666667,
+      "coverage_90": 0.8647916666666666,
+      "n_instances": 100,
+      "seconds": 11.271293878555298
+    },
+    "bdg-2_bear/H/long": {
+      "coverage_50": 0.8982990012484394,
+      "coverage_80": 0.9777855805243446,
+      "coverage_90": 0.9877262796504369,
+      "n_instances": 178,
+      "seconds": 2.2482781410217285
+    },
+    "bdg-2_bear/H/short": {
+      "coverage_50": 0.7720530258229844,
+      "coverage_80": 0.8862236349300217,
+      "coverage_90": 0.9246747486694263,
+      "n_instances": 1691,
+      "seconds": 24.613757848739624
+    },
+    "kdd2022/10T/long": {
+      "coverage_50": 0.8317013489316976,
+      "coverage_80": 0.9335359292755984,
+      "coverage_90": 0.9705453472865576,
+      "n_instances": 670,
+      "seconds": 19.868177890777588
+    },
+    "kdd2022/10T/short": {
+      "coverage_50": 0.5474488365573311,
+      "coverage_80": 0.7158209513129614,
+      "coverage_90": 0.7876055197333582,
+      "n_instances": 2680,
+      "seconds": 54.59019184112549
+    },
+    "kernelsynth/H/long": {
+      "coverage_50": 0.7587861111111112,
+      "coverage_80": 0.8692270833333333,
+      "coverage_90": 0.8972944444444444,
+      "n_instances": 2000,
+      "seconds": 7.8906660079956055
+    },
+    "kernelsynth/H/short": {
+      "coverage_50": 0.5137048611111111,
+      "coverage_80": 0.7983958333333333,
+      "coverage_90": 0.9029305555555556,
+      "n_instances": 6000,
+      "seconds": 22.237152099609375
+    },
+    "m1_monthly/M/short": {
+      "coverage_50": 0.44010840108401084,
+      "coverage_80": 0.7173441734417344,
+      "coverage_90": 0.82289972899729,
+      "n_instances": 615,
+      "seconds": 1.930406093597412
+    },
+    "monash_m3_yearly/A-DEC/short": {
+      "coverage_50": 0.39624724061810157,
+      "coverage_80": 0.6236203090507726,
+      "coverage_90": 0.7170713760117734,
+      "n_instances": 453,
+      "seconds": 1.3663172721862793
+    },
+    "nn5_daily_with_missing/D/short": {
+      "coverage_50": 0.8337055837563452,
+      "coverage_80": 0.9527918781725888,
+      "coverage_90": 0.9741116751269036,
+      "n_instances": 333,
+      "seconds": 1.218266248703003
+    },
+    "pedestrian_counts/H/long": {
+      "coverage_50": 0.9740497076023392,
+      "coverage_80": 0.9946637426900585,
+      "coverage_90": 0.9969298245614036,
+      "n_instances": 19,
+      "seconds": 0.20778298377990723
+    },
+    "pedestrian_counts/H/short": {
+      "coverage_50": 0.9338541666666667,
+      "coverage_80": 0.9734375,
+      "coverage_90": 0.9822916666666667,
+      "n_instances": 40,
+      "seconds": 0.34952402114868164
+    },
+    "tourism_quarterly/Q-DEC/short": {
+      "coverage_50": 0.4140258215962441,
+      "coverage_80": 0.6373239436619719,
+      "coverage_90": 0.733274647887324,
+      "n_instances": 426,
+      "seconds": 2.035935163497925
+    },
+    "traffic_weekly/W-SUN/short": {
+      "coverage_50": 0.7524651972157773,
+      "coverage_80": 0.9174883990719258,
+      "coverage_90": 0.9572940835266821,
+      "n_instances": 1724,
+      "seconds": 6.254003047943115
+    },
+    "uber_tlc_daily/D/short": {
+      "coverage_50": 0.8209923664122137,
+      "coverage_80": 0.9492366412213741,
+      "coverage_90": 0.9690839694656489,
+      "n_instances": 262,
+      "seconds": 1.102051019668579
+    }
+  },
+  "split": "val"
+}

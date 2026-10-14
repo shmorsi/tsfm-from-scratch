@@ -1,0 +1,26 @@
+[
+ {
+  "file": "results/runs/pilot_patch_s0_cpu/summary.json",
+  "sha256": "0b601aee129c998d29be4984e6e751201accdd1caed73a1a3684732af447d84d",
+  "source": "/Users/sherif/.cache/tsfm/runs/pilot_patch_s0_cpu/summary.json",
+  "run": "pilot_patch_s0_cpu",
+  "run_git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
+  "synced_utc": "2026-10-14T23:09:37+00:00"
+ },
+ {
+  "file": "results/runs/pilot_patch_s0_cpu/metrics.jsonl",
+  "sha256": "a1f0e96baee87c3346b5bf9442bedf4137a6faf6ab1864abdb980e3f2c2d30a4",
+  "source": "/Users/sherif/.cache/tsfm/runs/pilot_patch_s0_cpu/metrics.jsonl",
+  "run": "pilot_patch_s0_cpu",
+  "run_git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
+  "synced_utc": "2026-10-14T23:09:37+00:00"
+ },
+ {
+  "file": "results/runs/pilot_patch_s0_cpu/config.yaml",
+  "sha256": "337ab676dae1972d34a1c44a70c5ac9aa5c300227d8d39d9c2762cd77faa2656",
+  "source": "/Users/sherif/.cache/tsfm/runs/pilot_patch_s0_cpu/config.yaml",
+  "run": "pilot_patch_s0_cpu",
+  "run_git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
+  "synced_utc": "2026-10-14T23:09:37+00:00"
+ }
+]

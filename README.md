@@ -13,11 +13,13 @@ Sections whose results do not exist yet say *pending*.
 
 | Milestone | State |
 |---|---|
-| Data corpus, synthetic data, leakage check | see `DATA_CARD.md` |
-| Tokenizers, model, training loop | implemented and tested (CPU) |
-| Evaluation pipeline | reproduces upstream Seasonal Naive (`tests/test_eval.py`) |
-| Pre-registration | `PREREGISTRATION.md` |
-| Scaling runs, zero-shot results, fine-tuning, regimes | *pending* (need Colab GPU runs) |
+| Data corpus, synthetic data, leakage check | done; see `DATA_CARD.md` (upstream corpus contains GIFT-Eval copies; all excluded) |
+| Tokenizers, model, training loop | done; tested on CPU (exact resume, KV cache, causal mask) |
+| Evaluation pipeline | done; our Seasonal Naive equals upstream's on every official metric |
+| Pre-registration | done; `PREREGISTRATION.md`, tag `prereg-v1` |
+| Scaling runs, zero-shot results | *pending: Colab GPU runs* |
+| Volatility fine-tuning, regime robustness | *pending: data source sign-off* |
+| Write-up | partial; `RESEARCH_NOTE.md` fills in as results land |
 
 ## Method in brief
 
@@ -46,6 +48,19 @@ Geometric mean over the 97 configurations of each metric divided by Seasonal Nai
 | Auto_Theta | 1.090 | 1.244 | 4.77 | n/a |
 | Auto_ETS | 1.212 | 7.489 | 4.73 | n/a |
 | Seasonal Naive (run by us; equals upstream on all metrics) | 1.000 | 1.000 | 4.33 | 0.899 |
+
+### Pilot on the validation split
+
+A first end-to-end check, not a benchmark result: `patch_s0` (the smallest grid size)
+trained on a laptop CPU in fp32 with the full step budget
+(`configs/pilot/pilot_patch_s0_cpu.yaml`), scored on held-out validation datasets.
+
+Validation split (16 configurations from datasets held out of pretraining); geometric means of scores divided by Seasonal Naive.
+
+| model | MASE | CRPS | rank | 50% coverage | 80% coverage | 90% coverage |
+|---|---|---|---|---|---|---|
+| pilot_patch_s0_cpu | 1.123 | 0.733 | 1.25 | 0.390 | 0.685 | 0.801 |
+| seasonal_naive | 1.000 | 1.000 | 1.75 | 0.711 | 0.857 | 0.904 |
 
 ### Headline comparison (test split, pre-registered)
 

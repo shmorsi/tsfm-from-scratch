@@ -1,0 +1,7 @@
+{
+    "model": "pilot_patch_s0_cpu",
+    "model_type": "zero-shot",
+    "model_dtype": "float32",
+    "testdata_leakage": "No",
+    "replication_code_available": "Yes"
+}
