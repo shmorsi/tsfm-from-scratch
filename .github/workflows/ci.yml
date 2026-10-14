@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv sync --locked --extra cpu
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest -m "not slow and not network and not data" -q
+      - name: tiny end-to-end pipeline (must finish in < 5 min)
+        run: |
+          if uv run tsfm --help | grep -q pipeline; then
+            timeout 300 uv run tsfm pipeline --config configs/tiny_cpu.yaml
+          fi
+      - run: uv run tsfm docs check

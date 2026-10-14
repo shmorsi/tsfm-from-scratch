@@ -1,0 +1,15 @@
+# Numbers allowed in generated docs WITHOUT a results file backing them.
+# Only structural constants, versions and dates. Never a measured quantity.
+# One literal per line; text after '#' is the reason.
+3.12        # Python version
+2020        # regime break year (milestone 9 design)
+2022        # regime break year (milestone 9 design)
+50          # interval level (50/80/90% coverage)
+80          # interval level
+90          # interval level
+1           # "seasonal naive = 1.0" normalisation constant / list numbering
+1.0         # normalisation constant
+5           # "under 5 minutes" CI budget (design target, not a measurement)
+10          # "checkpoint every <=10 minutes" (design target)
+4,096       # tokenizer (a) vocabulary size (design choice)
+97          # number of GIFT-Eval configurations (benchmark definition)
