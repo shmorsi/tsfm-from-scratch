@@ -1,4 +1,4 @@
-# Tokenizer (a) at the s2 size and the same token budget as patch_s2 (1500 steps x 130816 tokens).
+# Tokenizer (a) at the s2 size and the same token budget as patch_s2 (800 steps x 261888 tokens).
 name: bins_s2
 seed: 0
 model:
@@ -8,7 +8,7 @@ model:
   n_heads: 5
   n_bins: 4094
   bin_limit: 15.0
-  max_seq_len: 1024
+  max_seq_len: 2048
   dropout: 0.0
 data:
   corpora:
@@ -19,14 +19,14 @@ data:
   - path: val
   - path: synthetic_val
     synthetic: true
-  window: 512
+  window: 1024
   min_context: 32
   synthetic_share: 0.1
   temperature: 0.5
   val_batches: 16
   val_batch_size: 128
 train:
-  steps: 1500
+  steps: 800
   batch_size: 256
   micro_batch: 64
   lr: 0.0006

@@ -235,3 +235,44 @@ def test_training_reduces_val_loss(
     assert before is not None
     assert after is not None
     assert after < 0.8 * before
+
+
+def test_draw_context_short_series_gets_half_as_context():
+    x = np.full((2, 64), np.nan, np.float32)
+    x[0, 44:] = 1.0  # 20 real points
+    x[1, 62:] = 1.0  # 2 real points
+    for seed in range(20):
+        c = draw_context(np.random.default_rng(seed), x, min_ctx=32, max_ctx=63)
+        assert 44 + 10 <= c[0] <= 63
+        assert c[1] == 63
+
+
+def test_align_to_patches_keeps_values_and_ends_context_on_boundary():
+    from tsfm.train.objective import align_to_patches
+
+    x = torch.arange(32, dtype=torch.float32).repeat(2, 1)
+    ctx = torch.tensor([13, 16])
+    y, c = align_to_patches(x, ctx, 8)
+    assert c.tolist() == [8, 16]
+    assert y[0, :8].tolist() == list(range(5, 13))  # context = the 8 points before 13
+    assert y[0, 8] == 13  # first target follows the context
+    assert torch.isnan(y[0, -5:]).all()
+    assert torch.equal(y[1], x[1])
+
+
+def test_short_series_loss_is_on_the_scale_of_the_data():
+    """Regression test: a 20-point series in a long window used to lose its whole context
+    to patch rounding, fall back to scale 1 and produce a loss in raw units."""
+    from tsfm.train.objective import patch_loss
+
+    torch.manual_seed(0)
+    m = TSModel(
+        ModelConfig(d_model=32, n_layers=1, n_heads=2, patch_len=32, horizon=64, max_seq_len=64)
+    ).eval()
+    x = torch.full((4, 2048), float("nan"))
+    x[:, -20:] = 5000.0 + torch.randn(4, 20) * 50
+    ctx = torch.from_numpy(draw_context(np.random.default_rng(0), x.numpy(), 32, 2047))
+    with torch.no_grad():
+        loss, n = patch_loss(m, x, ctx)
+    assert n > 0
+    assert loss.item() < 10  # scaled units (~1), not raw units (~5000)

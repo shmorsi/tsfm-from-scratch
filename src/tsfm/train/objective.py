@@ -6,6 +6,12 @@ the first ``c`` points only and the loss is taken only on predictions of points 
 the situation at forecast time - while the model still sees contexts of all lengths.
 The prefix positions are still processed (they are the context); they just do not
 contribute to the loss.
+
+Short series: the minimum context adapts (at most half of the real points), and for the
+patch model each window is shifted so that the context ends on a patch boundary, which
+is also what happens at forecast time (the context is left-padded to whole patches).
+Rows whose context has no observed value, or that have no observed target, are left out
+of the loss.
 """
 
 from __future__ import annotations
@@ -25,11 +31,30 @@ def leading_pad(x: Tensor) -> Tensor:
 
 
 def draw_context(rng: np.random.Generator, x: np.ndarray, min_ctx: int, max_ctx: int) -> np.ndarray:
-    """Per-row context length (in time steps), starting at the first real point."""
+    """Per-row context end position (in steps from the window start).
+
+    The context holds at least ``min(min_ctx, n_real // 2)`` (and at least one) real
+    points, at most ``max_ctx``, and at least one position follows it."""
+    t = x.shape[1]
     first = np.argmax(np.isfinite(x), axis=1)
-    lo = np.minimum(first + min_ctx, x.shape[1] - 1)
-    hi = np.minimum(first + max_ctx, x.shape[1] - 1)
-    return rng.integers(lo, np.maximum(hi, lo) + 1)
+    n_real = t - first
+    m = np.clip(np.minimum(min_ctx, n_real // 2), 1, None)
+    lo = np.minimum(first + m, t - 1)
+    hi = np.maximum(np.minimum(first + max_ctx, t - 1), lo)
+    return rng.integers(lo, hi + 1)
+
+
+def align_to_patches(x: Tensor, ctx: Tensor, p: int) -> tuple[Tensor, Tensor]:
+    """Shift each row left by ``ctx % p`` so the context ends on a patch boundary.
+
+    The ``ctx % p`` oldest positions are dropped and the end is filled with NaN; returns
+    the shifted rows and the new (aligned) context ends."""
+    t = x.shape[1]
+    r = ctx % p
+    idx = torch.arange(t, device=x.device)[None, :] + r[:, None]
+    shifted = torch.gather(x, 1, idx.clamp(max=t - 1))
+    shifted = torch.where(idx < t, shifted, torch.full_like(shifted, float("nan")))
+    return shifted, ctx - r
 
 
 def bins_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
@@ -38,11 +63,15 @@ def bins_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
     pos = torch.arange(t, device=x.device)
     pad = leading_pad(x)
     in_ctx = pos[None, :] < ctx[:, None]
-    scale = mean_scale(x, torch.isfinite(x) & in_ctx)
+    obs_ctx = torch.isfinite(x) & in_ctx
+    scale = mean_scale(x, obs_ctx)
     ids = model.bins.encode(x, scale, pad=pad)
     logits = model(ids[:, :-1], pad=pad[:, :-1])
     target = ids[:, 1:]
     use = (pos[None, 1:] >= ctx[:, None]) & (target >= N_SPECIAL) & (target != MISSING_ID)
+    use = use & obs_ctx.any(dim=1, keepdim=True)
+    if not use.any():
+        return logits.sum() * 0.0, 0
     loss = F.cross_entropy(logits[use].float(), target[use])
     return loss, int(use.sum())
 
@@ -55,23 +84,24 @@ def patch_targets(x: Tensor, p: int, horizon: int) -> Tensor:
 
 
 def patch_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
-    """x (B, T) with T a multiple of patch_len; ctx (B,) context lengths in steps,
-    rounded down to whole patches here so the context ends on a patch boundary."""
+    """x (B, T) with T a multiple of patch_len; ctx (B,) context ends in steps."""
     cfg = model.cfg
     p = cfg.patch_len
     _b, t = x.shape
     if t % p:
         raise ValueError("window length must be a multiple of patch_len")
-    ctx_p = torch.clamp(ctx // p, min=1)  # context in patches
+    x, ctx = align_to_patches(x, ctx, p)
+    ctx_p = ctx // p  # context length in whole patches
     pos = torch.arange(t, device=x.device)
-    in_ctx = pos[None, :] < (ctx_p * p)[:, None]
-    scale = mean_scale(x, torch.isfinite(x) & in_ctx)
+    obs_ctx = torch.isfinite(x) & (pos[None, :] < ctx[:, None])
+    scale = mean_scale(x, obs_ctx)
     tok = PatchTokenizer(p)
     patches, observed, patch_pad = tok.encode(x, scale)
     pred = model(patches=patches, observed=observed, pad=patch_pad)  # (B, N, H, Q)
     tgt = patch_targets(x / scale, p, cfg.horizon)
     tok_idx = torch.arange(t // p, device=x.device)
     use_tok = (tok_idx[None, :] >= (ctx_p - 1)[:, None]) & ~patch_pad
+    use_tok = use_tok & (ctx_p >= 1)[:, None] & obs_ctx.any(dim=1, keepdim=True)
     obs = torch.isfinite(tgt) & use_tok[..., None]
     levels = torch.tensor(cfg.quantiles, device=x.device, dtype=pred.dtype)
     loss = pinball_loss(pred.float(), tgt.float(), levels.float(), obs)

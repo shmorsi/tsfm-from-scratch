@@ -88,7 +88,7 @@ class PatchTokenizer:
 
         The series is left-padded to a multiple of ``patch_len``. Missing and padded
         points are 0 in ``patches`` and False in ``observed``. ``patch_pad`` marks patches
-        made only of padding (masked out of attention)."""
+        before the first observed value (masked out of attention)."""
         b, t = x.shape
         p = self.patch_len
         n = -(-t // p)
@@ -98,8 +98,9 @@ class PatchTokenizer:
         if pad:
             z = torch.cat([z.new_zeros(b, pad), z], dim=1)
             obs = torch.cat([obs.new_zeros(b, pad), obs], dim=1)
-        is_pad = torch.zeros(b, n * p, dtype=torch.bool, device=x.device)
-        is_pad[:, :pad] = True
+        # Padding = everything before the first observed point (our own left padding and
+        # any NaN left-padding of short series); a patch made only of it is masked.
+        is_pad = torch.cumsum(obs.int(), dim=1) == 0
         patch_pad = is_pad.view(b, n, p).all(dim=-1)
         return z.view(b, n, p), obs.view(b, n, p), patch_pad
 

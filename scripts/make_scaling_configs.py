@@ -16,7 +16,7 @@ GRID = {
     "s4": (768, 14, 12),
 }
 LRS = {"s0": 1e-3, "s1": 1e-3, "s2": 6e-4, "s3": 4e-4, "s4": 3e-4}
-BATCH, P, WINDOW, BINS_WINDOW = 256, 32, 2048, 512
+BATCH, P, WINDOW, BINS_WINDOW = 256, 32, 2048, 1024
 TOKENS_PER_PARAM = 20  # Chinchilla-style heuristic from LLMs; not established for time series
 
 
@@ -89,7 +89,7 @@ def main() -> None:
             "n_heads": h,
             "n_bins": 4094,
             "bin_limit": 15.0,
-            "max_seq_len": 1024,
+            "max_seq_len": 2048,
             "dropout": 0.0,
         },
         "data": data(BINS_WINDOW),
