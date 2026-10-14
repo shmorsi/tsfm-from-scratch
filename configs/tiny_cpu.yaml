@@ -1,0 +1,36 @@
+# Whole pipeline on CPU in a few minutes (CI). Uses a handful of tiny real datasets
+# (downloaded and SHA-256 verified), a little synthetic data, a ~0.1M-parameter model,
+# and scores 3 small GIFT-Eval configs. Writes nothing into results/.
+name: tiny_cpu
+seed: 0
+pipeline:
+  pretrain_datasets: [cif_2016_12, tourism_monthly, nn5_weekly, m1_quarterly]
+  val_datasets: [m1_monthly, tourism_quarterly]
+  synthetic_series: 200
+  synthetic_val_series: 50
+  synthetic_length: 256
+  eval_configs: [hospital/M/short, covid_deaths/D/short, us_births/M/short]
+model:
+  tokenizer: patch
+  d_model: 64
+  n_layers: 2
+  n_heads: 4
+  patch_len: 8
+  horizon: 32
+  max_seq_len: 64
+data:
+  corpora: [{path: pretrain}, {path: synthetic, synthetic: true}]
+  val: [{path: val}, {path: synthetic_val, synthetic: true}]
+  window: 256
+  min_context: 16
+  val_batches: 2
+  val_batch_size: 32
+train:
+  steps: 150
+  batch_size: 32
+  micro_batch: 16
+  lr: 3.0e-3
+  warmup: 15
+  device: cpu
+  eval_every: 50
+  log_every: 10

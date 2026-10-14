@@ -1,0 +1,41 @@
+# Scaling grid s3: d=512, L=10, ~31.5M body params, 38400 steps x 16384 patch tokens.
+name: patch_s3
+seed: 0
+model:
+  tokenizer: patch
+  d_model: 512
+  n_layers: 10
+  n_heads: 8
+  patch_len: 32
+  horizon: 64
+  max_seq_len: 128
+  dropout: 0.0
+data:
+  corpora:
+  - path: pretrain
+  - path: synthetic
+    synthetic: true
+  val:
+  - path: val
+  - path: synthetic_val
+    synthetic: true
+  window: 2048
+  min_context: 32
+  synthetic_share: 0.1
+  temperature: 0.5
+  val_batches: 16
+  val_batch_size: 128
+train:
+  steps: 38400
+  batch_size: 256
+  micro_batch: 64
+  lr: 0.0004
+  warmup: 768
+  min_lr_ratio: 0.1
+  weight_decay: 0.1
+  grad_clip: 1.0
+  precision: fp16
+  device: auto
+  ckpt_minutes: 10
+  eval_every: 1920
+  log_every: 50

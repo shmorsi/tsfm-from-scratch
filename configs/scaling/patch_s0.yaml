@@ -1,0 +1,41 @@
+# Scaling grid s0: d=128, L=4, ~0.8M body params, 1000 steps x 16384 patch tokens.
+name: patch_s0
+seed: 0
+model:
+  tokenizer: patch
+  d_model: 128
+  n_layers: 4
+  n_heads: 4
+  patch_len: 32
+  horizon: 64
+  max_seq_len: 128
+  dropout: 0.0
+data:
+  corpora:
+  - path: pretrain
+  - path: synthetic
+    synthetic: true
+  val:
+  - path: val
+  - path: synthetic_val
+    synthetic: true
+  window: 2048
+  min_context: 32
+  synthetic_share: 0.1
+  temperature: 0.5
+  val_batches: 16
+  val_batch_size: 128
+train:
+  steps: 1000
+  batch_size: 256
+  micro_batch: 128
+  lr: 0.001
+  warmup: 50
+  min_lr_ratio: 0.1
+  weight_decay: 0.1
+  grad_clip: 1.0
+  precision: fp16
+  device: auto
+  ckpt_minutes: 10
+  eval_every: 100
+  log_every: 50
