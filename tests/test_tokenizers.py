@@ -7,7 +7,7 @@ import math
 import numpy as np
 import pytest
 import torch
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
@@ -55,7 +55,10 @@ def test_bin_round_trip_error_bounded(x: np.ndarray):
 @settings(max_examples=100, deadline=None)
 @given(series, st.floats(1e-3, 1e3))
 def test_bin_scale_invariance(x: np.ndarray, c: float):
+    """Holds away from the deliberate fallback: a mean |x| below ``min_scale`` (1e-10)
+    switches the scale to 1, so inputs near that floor are excluded."""
     xt = t(x)
+    assume(float(mean_scale(xt)) * min(c, 1.0) > 1e-6)
     a = tok.encode(xt, mean_scale(xt))
     b = tok.encode(xt * c, mean_scale(xt * c))
     # Float rounding can move a value across a bin edge, but never by more than one bin.
