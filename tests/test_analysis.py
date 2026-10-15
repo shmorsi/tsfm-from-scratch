@@ -120,3 +120,18 @@ def test_headline_report_uses_upstream_arima_and_seed_average(
     assert primary["b"] == "upstream:Auto_Arima"
     assert primary["ratio"] == pytest.approx(0.6)  # seed-averaged per config
     assert primary["verdict"] == "better"
+
+
+def test_select_headline_tie_goes_to_smaller(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(A, "results_dir", lambda: tmp_path)
+    cfgs = ["a/H/short", "b/D/short"]
+    write_model(tmp_path, "val", "seasonal_naive", dict.fromkeys(cfgs, 1.0))
+    for name, mase, params in (("patch_s0", 0.802, 1), ("patch_s1", 0.8, 2), ("patch_s2", 0.9, 3)):
+        write_model(tmp_path, "val", name, dict.fromkeys(cfgs, mase))
+        d = tmp_path / "runs" / name
+        d.mkdir(parents=True)
+        (d / "summary.json").write_text(json.dumps({"params_total": params}))
+    h = json.loads(A.select_headline().read_text())
+    assert h["headline"] == "patch_s0"  # within 0.5% of the best (patch_s1), and smaller
+    h = json.loads(A.select_headline(tolerance=0.001).read_text())
+    assert h["headline"] == "patch_s1"

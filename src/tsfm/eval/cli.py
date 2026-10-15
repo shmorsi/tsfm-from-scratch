@@ -148,3 +148,18 @@ def _scaling(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
 
 
 register(_scaling)
+
+
+def _select(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
+    p = sub.add_parser("select-headline", help="apply the pre-registered headline selection rule")
+
+    def run(a: argparse.Namespace) -> int:
+        from tsfm.analysis import select_headline
+
+        print("wrote", select_headline())
+        return 0
+
+    p.set_defaults(func=run)
+
+
+register(_select)

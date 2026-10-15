@@ -221,3 +221,43 @@ def headline_report(seed_runs: list[str], label: str = "headline") -> Path:
     return write_result(
         results_dir() / "analysis" / "headline.json", out, split="test", label="M7-headline"
     )
+
+
+GRID_RUNS = ("patch_s0", "patch_s1", "patch_s2", "bins_s2", "patch_s3", "patch_s4")
+
+
+def select_headline(tolerance: float = 0.005) -> Path:
+    """PREREGISTRATION.md section 4: lowest validation CRPS (geometric mean normalised by
+    validation Seasonal Naive) among the grid runs that were trained; candidates within
+    ``tolerance`` (relative) of the best go to the smallest model."""
+    s = summarise(load_models("val"), "seasonal_naive")
+    cands = []
+    for name in GRID_RUNS:
+        if name not in s["models"]:
+            continue
+        summ = json.loads((results_dir() / "runs" / name / "summary.json").read_text())
+        cands.append(
+            {
+                "name": name,
+                "crps_gmean": s["models"][name]["crps_gmean"],
+                "mase_gmean": s["models"][name]["mase_gmean"],
+                "params_total": summ["params_total"],
+            }
+        )
+    if not cands:
+        raise SystemExit("no trained grid runs with validation results")
+    best = min(c["crps_gmean"] for c in cands)
+    near = [c for c in cands if c["crps_gmean"] <= best * (1 + tolerance)]
+    choice = min(near, key=lambda c: c["params_total"])
+    out = {
+        "rule": "PREREGISTRATION.md section 4",
+        "tolerance": tolerance,
+        "candidates": sorted(cands, key=lambda c: c["crps_gmean"]),
+        "headline": choice["name"],
+    }
+    return write_result(
+        results_dir() / "analysis" / "headline_choice.json",
+        out,
+        split="val",
+        label="M7-headline-choice",
+    )
