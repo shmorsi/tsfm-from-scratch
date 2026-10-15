@@ -191,6 +191,46 @@ def test_bins_forecast_shapes_and_reproducibility():
     assert (np.diff(a.quantiles, axis=-1) >= 0).all()
 
 
+def test_bins_forecast_chunking_matches_one_context_at_a_time():
+    """A tiny KV budget forces one context per chunk; each chunk must then match running
+    that context alone (same generator stream), so chunking changes memory, not results."""
+    from tsfm.forecast import forecast_bins
+    from tsfm.model import ModelConfig, TSModel
+
+    torch.manual_seed(0)
+    model = TSModel(
+        ModelConfig(tokenizer="bins", d_model=32, n_layers=2, n_heads=2, n_bins=126, max_seq_len=64)
+    ).eval()
+    rng = np.random.default_rng(0)
+    ctx = [rng.normal(10, 2, 24).astype(np.float32) for _ in range(3)]
+    gen = torch.Generator().manual_seed(3)
+    chunked = forecast_bins(model, ctx, 5, 50, n_samples=4, generator=gen, kv_budget_bytes=1)
+    gen = torch.Generator().manual_seed(3)
+    singles = [forecast_bins(model, [c], 5, 50, n_samples=4, generator=gen) for c in ctx]
+    np.testing.assert_array_equal(chunked.quantiles, np.concatenate([s.quantiles for s in singles]))
+    np.testing.assert_array_equal(chunked.mean, np.concatenate([s.mean for s in singles]))
+
+
+def test_short_kv_cache_matches_full_length_cache():
+    from tsfm.model import KVCache, ModelConfig, TSModel
+
+    torch.manual_seed(0)
+    cfg = ModelConfig(
+        tokenizer="bins", d_model=32, n_layers=2, n_heads=2, n_bins=126, max_seq_len=64
+    )
+    model = TSModel(cfg).eval()
+    ids = torch.randint(2, 128, (2, 10))
+    outs = []
+    for max_len in (None, 13):
+        cache = KVCache.empty(cfg, 2, torch.device("cpu"), torch.float32, max_len=max_len)
+        steps = [model(ids, cache=cache)[:, -1]]
+        for t in range(3):
+            steps.append(model(ids[:, t : t + 1], cache=cache)[:, -1])
+        outs.append(torch.stack(steps))
+    assert cache.k[0].shape[2] == 13
+    torch.testing.assert_close(outs[0], outs[1])
+
+
 def test_patch_rollout_horizon_and_monotone():
     from tsfm.forecast import forecast_patch
     from tsfm.model import ModelConfig, TSModel

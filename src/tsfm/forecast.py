@@ -6,7 +6,10 @@ patch model: one forward pass over the context; the last token's head gives quan
     median ignores the uncertainty of earlier steps, so later quantiles are likely too
     narrow; this is a known limitation of quantile-head models and is reported.
 bins model: draws ``n_samples`` sample paths token by token (temperature 1, no top-k)
-    with the KV cache, and reports empirical quantiles and the sample mean.
+    with the KV cache, and reports empirical quantiles and the sample mean. Contexts are
+    processed in chunks so that the expanded cache (one copy per sample path) stays
+    within ``kv_budget_bytes``; the chunk size depends only on the inputs, never on the
+    free memory of the device, so results are reproducible across machines.
 """
 
 from __future__ import annotations
@@ -105,34 +108,45 @@ def forecast_bins(
         0.95,
     ),
     generator: torch.Generator | None = None,
+    kv_budget_bytes: int = 3 * 2**30,
 ) -> Forecast:
     cfg = model.cfg
     dev = next(model.parameters()).device
+    dtype = next(model.parameters()).dtype
     max_context = min(max_context, cfg.max_seq_len - prediction_length)
     if max_context < 1:
         raise ValueError(f"prediction_length {prediction_length} leaves no room for context")
-    x = torch.from_numpy(_left_pad(contexts, max_context)).to(dev)
-    b = x.shape[0]
-    scale = mean_scale(x, torch.isfinite(x))
-    pad = before_first(torch.isfinite(x))
-    ids = model.bins.encode(x, scale, pad=pad)
-    cache = KVCache.empty(cfg, b, dev, next(model.parameters()).dtype)
-    logits = model(ids, pad=pad, cache=cache)[:, -1]
-    cache = cache.repeat_interleave(n_samples)
-    logits = logits.repeat_interleave(n_samples, 0)
-    out = torch.empty(b * n_samples, prediction_length, dtype=torch.long, device=dev)
-    for h in range(prediction_length):
-        probs = torch.softmax(logits.float(), -1)
-        probs[:, :N_SPECIAL] = 0  # never sample PAD/MISSING
-        nxt = torch.multinomial(probs, 1, generator=generator)
-        out[:, h] = nxt[:, 0]
-        if h + 1 < prediction_length:
-            logits = model(nxt, cache=cache)[:, -1]
-    vals = model.bins.decode(out, scale.repeat_interleave(n_samples, 0)).view(
-        b, n_samples, prediction_length
-    )
-    qs = torch.quantile(vals, torch.tensor(levels, device=dev), dim=1).permute(1, 2, 0)
-    return Forecast(qs.cpu().numpy(), vals.mean(1).cpu().numpy(), levels)
+    x_all = torch.from_numpy(_left_pad(contexts, max_context)).to(dev)
+    length = x_all.shape[1] + prediction_length
+    per_context = n_samples * KVCache.bytes_per_row(cfg, length, dtype)
+    chunk = max(1, kv_budget_bytes // per_context)
+    qs_parts, mean_parts = [], []
+    for lo in range(0, x_all.shape[0], chunk):
+        x = x_all[lo : lo + chunk]
+        b = x.shape[0]
+        scale = mean_scale(x, torch.isfinite(x))
+        pad = before_first(torch.isfinite(x))
+        ids = model.bins.encode(x, scale, pad=pad)
+        cache = KVCache.empty(cfg, b, dev, dtype, max_len=length)
+        logits = model(ids, pad=pad, cache=cache)[:, -1]
+        cache = cache.repeat_interleave(n_samples)
+        logits = logits.repeat_interleave(n_samples, 0)
+        out = torch.empty(b * n_samples, prediction_length, dtype=torch.long, device=dev)
+        for h in range(prediction_length):
+            probs = torch.softmax(logits.float(), -1)
+            probs[:, :N_SPECIAL] = 0  # never sample PAD/MISSING
+            nxt = torch.multinomial(probs, 1, generator=generator)
+            out[:, h] = nxt[:, 0]
+            if h + 1 < prediction_length:
+                logits = model(nxt, cache=cache)[:, -1]
+        del cache
+        vals = model.bins.decode(out, scale.repeat_interleave(n_samples, 0)).view(
+            b, n_samples, prediction_length
+        )
+        q = torch.quantile(vals, torch.tensor(levels, device=dev), dim=1).permute(1, 2, 0)
+        qs_parts.append(q.cpu().numpy())
+        mean_parts.append(vals.mean(1).cpu().numpy())
+    return Forecast(np.concatenate(qs_parts), np.concatenate(mean_parts), levels)
 
 
 def forecast(

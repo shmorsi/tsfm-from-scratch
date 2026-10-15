@@ -177,5 +177,7 @@ def test_quantile_head_matches_cumsum_formulation():
     up = torch.nn.functional.softplus(raw[..., head.mid + 1 :]).cumsum(-1)
     down = torch.nn.functional.softplus(raw[..., : head.mid]).flip(-1).cumsum(-1).flip(-1)
     ref = torch.cat([med - down, med, med + up], dim=-1)
-    torch.testing.assert_close(head(h), ref, rtol=1e-6, atol=1e-6)  # cumsum may sum in another order
+    torch.testing.assert_close(
+        head(h), ref, rtol=1e-6, atol=1e-6
+    )  # cumsum may sum in another order
     assert set(head.state_dict()) == {"proj.weight", "proj.bias"}  # checkpoints unchanged

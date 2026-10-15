@@ -106,14 +106,27 @@ class KVCache:
 
     @classmethod
     def empty(
-        cls, cfg: ModelConfig, batch: int, device: torch.device, dtype: torch.dtype
+        cls,
+        cfg: ModelConfig,
+        batch: int,
+        device: torch.device,
+        dtype: torch.dtype,
+        max_len: int | None = None,
     ) -> KVCache:
-        shape = (batch, cfg.n_heads, cfg.max_seq_len, cfg.head_dim)
+        """``max_len`` (default ``cfg.max_seq_len``) bounds the positions the cache can
+        hold; sizing it to the sequence actually decoded saves memory."""
+        t = cfg.max_seq_len if max_len is None else min(max_len, cfg.max_seq_len)
+        shape = (batch, cfg.n_heads, t, cfg.head_dim)
         return cls(
             k=[torch.zeros(shape, device=device, dtype=dtype) for _ in range(cfg.n_layers)],
             v=[torch.zeros(shape, device=device, dtype=dtype) for _ in range(cfg.n_layers)],
-            key_pad=torch.ones(batch, cfg.max_seq_len, dtype=torch.bool, device=device),
+            key_pad=torch.ones(batch, t, dtype=torch.bool, device=device),
         )
+
+    @staticmethod
+    def bytes_per_row(cfg: ModelConfig, length: int, dtype: torch.dtype) -> int:
+        elem = torch.empty((), dtype=dtype).element_size()
+        return 2 * cfg.n_layers * length * cfg.d_model * elem
 
     def repeat_interleave(self, n: int) -> KVCache:
         """Expand each row ``n`` times (for drawing several sample paths)."""
