@@ -33,6 +33,18 @@ SCALED_CLIP = 100.0
 QUANTILES: tuple[float, ...] = (0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 0.95)
 
 
+def before_first(mask: Tensor) -> Tensor:
+    """True at positions before the first True of each row (along the last axis).
+
+    Same as ``cumsum(mask) == 0`` but without a scan: CUDA's cumsum kernel was the
+    single largest cost of a training step on a T4 (profiled)."""
+    n = mask.shape[-1]
+    first = torch.where(
+        mask.any(-1), mask.int().argmax(-1), torch.full_like(mask[..., 0], n, dtype=torch.long)
+    )
+    return torch.arange(n, device=mask.device) < first.unsqueeze(-1)
+
+
 def mean_scale(x: Tensor, observed: Tensor | None = None, min_scale: float = 1e-10) -> Tensor:
     """Mean |x| over observed (finite, non-padded) points, per row. Shape (B,) -> (B, 1).
 
@@ -105,7 +117,7 @@ class PatchTokenizer:
             obs = torch.cat([obs.new_zeros(b, pad), obs], dim=1)
         # Padding = everything before the first observed point (our own left padding and
         # any NaN left-padding of short series); a patch made only of it is masked.
-        is_pad = torch.cumsum(obs.int(), dim=1) == 0
+        is_pad = before_first(obs)
         patch_pad = is_pad.view(b, n, p).all(dim=-1)
         return z.view(b, n, p), obs.view(b, n, p), patch_pad
 
@@ -114,6 +126,17 @@ class PatchTokenizer:
         """(B, N, P) scaled patches -> (B, N * P) values."""
         b = patches.shape[0]
         return patches.reshape(b, -1) * scale
+
+
+def _running_sum(x: Tensor) -> Tensor:
+    """Cumulative sum over a short last axis as a chain of additions. Same values and
+    the same monotonicity guarantee as ``cumsum`` (each partial sum adds a non-negative
+    term to the previous one), but CUDA's scan kernel over a tiny innermost axis was the
+    largest cost of a training step on a T4 (profiled)."""
+    parts = [x[..., 0]]
+    for i in range(1, x.shape[-1]):
+        parts.append(parts[-1] + x[..., i])
+    return torch.stack(parts, dim=-1)
 
 
 class QuantileHead(nn.Module):
@@ -136,8 +159,8 @@ class QuantileHead(nn.Module):
         """(..., d_model) -> (..., horizon, n_quantiles), sorted along the last axis."""
         raw = self.proj(h).unflatten(-1, (self.horizon, self.n_q))
         med = raw[..., self.mid : self.mid + 1]
-        up = torch.nn.functional.softplus(raw[..., self.mid + 1 :]).cumsum(-1)
-        down = torch.nn.functional.softplus(raw[..., : self.mid]).flip(-1).cumsum(-1).flip(-1)
+        up = _running_sum(torch.nn.functional.softplus(raw[..., self.mid + 1 :]))
+        down = _running_sum(torch.nn.functional.softplus(raw[..., : self.mid]).flip(-1)).flip(-1)
         return torch.cat([med - down, med, med + up], dim=-1)
 
 

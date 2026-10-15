@@ -27,6 +27,7 @@ from tsfm.tokenizers import (
     N_SPECIAL,
     SCALED_CLIP,
     PatchTokenizer,
+    before_first,
     mean_scale,
     pinball_loss,
 )
@@ -34,7 +35,7 @@ from tsfm.tokenizers import (
 
 def leading_pad(x: Tensor) -> Tensor:
     """True for positions before the first finite value of each row."""
-    return torch.cumsum(torch.isfinite(x).int(), dim=-1) == 0
+    return before_first(torch.isfinite(x))
 
 
 def draw_context(rng: np.random.Generator, x: np.ndarray, min_ctx: int, max_ctx: int) -> np.ndarray:

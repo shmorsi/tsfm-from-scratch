@@ -19,7 +19,7 @@ import numpy as np
 import torch
 
 from tsfm.model import KVCache, TSModel
-from tsfm.tokenizers import N_SPECIAL, PatchTokenizer, mean_scale
+from tsfm.tokenizers import N_SPECIAL, PatchTokenizer, before_first, mean_scale
 
 
 @dataclass
@@ -114,7 +114,7 @@ def forecast_bins(
     x = torch.from_numpy(_left_pad(contexts, max_context)).to(dev)
     b = x.shape[0]
     scale = mean_scale(x, torch.isfinite(x))
-    pad = torch.cumsum(torch.isfinite(x).int(), -1) == 0
+    pad = before_first(torch.isfinite(x))
     ids = model.bins.encode(x, scale, pad=pad)
     cache = KVCache.empty(cfg, b, dev, next(model.parameters()).dtype)
     logits = model(ids, pad=pad, cache=cache)[:, -1]

@@ -61,10 +61,11 @@ Validation split (16 configurations from datasets held out of pretraining); geom
 
 | model | MASE | CRPS | rank | 50% coverage | 80% coverage | 90% coverage |
 |---|---|---|---|---|---|---|
-| patch_s1 | 0.910 | 0.636 | 1.38 | 0.416 | 0.694 | 0.806 |
-| pilot_patch_s0_cpu | 1.123 | 0.733 | 2.81 | 0.390 | 0.685 | 0.801 |
-| patch_s0 | 1.139 | 0.740 | 2.44 | 0.396 | 0.686 | 0.800 |
-| seasonal_naive | 1.000 | 1.000 | 3.38 | 0.711 | 0.857 | 0.904 |
+| patch_s2 | 0.840 | 0.605 | 1.62 | 0.365 | 0.649 | 0.770 |
+| patch_s1 | 0.910 | 0.636 | 2.06 | 0.416 | 0.694 | 0.806 |
+| pilot_patch_s0_cpu | 1.123 | 0.733 | 3.75 | 0.390 | 0.685 | 0.801 |
+| patch_s0 | 1.139 | 0.740 | 3.38 | 0.396 | 0.686 | 0.800 |
+| seasonal_naive | 1.000 | 1.000 | 4.19 | 0.711 | 0.857 | 0.904 |
 
 ### Headline comparison (test split, pre-registered)
 

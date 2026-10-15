@@ -157,3 +157,25 @@ def test_pinball_ignores_unobserved_nan_targets():
     out = pinball_loss(pred, target, torch.tensor([0.1, 0.5, 0.9]), obs)
     assert torch.isfinite(out)
     assert out.item() == pytest.approx((0.1 + 0.5 + 0.9) / 3)
+
+
+@settings(max_examples=100, deadline=None)
+@given(arrays(np.bool_, st.tuples(st.integers(1, 5), st.integers(1, 40))))
+def test_before_first_matches_cumsum(m: np.ndarray):
+    from tsfm.tokenizers import before_first
+
+    t_ = torch.from_numpy(m)
+    assert torch.equal(before_first(t_), torch.cumsum(t_.int(), dim=-1) == 0)
+
+
+def test_quantile_head_matches_cumsum_formulation():
+    torch.manual_seed(0)
+    head = QuantileHead(16, horizon=8)
+    h = torch.randn(4, 5, 16)
+    raw = head.proj(h).unflatten(-1, (8, head.n_q))
+    med = raw[..., head.mid : head.mid + 1]
+    up = torch.nn.functional.softplus(raw[..., head.mid + 1 :]).cumsum(-1)
+    down = torch.nn.functional.softplus(raw[..., : head.mid]).flip(-1).cumsum(-1).flip(-1)
+    ref = torch.cat([med - down, med, med + up], dim=-1)
+    torch.testing.assert_close(head(h), ref, rtol=1e-6, atol=1e-6)  # cumsum may sum in another order
+    assert set(head.state_dict()) == {"proj.weight", "proj.bias"}  # checkpoints unchanged
