@@ -24,7 +24,7 @@ checkpoint, written every <= 10 minutes).
     (
         "code",
         """# Parameters
-PHASE = "A"                # "A" or "B" (see above)
+PHASE = "B"                # "A" or "B" (see above)
 REPO = "shmorsi/tsfm-from-scratch"
 COMMIT = "main"            # or a full commit SHA
 DRIVE_ROOT = "/content/drive/MyDrive/tsfm"

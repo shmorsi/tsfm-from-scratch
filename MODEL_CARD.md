@@ -3,7 +3,15 @@
 
 ## Model
 
-*The headline model is chosen on the validation split by the pre-registered rule once the scaling grid has finished; until then this section is pending.*
+|  |  |
+|---|---|
+| run | `patch_s2` |
+| parameters (total / transformer body) | 10,083,392 / 9,671,680 |
+| layers x width x heads | 8 x 320 x 5 |
+| training steps x batch | 12,000 x 256 |
+| training tokens (patches) | 196,608,000 |
+| training compute (6ND) | 1.14e+16 FLOPs |
+| precision / hardware | fp16 on one Colab T4 |
 
 Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary position
 embeddings, SwiGLU feed-forward layers, a key/value cache for incremental decoding.

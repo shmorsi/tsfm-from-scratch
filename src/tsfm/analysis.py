@@ -226,10 +226,12 @@ def headline_report(seed_runs: list[str], label: str = "headline") -> Path:
 GRID_RUNS = ("patch_s0", "patch_s1", "patch_s2", "bins_s2", "patch_s3", "patch_s4")
 
 
-def select_headline(tolerance: float = 0.005) -> Path:
+def select_headline(tolerance: float = 0.005, extra_seeds: tuple[int, ...] = (1, 2)) -> Path:
     """PREREGISTRATION.md section 4: lowest validation CRPS (geometric mean normalised by
     validation Seasonal Naive) among the grid runs that were trained; candidates within
-    ``tolerance`` (relative) of the best go to the smallest model."""
+    ``tolerance`` (relative) of the best go to the smallest model. ``extra_seeds`` are the
+    seeds trained on top of seed 0 for the test evaluation (recorded so the runner reads
+    them from the committed choice)."""
     s = summarise(load_models("val"), "seasonal_naive")
     cands = []
     for name in GRID_RUNS:
@@ -254,6 +256,7 @@ def select_headline(tolerance: float = 0.005) -> Path:
         "tolerance": tolerance,
         "candidates": sorted(cands, key=lambda c: c["crps_gmean"]),
         "headline": choice["name"],
+        "extra_seeds": list(extra_seeds),
     }
     return write_result(
         results_dir() / "analysis" / "headline_choice.json",

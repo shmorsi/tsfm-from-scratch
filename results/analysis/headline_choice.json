@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-15T05:12:20+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "0a719cb3825300b4ca3dbd9faafa4fe8ab756e57",
+    "label": "M7-headline-choice",
+    "split": "val"
+  },
+  "candidates": [
+    {
+      "crps_gmean": 0.6046135740762908,
+      "mase_gmean": 0.8402240103055788,
+      "name": "patch_s2",
+      "params_total": 10083392
+    },
+    {
+      "crps_gmean": 0.6362082982406075,
+      "mase_gmean": 0.9100080071453884,
+      "name": "patch_s1",
+      "params_total": 2879296
+    },
+    {
+      "crps_gmean": 0.7403048319135199,
+      "mase_gmean": 1.1386755082356979,
+      "name": "patch_s0",
+      "params_total": 895296
+    }
+  ],
+  "extra_seeds": [],
+  "headline": "patch_s2",
+  "rule": "PREREGISTRATION.md section 4",
+  "tolerance": 0.005
+}

@@ -152,11 +152,17 @@ register(_scaling)
 
 def _select(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     p = sub.add_parser("select-headline", help="apply the pre-registered headline selection rule")
+    p.add_argument(
+        "--extra-seeds",
+        default="1,2",
+        help="comma-separated seeds trained on top of seed 0 (empty for seed 0 only)",
+    )
 
     def run(a: argparse.Namespace) -> int:
         from tsfm.analysis import select_headline
 
-        print("wrote", select_headline())
+        seeds = tuple(int(x) for x in a.extra_seeds.split(",") if x.strip())
+        print("wrote", select_headline(extra_seeds=seeds))
         return 0
 
     p.set_defaults(func=run)

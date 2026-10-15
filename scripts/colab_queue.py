@@ -241,7 +241,7 @@ def main() -> int:
         base = choice["headline"]
         cfg_path = ROOT / "configs" / "scaling" / f"{base}.yaml"
         names = [base]
-        for seed in (1, 2):
+        for seed in choice.get("extra_seeds", [1, 2]):
             name = f"{base}_seed{seed}"
             names.append(name)
             if not stage(drive, f"train_{name}"):
@@ -270,6 +270,7 @@ def main() -> int:
                 log,
             )
             done(drive, f"test_{name}")
+            dump(drive)
         # Milestones 8-9 (PREREGISTRATION_VOL.md): the seed-0 headline checkpoint,
         # zero-shot and fine-tuned, on the realized-volatility test period.
         for vname, flag in (("tsfm_zero_shot", ""), ("tsfm_finetuned", "--finetune")):
@@ -281,6 +282,7 @@ def main() -> int:
                 log,
             )
             done(drive, f"vol_{vname}")
+            dump(drive)
     status(drive, state=f"phase {a.phase} complete")
     return 0
 
