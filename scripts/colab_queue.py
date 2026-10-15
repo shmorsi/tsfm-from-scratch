@@ -31,13 +31,45 @@ ROOT = Path(__file__).resolve().parents[1]
 GRID = ["patch_s0", "patch_s1", "patch_s2", "bins_s2", "patch_s3"]
 
 
+def say(msg: str) -> None:
+    print(f"[queue {dt.datetime.now(dt.UTC):%H:%M:%S}] {msg}", flush=True)
+
+
 def sh(cmd: str, log: Path) -> None:
+    t0 = time.time()
+    say(f"start: {cmd[:140]}")
     with open(log, "a") as f:
         f.write(f"\n$ {cmd}\n")
         f.flush()
         r = subprocess.run(cmd, shell=True, cwd=ROOT, stdout=f, stderr=subprocess.STDOUT)
+    say(f"exit {r.returncode} after {(time.time() - t0) / 60:.1f} min")
     if r.returncode:
+        tail = log.read_text()[-3000:]
+        print(tail, flush=True)
         raise SystemExit(f"failed ({r.returncode}): {cmd}")
+
+
+def dump(drive: Path) -> None:
+    """Print every new or changed file under <drive>/export between markers with its
+    SHA-256, so results can be copied from the notebook output and verified."""
+    import hashlib
+
+    seen_p = drive / "queue" / "dumped.json"
+    seen = json.loads(seen_p.read_text()) if seen_p.exists() else {}
+    root = drive / "export"
+    for p in sorted(root.rglob("*")) if root.exists() else []:
+        if not p.is_file() or "/partial/" in str(p):
+            continue
+        rel = str(p.relative_to(root))
+        data = p.read_bytes()
+        sha = hashlib.sha256(data).hexdigest()
+        if seen.get(rel) == sha:
+            continue
+        print(f"===FILE {rel} {sha}===", flush=True)
+        print(data.decode(), end="" if data.endswith(b"\n") else "\n", flush=True)
+        print("===END===", flush=True)
+        seen[rel] = sha
+    seen_p.write_text(json.dumps(seen, indent=1) + "\n")
 
 
 def status(drive: Path, **kw: object) -> None:
@@ -63,6 +95,8 @@ def stage(drive: Path, name: str) -> bool:
 
 def done(drive: Path, name: str) -> None:
     (drive / "queue" / f"{name}.done").write_text(dt.datetime.now(dt.UTC).isoformat() + "\n")
+    say(f"stage done: {name}")
+    dump(drive)
 
 
 def run_config(
@@ -109,6 +143,10 @@ def main() -> int:
         ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True
     ).stdout.strip()
     status(drive, phase=a.phase, git_sha=sha, state="running")
+    say(
+        f"phase {a.phase} at {sha[:7]}; finished stages: {sorted(p.stem for p in (drive / 'queue').glob('*.done'))}"
+    )
+    dump(drive)
 
     if a.phase == "A":
         if stage(drive, "bench"):
