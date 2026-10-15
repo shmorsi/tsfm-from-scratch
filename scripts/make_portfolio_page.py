@@ -69,8 +69,14 @@ def build() -> str:
         "seasonal_naive",
         "upstream:Auto_ETS",
     ]
+    n_seeds = len(head["seed_runs"])
+    seed_txt = (
+        "mean of 3 seeds"
+        if n_seeds == 3
+        else ("1 seed" if n_seeds == 1 else f"mean of {n_seeds} seeds")
+    )
     labels = {
-        "headline": f"Ours ({hl}, mean of 3 seeds)",
+        "headline": f"Ours ({hl}, {hsum['params_total'] / 1e6:.0f}M, {seed_txt})",
         "upstream:TimesFM-2.5": "TimesFM-2.5, 231M (reported)",
         "upstream:FlowState-9.1M": "FlowState, 9.1M (reported)",
         "flowstate_9.1m": "FlowState, 9.1M (run by us)",
@@ -140,6 +146,23 @@ def build() -> str:
         volrows,
     )
 
+    ours = tm["headline"]["crps_gmean"]
+    ahead = [
+        labels[k].split(" (")[0].split(",")[0]
+        for k in ("upstream:TimesFM-2.5", "upstream:FlowState-9.1M")
+        if k in tm and tm[k]["crps_gmean"] < ours
+    ]
+    behind = [
+        labels[k].split(" (")[0].split(",")[0]
+        for k in ("upstream:TimesFM-2.5", "upstream:FlowState-9.1M")
+        if k in tm and tm[k]["crps_gmean"] >= ours
+    ]
+    published_txt = ""
+    if ahead:
+        published_txt += f"Published foundation models trained with far more data and compute score better on CRPS ({', '.join(ahead)}). "
+    if behind:
+        published_txt += f"It matches or beats the reported CRPS of {', '.join(behind)}. "
+    has_ft = "both/all_test" in vol.get("tsfm_finetuned", {})
     glance = [
         (
             f"{prim['ratio']:.3f}",
@@ -208,10 +231,10 @@ def build() -> str:
       <div class="graticule" aria-hidden="true"></div>
       <div class="wrap cs-hero-inner">
         <a class="back" href="../#tsfm">← All projects</a>
-        <span class="label signal">03 · Deep learning · Forecasting · Research engineering</span>
+        <span class="label signal">01 · Deep learning · Forecasting · Research engineering</span>
         <h1 id="cs-title">A time-series foundation model, from scratch</h1>
         <p class="cs-question">How far does a small transformer get on a public zero-shot forecasting benchmark when it is pretrained from scratch, on data checked for overlap with the benchmark, and judged by a test fixed in advance?</p>
-        <p class="cs-summary">A decoder-only transformer, its tokenizers, training loop and sampling written in plain PyTorch; pretrained on a pinned, leakage-audited corpus plus synthetic Gaussian-process series; scored once on the 97 GIFT-Eval configurations against classical baselines and published models; then fine-tuned on daily realized volatility of crypto markets and tested across the 2020 and 2022 market breaks.</p>
+        <p class="cs-summary">A decoder-only transformer, its tokenizers, training loop and sampling written in plain PyTorch; pretrained on a pinned, leakage-audited corpus plus synthetic Gaussian-process series; scored once on the 97 GIFT-Eval configurations against classical baselines and published models; then {"zero-shot and fine-tuned" if has_ft else "zero-shot"} on daily realized volatility of crypto markets, tested across the 2020 and 2022 market breaks.</p>
         <div class="project-links">
           <a class="button primary" href="{REPO}" target="_blank" rel="noopener noreferrer">Code and results <span aria-hidden="true">↗</span></a>
           <a class="button ghost" href="{REPO}/blob/main/RESEARCH_NOTE.md" target="_blank" rel="noopener noreferrer">Read the research note <span aria-hidden="true">↗</span></a>
@@ -243,7 +266,7 @@ def build() -> str:
         <div class="prose">
           <ul>
             <li><strong>Model:</strong> decoder-only transformer with pre-norm RMSNorm, rotary position embeddings, SwiGLU and a key/value cache, written without model libraries. Two tokenizers: mean-scaled 4,096-bin quantisation with cross-entropy, and patches with a non-crossing quantile head.</li>
-            <li><strong>Training:</strong> mixed precision, gradient accumulation, cosine schedule, checkpoints to Google Drive every 10 minutes; a resumed run is bit-identical to an uninterrupted one (tested). Trained on a free Colab T4.</li>
+            <li><strong>Training:</strong> mixed precision, gradient accumulation, cosine schedule, checkpoints to Google Drive every 10 minutes; a resumed run is bit-identical to an uninterrupted one (tested). Trained on a free Colab T4; profiling showed half of each step went to cumulative-sum kernels, which were replaced by equivalent cheaper operations.</li>
             <li><strong>Evaluation:</strong> GluonTS exactly as GIFT-Eval scores the leaderboard, verified by reproducing upstream's Seasonal Naive on every metric. The split, metrics, baselines, primary comparison and decision rule were committed and tagged in git before any of our models saw the test set, which each model faced once.</li>
           </ul>
         </div>
@@ -253,14 +276,14 @@ def build() -> str:
         <h2 id="s-results">Results</h2>
         <div class="prose">
           {test_table}
-          <p>The headline model was chosen on held-out validation datasets by the pre-registered rule. Against AutoARIMA, its test CRPS ratio is {prim["ratio"]:.3f} (95% bootstrap interval {prim["ci95"][0]:.3f} to {prim["ci95"][1]:.3f} over configurations), so the verdict fixed in advance is <strong>{esc(prim["verdict"])}</strong>. Published models trained with far more data and compute remain clearly ahead.</p>
+          <p>The headline model was chosen on held-out validation datasets by the pre-registered rule. Against AutoARIMA, its test CRPS ratio is {prim["ratio"]:.3f} (95% bootstrap interval {prim["ci95"][0]:.3f} to {prim["ci95"][1]:.3f} over configurations), so the verdict fixed in advance is <strong>{esc(prim["verdict"])}</strong>. {published_txt}</p>
           {val_table}
           {scaling_text}
         </div>
       </section>
 
       <section class="cs-section" aria-labelledby="s-vol">
-        <h2 id="s-vol">Fine-tuning on market volatility</h2>
+        <h2 id="s-vol">{"Fine-tuning on" if has_ft else "Transfer to"} market volatility</h2>
         <div class="prose">
           <p>Daily realized volatility of BTCUSDT and ETHUSDT, computed from Binance Vision 5-minute data, forecast 22 days ahead from every day of 2020 to 2026, with the 2020 crash and the 2022 collapses as stress regimes. The design was pre-registered separately.</p>
           {vol_table}
@@ -276,7 +299,7 @@ def build() -> str:
             <ul>
               <li>The first GPU run diverged: future patches reach about a million in scaled units when the context is near zero, overflowing half precision. Clipping fixed it; the broken runs are discarded and recorded in the repository.</li>
               <li>Prediction intervals are too narrow, worst at long horizons, because longer forecasts feed back medians.</li>
-              <li>The largest planned model (about 100M parameters) was not trained: it needs paid compute.</li>
+              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of five, the second tokenizer trained but not scored, and the headline scored with {seed_txt} instead of three, so seed-to-seed variation is not measured.</li>
               <li>The leakage check finds exact and rescaled copies only, not noisy or re-sampled ones.</li>
             </ul>
           </div>
@@ -295,7 +318,7 @@ def build() -> str:
       </section>
 
       <nav class="next-project" aria-label="Next project">
-        <a class="next" href="world-shock-lab.html"><span class="label">Next project · 01</span><strong>World Shock Lab →</strong></a>
+        <a class="next" href="world-shock-lab.html"><span class="label">Next project · 02</span><strong>World Shock Lab →</strong></a>
         <a class="text-link" href="../#work">All projects</a>
       </nav>
     </div>

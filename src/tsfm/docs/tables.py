@@ -118,6 +118,33 @@ def reported_reference(root: Path) -> str:
     return note + "\n\n" + md_table(["model", "MASE", "CRPS", "rank", "80% coverage"], rows)
 
 
+@table("test_models")
+def test_models(root: Path) -> str:
+    """Our headline model next to the reported references and our Seasonal Naive."""
+    from tsfm.docs.build import MissingResult
+
+    s = _load(root, "results/analysis/test_summary.json")
+    hl = _load(root, "results/analysis/headline_choice.json")["headline"]
+    if hl not in s["models"]:
+        raise MissingResult("headline test results")
+    names = sorted(
+        (n for n in s["models"] if n.startswith("upstream:") or n in (hl, "seasonal_naive")),
+        key=lambda n: s["models"][n]["crps_gmean"],
+    )
+    rows = _model_rows(s, names)
+    for r, n in zip(rows, names, strict=True):
+        if n == hl:
+            r[0] = f"**{n} (ours, pretrained from scratch)**"
+        elif n == "seasonal_naive":
+            r[0] = "Seasonal Naive (run by us)"
+    note = (
+        f"GIFT-Eval test split, {s['n_configs']} configurations; geometric mean of each metric "
+        "divided by Seasonal Naive (lower is better). All rows except ours and Seasonal Naive are "
+        "computed from upstream's committed result files; coverage needs quantiles those files do not contain."
+    )
+    return note + "\n\n" + md_table(["model", "MASE", "CRPS", "rank", "80% coverage"], rows)
+
+
 @table("headline")
 def headline(root: Path) -> str:
     h = _load(root, "results/analysis/headline.json")

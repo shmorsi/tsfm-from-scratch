@@ -169,3 +169,32 @@ def _select(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
 
 
 register(_select)
+
+
+def _headline(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
+    p = sub.add_parser(
+        "headline", help="pre-registered test comparisons for the headline model's seed runs"
+    )
+    p.add_argument(
+        "--runs",
+        nargs="*",
+        help="test result names, one per seed (default: from results/analysis/headline_choice.json)",
+    )
+
+    def run(a: argparse.Namespace) -> int:
+        import json
+
+        from tsfm.analysis import headline_report
+        from tsfm.paths import results_dir
+
+        runs = a.runs
+        if not runs:
+            c = json.loads((results_dir() / "analysis" / "headline_choice.json").read_text())
+            runs = [c["headline"], *(f"{c['headline']}_seed{s}" for s in c.get("extra_seeds", []))]
+        print("wrote", headline_report(runs))
+        return 0
+
+    p.set_defaults(func=run)
+
+
+register(_headline)
