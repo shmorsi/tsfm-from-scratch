@@ -53,7 +53,9 @@ Geometric mean over the 97 configurations of each metric divided by Seasonal Nai
 
 A first end-to-end check, not a benchmark result: `patch_s0` (the smallest grid size)
 trained on a laptop CPU in fp32 with the full step budget
-(`configs/pilot/pilot_patch_s0_cpu.yaml`), scored on held-out validation datasets.
+(`configs/pilot/pilot_patch_s0_cpu.yaml`), scored on held-out validation datasets. It
+predates the clipping of extreme scaled values that fixed fp16 overflow on the GPU; it
+ran in fp32, where that overflow cannot occur.
 
 Validation split (16 configurations from datasets held out of pretraining); geometric means of scores divided by Seasonal Naive.
 
