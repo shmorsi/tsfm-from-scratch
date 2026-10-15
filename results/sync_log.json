@@ -94,5 +94,35 @@
   "sha256": "7808d549aa5e675621bf94fd1a53292a232cbdff6f7b493b12ea29224b95e459",
   "source": "colab notebook output",
   "synced_utc": "2026-10-15T01:01:49+00:00"
+ },
+ {
+  "file": "results/eval/val/patch_s2/all_results.csv",
+  "sha256": "1e444867376ce85e5fab500b775d5066635438e773d54c49b823907e019463a7",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T02:34:59+00:00"
+ },
+ {
+  "file": "results/eval/val/patch_s2/config.json",
+  "sha256": "5327beee79b15b528a58a0c442d9ba566798e609aba43f6256961357b2dd3846",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T02:34:59+00:00"
+ },
+ {
+  "file": "results/eval/val/patch_s2/run.json",
+  "sha256": "ca80c5d52dae5e31134af4bdbd7be6c3411f8fac26a5e71019064b15ce417e1d",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T02:34:59+00:00"
+ },
+ {
+  "file": "results/runs/patch_s2/config.yaml",
+  "sha256": "182c5f5e375da685c6b0ca3a56aedb534e22cbf37769e8a436d1a4f59843ba54",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T02:34:59+00:00"
+ },
+ {
+  "file": "results/runs/patch_s2/summary.json",
+  "sha256": "6e5e7abbf020d019a6c7a9d7bd35db90a83687c161aafda0c00dafe6c8bddec0",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T02:34:59+00:00"
  }
 ]

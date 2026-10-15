@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "created_utc": "2026-10-15T01:02:22+00:00",
+    "created_utc": "2026-10-15T02:34:59+00:00",
     "env": {
       "gluonts": "0.15.1",
       "numpy": "1.26.4",
@@ -12,7 +12,7 @@
       "tsfm": "0.1.0"
     },
     "git_dirty": true,
-    "git_sha": "a4c8ba3533af7ba22ee51fa19e6440afd3b1a6f7",
+    "git_sha": "5654415c5efc0bf254d4aa06e776c722d0ca7d20",
     "label": "report-val",
     "split": "none"
   },
@@ -84,8 +84,8 @@
       },
       "crps_gmean": 0.7403048319135199,
       "mase_gmean": 1.1386755082356979,
-      "rank_crps": 2.4375,
-      "rank_mase": 3.1875,
+      "rank_crps": 3.375,
+      "rank_mase": 4.0625,
       "worst_configs_crps": [
         [
           "monash_m3_yearly/A-DEC/short",
@@ -175,8 +175,8 @@
       },
       "crps_gmean": 0.6362082982406075,
       "mase_gmean": 0.9100080071453884,
-      "rank_crps": 1.375,
-      "rank_mase": 1.5625,
+      "rank_crps": 2.0625,
+      "rank_mase": 2.3125,
       "worst_configs_crps": [
         [
           "tourism_quarterly/Q-DEC/short",
@@ -197,6 +197,97 @@
         [
           "kdd2022/10T/long",
           0.7661746470040779
+        ]
+      ]
+    },
+    "patch_s2": {
+      "by": {
+        "domain": {
+          "validation": {
+            "crps": 0.6046135740762908,
+            "mase": 0.8402240103055788,
+            "n": 16
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.405410100481047,
+            "mase": 0.5288890960606513,
+            "n": 2
+          },
+          "hourly": {
+            "crps": 0.47610643911738243,
+            "mase": 0.8496285399243956,
+            "n": 6
+          },
+          "minutely": {
+            "crps": 0.6087192652936585,
+            "mase": 0.7511681277340527,
+            "n": 4
+          },
+          "monthly": {
+            "crps": 1.087242083518913,
+            "mase": 1.02452908965333,
+            "n": 1
+          },
+          "quarterly": {
+            "crps": 1.0500545442757638,
+            "mase": 1.2439386085188704,
+            "n": 1
+          },
+          "weekly": {
+            "crps": 0.9459170851750697,
+            "mase": 1.142924364000255,
+            "n": 1
+          },
+          "yearly": {
+            "crps": 1.1235009944681063,
+            "mase": 1.2645275104600595,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 0.5079454211459575,
+            "mase": 0.9108845625571218,
+            "n": 5
+          },
+          "short": {
+            "crps": 0.6544390201243674,
+            "mase": 0.8099439623434646,
+            "n": 11
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.3649806050290264,
+        "80": 0.6494680843827596,
+        "90": 0.7700676157111507
+      },
+      "crps_gmean": 0.6046135740762908,
+      "mase_gmean": 0.8402240103055788,
+      "rank_crps": 1.625,
+      "rank_mase": 1.875,
+      "worst_configs_crps": [
+        [
+          "monash_m3_yearly/A-DEC/short",
+          1.1235009944681063
+        ],
+        [
+          "m1_monthly/M/short",
+          1.087242083518913
+        ],
+        [
+          "tourism_quarterly/Q-DEC/short",
+          1.0500545442757638
+        ],
+        [
+          "traffic_weekly/W-SUN/short",
+          0.9459170851750697
+        ],
+        [
+          "australian_electricity_demand/30T/short",
+          0.8245516059507636
         ]
       ]
     },
@@ -266,8 +357,8 @@
       },
       "crps_gmean": 0.7329016837442155,
       "mase_gmean": 1.1228366170705768,
-      "rank_crps": 2.8125,
-      "rank_mase": 3.1875,
+      "rank_crps": 3.75,
+      "rank_mase": 4.0625,
       "worst_configs_crps": [
         [
           "monash_m3_yearly/A-DEC/short",
@@ -357,8 +448,8 @@
       },
       "crps_gmean": 1.0,
       "mase_gmean": 1.0,
-      "rank_crps": 3.375,
-      "rank_mase": 2.0625,
+      "rank_crps": 4.1875,
+      "rank_mase": 2.6875,
       "worst_configs_crps": [
         [
           "australian_electricity_demand/30T/long",
