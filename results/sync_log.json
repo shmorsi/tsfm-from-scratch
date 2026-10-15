@@ -22,5 +22,11 @@
   "run": "pilot_patch_s0_cpu",
   "run_git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
   "synced_utc": "2026-10-14T23:09:37+00:00"
+ },
+ {
+  "file": "results/bench/Tesla_T4.json",
+  "sha256": "dc37b89f2f60a7ac6d183bfc8a1beb34a75969afee954c7cd0eb5df0ccf9b250",
+  "source": "colab notebook output",
+  "synced_utc": "2026-10-15T00:18:39+00:00"
  }
 ]

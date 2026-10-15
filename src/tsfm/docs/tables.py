@@ -212,3 +212,85 @@ def val_models(root: Path) -> str:
             ["model", "MASE", "CRPS", "rank", "50% coverage", "80% coverage", "90% coverage"], rows
         )
     )
+
+
+VOL_LABELS = {
+    "random_walk": "Random walk (reference)",
+    "har": "HAR-RV",
+    "tsfm_zero_shot": "Our model, zero-shot",
+    "tsfm_finetuned": "Our model, fine-tuned",
+}
+
+
+def _ratio_cell(g: dict[str, Any]) -> str:
+    if "wql_ratio_vs_ref" not in g:
+        return "1 (reference)"
+    lo, hi = g["wql_ratio_ci95"]
+    return f"{g['wql_ratio_vs_ref']:.3f} [{lo:.3f}, {hi:.3f}]"
+
+
+@table("vol_overall")
+def vol_overall(root: Path) -> str:
+    s = _load(root, "results/finance/summary.json")
+    rows = []
+    for m in VOL_LABELS:
+        g = s["models"].get(m, {}).get("both/all_test")
+        if g:
+            rows.append(
+                [
+                    VOL_LABELS[m],
+                    f"{g['origins']:,}",
+                    f"{g['wql']:.4f}",
+                    _ratio_cell(g),
+                    f"{g['cov50']:.3f}",
+                    f"{g['cov80']:.3f}",
+                    f"{g['cov90']:.3f}",
+                ]
+            )
+    return md_table(
+        [
+            "model",
+            "origins",
+            "weighted quantile loss",
+            "ratio to random walk [95% CI]",
+            "50% cov.",
+            "80% cov.",
+            "90% cov.",
+        ],
+        rows,
+    )
+
+
+@table("vol_regimes")
+def vol_regimes(root: Path) -> str:
+    s = _load(root, "results/finance/summary.json")
+    regs = ["calm", "covid_2020", "terra_3ac_2022", "ftx_2022"]
+    rows = []
+    for m in VOL_LABELS:
+        res = s["models"].get(m)
+        if not res:
+            continue
+        for r in regs:
+            g = res.get(f"both/{r}")
+            if g:
+                rows.append(
+                    [
+                        VOL_LABELS[m],
+                        r,
+                        f"{g['origins']:,}",
+                        f"{g['wql']:.4f}",
+                        _ratio_cell(g),
+                        f"{g['cov80']:.3f}",
+                    ]
+                )
+    return md_table(
+        [
+            "model",
+            "regime",
+            "origins",
+            "weighted quantile loss",
+            "ratio to random walk [95% CI]",
+            "80% coverage",
+        ],
+        rows,
+    )

@@ -48,7 +48,20 @@ Seasonal Naive reproduces upstream's on all official metrics and configurations)
 
 ### Fine-tuning on realized volatility, and regime robustness
 
-*pending (milestones 8-9; the data source and licence need sign-off first).*
+Design fixed in `PREREGISTRATION_VOL.md` (tag `prereg-vol-v1`) before scoring: daily
+realized volatility of BTCUSDT and ETHUSDT from Binance Vision 5-minute klines
+(CC BY-NC-SA 4.0), 22-day forecasts from every day of the test period, pooled weighted
+quantile loss with moving-block bootstrap intervals. Models not yet run show no row.
+
+{{ table:vol_overall | default:*pending* }}
+
+By regime (labelled by forecast origin; "calm" excludes any origin whose 22-day window
+touches a break):
+
+{{ table:vol_regimes | default:*pending* }}
+
+These are statistical forecast scores only. They say nothing about trading
+performance, and none is claimed.
 
 ## Not established
 

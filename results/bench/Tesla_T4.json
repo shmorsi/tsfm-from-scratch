@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-15T00:11:37+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cu126",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "55396dc9991aa78b2f4fc5c6e731dbb131bbc1a1",
+    "label": "M3-bench",
+    "split": "none"
+  },
+  "device": "Tesla_T4",
+  "rows": [
+    {
+      "achieved_tflops_6ND": 3.5500199391002414,
+      "config": "bins_s2.yaml",
+      "configured_steps": 800,
+      "params_body": 9671680,
+      "params_total": 12293440,
+      "peak_memory_gb": 11.934273024,
+      "precision": "fp16",
+      "projected_hours": 0.9513174480862089,
+      "seconds_per_step": 4.28092851638794,
+      "tokens_per_second": 61175.51344234303
+    },
+    {
+      "achieved_tflops_6ND": 0.12013677534833314,
+      "config": "patch_s0.yaml",
+      "configured_steps": 1000,
+      "params_body": 754688,
+      "params_total": 895296,
+      "peak_memory_gb": 0.483776512,
+      "precision": "fp16",
+      "projected_hours": 0.17153792911105686,
+      "seconds_per_step": 0.6175365447998047,
+      "tokens_per_second": 26531.223355067068
+    },
+    {
+      "achieved_tflops_6ND": 0.9240670617273758,
+      "config": "patch_s1.yaml",
+      "configured_steps": 3200,
+      "params_body": 2656512,
+      "params_total": 2879296,
+      "peak_memory_gb": 0.79224832,
+      "precision": "fp16",
+      "projected_hours": 0.25120423634847006,
+      "seconds_per_step": 0.2826047658920288,
+      "tokens_per_second": 57974.96000566256
+    },
+    {
+      "achieved_tflops_6ND": 2.4645005350106506,
+      "config": "patch_s2.yaml",
+      "configured_steps": 12000,
+      "params_body": 9671680,
+      "params_total": 10083392,
+      "peak_memory_gb": 1.516170752,
+      "precision": "fp16",
+      "projected_hours": 1.2859466075897217,
+      "seconds_per_step": 0.3857839822769165,
+      "tokens_per_second": 42469.36304431513
+    },
+    {
+      "achieved_tflops_6ND": 4.5537911409564815,
+      "config": "patch_s3.yaml",
+      "configured_steps": 38400,
+      "params_body": 31139840,
+      "params_total": 31896384,
+      "peak_memory_gb": 1.796173824,
+      "precision": "fp16",
+      "projected_hours": 7.170396677652994,
+      "seconds_per_step": 0.6722246885299683,
+      "tokens_per_second": 24372.80314090932
+    },
+    {
+      "achieved_tflops_6ND": 8.305868785265503,
+      "config": "patch_s4.yaml",
+      "configured_steps": 121000,
+      "params_body": 99111936,
+      "params_total": 100442944,
+      "peak_memory_gb": 4.207937024,
+      "precision": "fp16",
+      "projected_hours": 39.42711075146993,
+      "seconds_per_step": 1.1730380058288574,
+      "tokens_per_second": 13967.151889868413
+    }
+  ],
+  "timed_steps": 10
+}

@@ -49,7 +49,32 @@ Seasonal Naive reproduces upstream's on all official metrics and configurations)
 
 ### Fine-tuning on realized volatility, and regime robustness
 
-*pending (milestones 8-9; the data source and licence need sign-off first).*
+Design fixed in `PREREGISTRATION_VOL.md` (tag `prereg-vol-v1`) before scoring: daily
+realized volatility of BTCUSDT and ETHUSDT from Binance Vision 5-minute klines
+(CC BY-NC-SA 4.0), 22-day forecasts from every day of the test period, pooled weighted
+quantile loss with moving-block bootstrap intervals. Models not yet run show no row.
+
+| model | origins | weighted quantile loss | ratio to random walk [95% CI] | 50% cov. | 80% cov. | 90% cov. |
+|---|---|---|---|---|---|---|
+| Random walk (reference) | 4,886 | 0.3557 | 1 (reference) | 0.505 | 0.799 | 0.896 |
+| HAR-RV | 4,886 | 0.2687 | 0.755 [0.731, 0.783] | 0.536 | 0.810 | 0.899 |
+
+By regime (labelled by forecast origin; "calm" excludes any origin whose 22-day window
+touches a break):
+
+| model | regime | origins | weighted quantile loss | ratio to random walk [95% CI] | 80% coverage |
+|---|---|---|---|---|---|
+| Random walk (reference) | calm | 4,306 | 0.3412 | 1 (reference) | 0.809 |
+| Random walk (reference) | covid_2020 | 142 | 0.5190 | 1 (reference) | 0.743 |
+| Random walk (reference) | terra_3ac_2022 | 184 | 0.3835 | 1 (reference) | 0.727 |
+| Random walk (reference) | ftx_2022 | 122 | 0.5634 | 1 (reference) | 0.618 |
+| HAR-RV | calm | 4,306 | 0.2588 | 0.759 [0.734, 0.785] | 0.818 |
+| HAR-RV | covid_2020 | 142 | 0.3722 | 0.717 [0.534, 0.862] | 0.781 |
+| HAR-RV | terra_3ac_2022 | 184 | 0.2615 | 0.682 [0.603, 0.776] | 0.839 |
+| HAR-RV | ftx_2022 | 122 | 0.4523 | 0.803 [0.651, 1.187] | 0.496 |
+
+These are statistical forecast scores only. They say nothing about trading
+performance, and none is claimed.
 
 ## Not established
 
