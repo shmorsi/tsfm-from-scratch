@@ -1,0 +1,114 @@
+{
+  "done": true,
+  "step": 3200,
+  "resumed": false,
+  "session_seconds": 988.0403988361359,
+  "params_total": 2879296,
+  "params_body": 2656512,
+  "train_tokens": 52428800,
+  "train_flops_6ND": 835666418073600,
+  "train_flops_attention": 23192823398400,
+  "val_loss_final": 0.1974604269489646,
+  "val_loss_batches": [
+    0.1764378547668457,
+    0.1379837691783905,
+    0.18657171726226807,
+    0.14889401197433472,
+    0.1830964982509613,
+    0.18530690670013428,
+    0.17023086547851562,
+    0.14014101028442383,
+    0.12806974351406097,
+    0.15161962807178497,
+    0.6593096256256104,
+    0.14284363389015198,
+    0.2699756920337677,
+    0.18627355992794037,
+    0.15915678441524506,
+    0.1334555298089981
+  ],
+  "config": {
+    "name": "patch_s1",
+    "seed": 0,
+    "model": {
+      "tokenizer": "patch",
+      "d_model": 192,
+      "n_layers": 6,
+      "n_heads": 6,
+      "ffn_mult": 2.6666666666666665,
+      "dropout": 0.0,
+      "rope_base": 10000.0,
+      "max_seq_len": 128,
+      "n_bins": 4094,
+      "bin_limit": 15.0,
+      "patch_len": 32,
+      "horizon": 64,
+      "quantiles": [
+        0.05,
+        0.1,
+        0.2,
+        0.25,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.75,
+        0.8,
+        0.9,
+        0.95
+      ]
+    },
+    "data": {
+      "corpora": [
+        {
+          "path": "pretrain"
+        },
+        {
+          "path": "synthetic",
+          "synthetic": true
+        }
+      ],
+      "val": [
+        {
+          "path": "val"
+        },
+        {
+          "path": "synthetic_val",
+          "synthetic": true
+        }
+      ],
+      "window": 2048,
+      "min_context": 32,
+      "max_context": null,
+      "synthetic_share": 0.1,
+      "temperature": 0.5,
+      "val_batches": 16,
+      "val_batch_size": 128,
+      "val_seed": 12345
+    },
+    "train": {
+      "steps": 3200,
+      "batch_size": 256,
+      "micro_batch": 128,
+      "lr": 0.001,
+      "warmup": 64,
+      "min_lr_ratio": 0.1,
+      "weight_decay": 0.1,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "grad_clip": 1.0,
+      "precision": "fp16",
+      "device": "cuda",
+      "ckpt_minutes": 10.0,
+      "ckpt_every_steps": null,
+      "eval_every": 160,
+      "log_every": 50
+    }
+  },
+  "config_hash": "6d078f179f3bd7a8",
+  "git_sha": "1efa5d3a027196431d5d63269869a0fc012e076b",
+  "git_dirty": true
+}

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "created_utc": "2026-10-15T00:41:09+00:00",
+    "created_utc": "2026-10-15T01:02:22+00:00",
     "env": {
       "gluonts": "0.15.1",
       "numpy": "1.26.4",
@@ -12,7 +12,7 @@
       "tsfm": "0.1.0"
     },
     "git_dirty": true,
-    "git_sha": "ce72d846af5188075c1566d57fb76f86b96541b9",
+    "git_sha": "a4c8ba3533af7ba22ee51fa19e6440afd3b1a6f7",
     "label": "report-val",
     "split": "none"
   },
@@ -84,8 +84,8 @@
       },
       "crps_gmean": 0.7403048319135199,
       "mase_gmean": 1.1386755082356979,
-      "rank_crps": 1.5625,
-      "rank_mase": 2.25,
+      "rank_crps": 2.4375,
+      "rank_mase": 3.1875,
       "worst_configs_crps": [
         [
           "monash_m3_yearly/A-DEC/short",
@@ -106,6 +106,97 @@
         [
           "bdg-2_bear/H/short",
           0.8353964014079444
+        ]
+      ]
+    },
+    "patch_s1": {
+      "by": {
+        "domain": {
+          "validation": {
+            "crps": 0.6362082982406075,
+            "mase": 0.9100080071453884,
+            "n": 16
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.43568997582836166,
+            "mase": 0.5873192109767504,
+            "n": 2
+          },
+          "hourly": {
+            "crps": 0.5088687566704275,
+            "mase": 0.9944729298708072,
+            "n": 6
+          },
+          "minutely": {
+            "crps": 0.6544753446784337,
+            "mase": 0.8192037142305936,
+            "n": 4
+          },
+          "monthly": {
+            "crps": 1.081247859831757,
+            "mase": 1.0324548685898276,
+            "n": 1
+          },
+          "quarterly": {
+            "crps": 1.5089481124854185,
+            "mase": 1.6618003839329463,
+            "n": 1
+          },
+          "weekly": {
+            "crps": 0.7410459578492294,
+            "mase": 0.8700380886723497,
+            "n": 1
+          },
+          "yearly": {
+            "crps": 0.9853296259997114,
+            "mase": 0.9859646909720962,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 0.5425183972921451,
+            "mase": 1.0124722024458912,
+            "n": 5
+          },
+          "short": {
+            "crps": 0.6839856538399249,
+            "mase": 0.8669270104052698,
+            "n": 11
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.41593901029456487,
+        "80": 0.6943990356803758,
+        "90": 0.8061612225392509
+      },
+      "crps_gmean": 0.6362082982406075,
+      "mase_gmean": 0.9100080071453884,
+      "rank_crps": 1.375,
+      "rank_mase": 1.5625,
+      "worst_configs_crps": [
+        [
+          "tourism_quarterly/Q-DEC/short",
+          1.5089481124854185
+        ],
+        [
+          "m1_monthly/M/short",
+          1.081247859831757
+        ],
+        [
+          "monash_m3_yearly/A-DEC/short",
+          0.9853296259997114
+        ],
+        [
+          "australian_electricity_demand/30T/short",
+          0.8924307226054762
+        ],
+        [
+          "kdd2022/10T/long",
+          0.7661746470040779
         ]
       ]
     },
@@ -175,8 +266,8 @@
       },
       "crps_gmean": 0.7329016837442155,
       "mase_gmean": 1.1228366170705768,
-      "rank_crps": 1.9375,
-      "rank_mase": 2.25,
+      "rank_crps": 2.8125,
+      "rank_mase": 3.1875,
       "worst_configs_crps": [
         [
           "monash_m3_yearly/A-DEC/short",
@@ -266,8 +357,8 @@
       },
       "crps_gmean": 1.0,
       "mase_gmean": 1.0,
-      "rank_crps": 2.5,
-      "rank_mase": 1.5,
+      "rank_crps": 3.375,
+      "rank_mase": 2.0625,
       "worst_configs_crps": [
         [
           "australian_electricity_demand/30T/long",
