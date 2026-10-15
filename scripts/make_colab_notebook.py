@@ -62,9 +62,12 @@ import subprocess
 
 if not os.path.exists("/content/tsfm"):
     subprocess.run(["git", "clone", "-q", f"https://github.com/{REPO}.git", "/content/tsfm"], check=True)
-subprocess.run(["git", "-C", "/content/tsfm", "fetch", "-q", "--tags", "origin"], check=True)
-subprocess.run(["git", "-C", "/content/tsfm", "checkout", "-q", COMMIT], check=True)
-subprocess.run(["git", "-C", "/content/tsfm", "pull", "-q", "--ff-only"], check=False)
+subprocess.run(["git", "-C", "/content/tsfm", "fetch", "-q", "--force", "--tags", "origin"], check=True)
+# A branch name follows the remote branch (even across a history rewrite); a SHA or tag is used as is.
+remote = f"origin/{COMMIT}"
+known = subprocess.run(["git", "-C", "/content/tsfm", "rev-parse", "-q", "--verify", remote], capture_output=True)
+ref = remote if known.returncode == 0 else COMMIT
+subprocess.run(["git", "-C", "/content/tsfm", "checkout", "-q", "--force", "--detach", ref], check=True)
 print(subprocess.run(["git", "-C", "/content/tsfm", "log", "-1", "--oneline"], capture_output=True, text=True).stdout)""",
     ),
     (
