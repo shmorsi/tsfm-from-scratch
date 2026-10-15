@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-15T00:09:05+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "55396dc9991aa78b2f4fc5c6e731dbb131bbc1a1",
+    "label": "M8-data",
+    "split": "none"
+  },
+  "attribution": "Data: Binance Vision (data.binance.vision), CC BY-NC-SA 4.0",
+  "min_bars": 274,
+  "symbols": {
+    "BTCUSDT": {
+      "days": 3332,
+      "first_day": "2017-08-17",
+      "last_day": "2026-09-30",
+      "median_rvol_pct": 2.5739458718381063,
+      "missing_days": 28,
+      "sha256": "a6e756bef4ac1d63a19fa777a85c85d5fbf21f10bda7a852698e8fca658eec2a"
+    },
+    "ETHUSDT": {
+      "days": 3332,
+      "first_day": "2017-08-17",
+      "last_day": "2026-09-30",
+      "median_rvol_pct": 3.3740998506014646,
+      "missing_days": 28,
+      "sha256": "44630c9bb8b39b5caeceb9884ab11358f66ee962f9096c70fb0ecf843dbed5b4"
+    }
+  }
+}

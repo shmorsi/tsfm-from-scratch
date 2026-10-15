@@ -98,7 +98,7 @@ disallow_any_generics = false
 
 [[tool.mypy.overrides]]
 # torch's stubs return Any from nn.Module.__call__ and leave Tensor.backward untyped.
-module = ["tsfm.model", "tsfm.forecast", "tsfm.tokenizers", "tsfm.train.*", "tsfm.data.synthetic", "tsfm.data.leakage"]
+module = ["tsfm.model", "tsfm.forecast", "tsfm.tokenizers", "tsfm.train.*", "tsfm.data.synthetic", "tsfm.data.leakage", "tsfm.finance.*"]
 warn_return_any = false
 disallow_untyped_calls = false
 

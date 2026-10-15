@@ -34,7 +34,13 @@ def _load_commands() -> None:
     # Imported lazily so `tsfm docs` works without torch installed.
     import importlib
 
-    for mod in ("tsfm.data.cli", "tsfm.train.cli", "tsfm.eval.cli", "tsfm.pipeline"):
+    for mod in (
+        "tsfm.data.cli",
+        "tsfm.train.cli",
+        "tsfm.eval.cli",
+        "tsfm.pipeline",
+        "tsfm.finance.cli",
+    ):
         try:
             importlib.import_module(mod)
         except ModuleNotFoundError as e:
