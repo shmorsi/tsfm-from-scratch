@@ -260,7 +260,7 @@ def build() -> str:
         <a class="back" href="../#tsfm">← All projects</a>
         <span class="label signal">01 · Deep learning · Forecasting · Research engineering</span>
         <h1 id="cs-title">A time-series foundation model, from scratch</h1>
-        <p class="cs-question">How far does a small transformer get on a public zero-shot forecasting benchmark when it is pretrained from scratch, on data checked for overlap with the benchmark, and judged by a test fixed in advance?</p>
+        <p class="cs-question">How far does a small transformer get on a public zero-shot forecasting benchmark when it is pretrained from scratch, on data checked for overlap with the benchmark, and judged by rules fixed in advance?</p>
         <p class="cs-summary">A decoder-only transformer, its tokenizers, training loop and sampling written in plain PyTorch; pretrained on a pinned, leakage-audited corpus plus synthetic Gaussian-process series; scored zero-shot on held-out datasets with the official GIFT-Eval scoring code; {"then " + ("zero-shot and fine-tuned" if has_ft else "zero-shot") + " on daily realized volatility of crypto markets, tested across the 2020 and 2022 market breaks." if has_zs else "with a pre-registered study of daily crypto-market volatility across the 2020 and 2022 market breaks."}</p>
         <div class="project-links">
           <a class="button primary" href="{REPO}" target="_blank" rel="noopener noreferrer">Code and results <span aria-hidden="true">↗</span></a>
@@ -294,7 +294,7 @@ def build() -> str:
           <ul>
             <li><strong>Model:</strong> decoder-only transformer with pre-norm RMSNorm, rotary position embeddings, SwiGLU and a key/value cache, written without model libraries. Two tokenizers: mean-scaled 4,096-bin quantisation with cross-entropy, and patches with a non-crossing quantile head.</li>
             <li><strong>Training:</strong> mixed precision, gradient accumulation, cosine schedule, checkpoints to Google Drive every 10 minutes; a resumed run is bit-identical to an uninterrupted one (tested). Trained on a free Colab T4; profiling showed half of each step went to cumulative-sum kernels, which were replaced by equivalent cheaper operations.</li>
-            <li><strong>Evaluation:</strong> GluonTS exactly as GIFT-Eval scores the leaderboard, verified by reproducing upstream's Seasonal Naive on every metric. The split, metrics, baselines, primary comparison and decision rule were committed and tagged in git before any of our models saw the test set, which each model faced once.</li>
+            <li><strong>Evaluation:</strong> GluonTS exactly as GIFT-Eval scores the leaderboard, verified by reproducing upstream's Seasonal Naive on every metric. The split, metrics, baselines, primary comparison and decision rule were committed and tagged in git before any test-set scoring; model selection used only held-out validation datasets.</li>
           </ul>
         </div>
       </section>
