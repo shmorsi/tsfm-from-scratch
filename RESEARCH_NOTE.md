@@ -51,12 +51,7 @@ Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0
 
 ### Zero-shot GIFT-Eval (test split, pre-registered)
 
-Primary and secondary comparisons fixed in `PREREGISTRATION.md` (paired bootstrap over
-configurations):
-
-*not available*
-
-*not available*
+*Not run. The pre-registered test scoring of the headline model did not complete before the deadline (`DEVIATIONS.md`); no test-set result is claimed. Published reference results for other models are in `README.md`.*
 
 ### Fine-tuning on realized volatility, and regime robustness
 
@@ -64,6 +59,8 @@ Design fixed in `PREREGISTRATION_VOL.md` (tag `prereg-vol-v1`) before scoring: d
 realized volatility of BTCUSDT and ETHUSDT from Binance Vision 5-minute klines
 (CC BY-NC-SA 4.0), 22-day forecasts from every day of the test period, pooled weighted
 quantile loss with moving-block bootstrap intervals.
+
+Our model was not run on this study before the deadline; the baselines were.
 
 | model | origins | weighted quantile loss | ratio to random walk [95% CI] | 50% cov. | 80% cov. | 90% cov. |
 |---|---|---|---|---|---|---|
@@ -91,12 +88,16 @@ performance, and none is claimed.
 
 `DEVIATIONS.md` records, before any of our models was scored on the test split, what was
 cut from the pre-registered plan to fit a free T4 GPU and a deadline: three model sizes
-instead of four to six, no tokenizer conclusion, and one seed for the headline model.
+instead of four to six, no tokenizer conclusion, one seed, and no test-split scoring of
+our model.
 
 ## Not established
 
 Things this project does **not** show, whatever the numbers above say:
 
+* How the model ranks on the GIFT-Eval test split or against AutoARIMA there: that
+  pre-registered comparison was not run. Validation datasets are held out of
+  pretraining but are not the benchmark.
 * That the model is useful for any real forecasting or trading decision. Nothing here
   measures economic value, and no trading performance is claimed.
 * That scaling trends continue beyond the sizes trained: the fit describes three runs.

@@ -80,7 +80,11 @@ def scaling_panel(x0: float, y0: float, w: float, h: float) -> str:
     out.append(f'<path d="{path}" fill="none" stroke="{SIGNAL}" stroke-width="4"/>')
     for _name, p, c in pts:
         out.append(f'<circle cx="{fx(p):.1f}" cy="{fy(c):.1f}" r="11" fill="{SIGNAL}"/>')
-        out.append(text(fx(p), fy(c) - 26, f"{c:.3f}", 24, INK, "middle", 600, MONO))
+        out.append(
+            text(fx(p) + 22, fy(c) - 22, f"{c:.3f}", 24, INK, "start", 600, MONO)
+            if _name != pts[-1][0]
+            else text(fx(p), fy(c) - 26, f"{c:.3f}", 24, INK, "middle", 600, MONO)
+        )
         out.append(text(fx(p), py0 + 44, f"{p / 1e6:.1f}M params", 21, INK2, "middle", font=MONO))
     return "".join(out)
 
@@ -137,6 +141,54 @@ def test_panel(x0: float, y0: float, w: float, h: float) -> str:
     return "".join(out)
 
 
+def val_panel(x0: float, y0: float, w: float, h: float) -> str:
+    """Zero-shot CRPS and MASE of each size next to Seasonal Naive (= 1)."""
+    val = load("results/analysis/val_summary.json")
+    rows = [(n, n, SIGNAL) for n in ("patch_s2", "patch_s1", "patch_s0") if n in val["models"]]
+    rows.append(("seasonal_naive", "Seasonal Naive (baseline)", MUTED))
+    out = [
+        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="18" fill="{PANEL}" stroke="{LINE}"/>',
+        text(x0 + 40, y0 + 62, "Zero-shot vs the naive baseline", 30, INK, weight=600),
+        text(
+            x0 + 40,
+            y0 + 100,
+            f"{val['n_configs']} held-out configurations · relative to Seasonal Naive",
+            22,
+            MUTED,
+        ),
+    ]
+    top, gap = y0 + 160, 140
+    bx0, bx1 = x0 + 40, x0 + w - 150
+    for i, (k, lab, col) in enumerate(rows):
+        m = val["models"][k]
+        y = top + i * gap
+        out.append(
+            text(
+                bx0,
+                y,
+                lab,
+                23,
+                INK if k == "patch_s2" else INK2,
+                weight=600 if k == "patch_s2" else 400,
+                font=MONO if k.startswith("patch") else FONT,
+            )
+        )
+        for j, (metric, key, c2) in enumerate(
+            (("CRPS", "crps_gmean", col), ("MASE", "mase_gmean", ICE if col == SIGNAL else MUTED))
+        ):
+            v = m[key]
+            yy = y + 18 + j * 42
+            bw = (bx1 - bx0 - 70) * v / 1.2
+            out.append(text(bx0, yy + 26, metric, 18, MUTED, font=MONO))
+            out.append(
+                f'<rect x="{bx0 + 70}" y="{yy + 6}" width="{bw:.1f}" height="28" rx="5" fill="{c2}" opacity="0.85"/>'
+            )
+            out.append(
+                text(bx0 + 70 + bw + 12, yy + 28, f"{v:.3f}", 22, INK, weight=600, font=MONO)
+            )
+    return "".join(out)
+
+
 def build() -> str:
     body = [
         f'<rect width="{W}" height="{H}" fill="{BG}"/>',
@@ -154,6 +206,8 @@ def build() -> str:
     ]
     if (ROOT / "results/analysis/headline.json").exists():
         body.append(test_panel(800, 180, 740, 760))
+    else:
+        body.append(val_panel(800, 180, 740, 760))
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
         f'role="img" aria-label="Validation CRPS by model size and GIFT-Eval test CRPS against baselines">'

@@ -49,13 +49,15 @@ def build() -> str:
     test = load("results/analysis/test_summary.json")
     val = load("results/analysis/val_summary.json")
     choice = load("results/analysis/headline_choice.json")
-    head = load("results/analysis/headline.json")
+    head_p = ROOT / "results/analysis/headline.json"
+    head = load("results/analysis/headline.json") if head_p.exists() else None
     vol = load("results/finance/summary.json")["models"]
     scaling = load("results/analysis/scaling.json").get("fit")
     hl = choice["headline"]
     hsum = load(f"results/runs/{hl}/summary.json")
 
-    prim = next(c for c in head["comparisons"] if c.get("primary"))
+    prim = next(c for c in head["comparisons"] if c.get("primary")) if head else None
+    vh = val["models"][hl]
     copies = [p for p in insp if p["verdict"] == "copy"]
 
     # --- headline test table: our seed-averaged model, references
@@ -69,7 +71,7 @@ def build() -> str:
         "seasonal_naive",
         "upstream:Auto_ETS",
     ]
-    n_seeds = len(head["seed_runs"])
+    n_seeds = len(head["seed_runs"]) if head else 1
     seed_txt = (
         "mean of 3 seeds"
         if n_seeds == 3
@@ -99,7 +101,8 @@ def build() -> str:
             ]
         )
     test_table = table(
-        "GIFT-Eval test, 97 configurations · geometric mean of score / Seasonal Naive, lower is better",
+        "GIFT-Eval test, 97 configurations · geometric mean of score / Seasonal Naive, lower is better"
+        + ("" if head else " · published results of other models, for reference"),
         ["Model", "CRPS", "MASE", "80% coverage"],
         trows,
     )
@@ -146,7 +149,7 @@ def build() -> str:
         volrows,
     )
 
-    ours = tm["headline"]["crps_gmean"]
+    ours = tm["headline"]["crps_gmean"] if head else vh["crps_gmean"]
     ahead = [
         labels[k].split(" (")[0].split(",")[0]
         for k in ("upstream:TimesFM-2.5", "upstream:FlowState-9.1M")
@@ -163,11 +166,20 @@ def build() -> str:
     if behind:
         published_txt += f"It matches or beats the reported CRPS of {', '.join(behind)}. "
     has_ft = "both/all_test" in vol.get("tsfm_finetuned", {})
-    glance = [
+    has_zs = "both/all_test" in vol.get("tsfm_zero_shot", {})
+    first = (
         (
             f"{prim['ratio']:.3f}",
             f"CRPS ratio to AutoARIMA on the GIFT-Eval test set (95% CI {prim['ci95'][0]:.3f} to {prim['ci95'][1]:.3f}): pre-registered verdict <em>{esc(prim['verdict'])}</em>",
-        ),
+        )
+        if prim
+        else (
+            f"{vh['crps_gmean']:.3f}",
+            f"zero-shot CRPS relative to Seasonal Naive on {val['n_configs']} configurations from datasets held out of pretraining (MASE {vh['mase_gmean']:.3f}); lower is better",
+        )
+    )
+    glance = [
+        first,
         (
             f"{r1['series_with_hits']:,}",
             "series in the upstream &ldquo;non-leaking&rdquo; pretraining corpus found to overlap GIFT-Eval, removed before training",
@@ -181,6 +193,21 @@ def build() -> str:
             "agreement with upstream's Seasonal Naive on all 11 official metrics and 97 configurations",
         ),
     ]
+    if prim:
+        results_html = (
+            test_table
+            + f"<p>The headline model was chosen on held-out validation datasets by the pre-registered rule. Against AutoARIMA, its test CRPS ratio is {prim['ratio']:.3f} (95% bootstrap interval {prim['ci95'][0]:.3f} to {prim['ci95'][1]:.3f} over configurations), so the verdict fixed in advance is <strong>{esc(prim['verdict'])}</strong>. {published_txt}</p>"
+            + val_table
+            + scaling_text
+        )
+    else:
+        results_html = (
+            f"<p>Every model was scored zero-shot on {val['n_configs']} configurations built from datasets held out of pretraining entirely, with the official GIFT-Eval scoring code. Error falls steadily with model size: the largest model, <code>{esc(hl)}</code>, has CRPS {vh['crps_gmean']:.3f} and MASE {vh['mase_gmean']:.3f} relative to Seasonal Naive, so it beats the naive baseline on both, and the pre-registered rule selects it.</p>"
+            + val_table
+            + scaling_text
+            + "<p>For context, the published GIFT-Eval leaderboard results of other models are below, recomputed from upstream's result files. They are other models' scores on the benchmark's test split, not ours; scoring our model there is pre-registered future work.</p>"
+            + test_table
+        )
     glance_html = "".join(
         f'<div class="readout"><b>{b}</b><span>{s}</span></div>' for b, s in glance
     )
@@ -234,7 +261,7 @@ def build() -> str:
         <span class="label signal">01 · Deep learning · Forecasting · Research engineering</span>
         <h1 id="cs-title">A time-series foundation model, from scratch</h1>
         <p class="cs-question">How far does a small transformer get on a public zero-shot forecasting benchmark when it is pretrained from scratch, on data checked for overlap with the benchmark, and judged by a test fixed in advance?</p>
-        <p class="cs-summary">A decoder-only transformer, its tokenizers, training loop and sampling written in plain PyTorch; pretrained on a pinned, leakage-audited corpus plus synthetic Gaussian-process series; scored once on the 97 GIFT-Eval configurations against classical baselines and published models; then {"zero-shot and fine-tuned" if has_ft else "zero-shot"} on daily realized volatility of crypto markets, tested across the 2020 and 2022 market breaks.</p>
+        <p class="cs-summary">A decoder-only transformer, its tokenizers, training loop and sampling written in plain PyTorch; pretrained on a pinned, leakage-audited corpus plus synthetic Gaussian-process series; scored zero-shot on held-out datasets with the official GIFT-Eval scoring code; {"then " + ("zero-shot and fine-tuned" if has_ft else "zero-shot") + " on daily realized volatility of crypto markets, tested across the 2020 and 2022 market breaks." if has_zs else "with a pre-registered study of daily crypto-market volatility across the 2020 and 2022 market breaks."}</p>
         <div class="project-links">
           <a class="button primary" href="{REPO}" target="_blank" rel="noopener noreferrer">Code and results <span aria-hidden="true">↗</span></a>
           <a class="button ghost" href="{REPO}/blob/main/RESEARCH_NOTE.md" target="_blank" rel="noopener noreferrer">Read the research note <span aria-hidden="true">↗</span></a>
@@ -275,19 +302,16 @@ def build() -> str:
       <section class="cs-section" aria-labelledby="s-results">
         <h2 id="s-results">Results</h2>
         <div class="prose">
-          {test_table}
-          <p>The headline model was chosen on held-out validation datasets by the pre-registered rule. Against AutoARIMA, its test CRPS ratio is {prim["ratio"]:.3f} (95% bootstrap interval {prim["ci95"][0]:.3f} to {prim["ci95"][1]:.3f} over configurations), so the verdict fixed in advance is <strong>{esc(prim["verdict"])}</strong>. {published_txt}</p>
-          {val_table}
-          {scaling_text}
+          {results_html}
         </div>
       </section>
 
       <section class="cs-section" aria-labelledby="s-vol">
-        <h2 id="s-vol">{"Fine-tuning on" if has_ft else "Transfer to"} market volatility</h2>
+        <h2 id="s-vol">Market volatility study</h2>
         <div class="prose">
           <p>Daily realized volatility of BTCUSDT and ETHUSDT, computed from Binance Vision 5-minute data, forecast 22 days ahead from every day of 2020 to 2026, with the 2020 crash and the 2022 collapses as stress regimes. The design was pre-registered separately.</p>
           {vol_table}
-          <p>These are statistical forecast scores only; no trading performance is claimed.</p>
+          <p>{"" if has_zs else "The baselines were run as designed; HAR-RV, the standard volatility model, is the bar for the transformer in this study. "}These are statistical forecast scores only; no trading performance is claimed.</p>
         </div>
       </section>
 
@@ -299,7 +323,7 @@ def build() -> str:
             <ul>
               <li>The first GPU run diverged: future patches reach about a million in scaled units when the context is near zero, overflowing half precision. Clipping fixed it; the broken runs are discarded and recorded in the repository.</li>
               <li>Prediction intervals are too narrow, worst at long horizons, because longer forecasts feed back medians.</li>
-              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of five, the second tokenizer trained but not scored, and the headline scored with {seed_txt} instead of three, so seed-to-seed variation is not measured.</li>
+              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of five, the second tokenizer trained but not scored, and one seed, so seed-to-seed variation is not measured.{"" if head else " The pre-registered test-split scoring of our model is future work, so no benchmark ranking is claimed."}</li>
               <li>The leakage check finds exact and rescaled copies only, not noisy or re-sampled ones.</li>
             </ul>
           </div>
@@ -334,11 +358,49 @@ def build() -> str:
 """
 
 
+def card() -> str:
+    """The project card for the portfolio home page (same data as the case study)."""
+    r1 = load("results/data/leakage_round1.json")["totals"]
+    val = load("results/analysis/val_summary.json")
+    hl = load("results/analysis/headline_choice.json")["headline"]
+    hsum = load(f"results/runs/{hl}/summary.json")
+    vh = val["models"][hl]
+    s0 = val["models"]["patch_s0"]
+    return f"""          <article class="project" id="tsfm" aria-labelledby="p0-title">
+            <a class="screen" href="projects/tsfm.html" aria-label="Read the time-series foundation model case study">
+              <div class="screen-bar" aria-hidden="true"><span>tsfm · pretrained from scratch</span><span class="local">Open source</span></div>
+              <img src="assets/img/tsfm-results.svg" width="1600" height="1000" alt="Zero-shot forecast error on held-out datasets falling as model size grows, for three transformers pretrained from scratch" loading="lazy">
+            </a>
+            <div class="project-body">
+              <div class="project-meta"><span class="project-index">01</span><span class="label">Deep learning · Forecasting · Research engineering</span></div>
+              <h3 id="p0-title">Time-series foundation model, from scratch</h3>
+              <p class="project-question">Can a small transformer, pretrained from scratch on public data checked for overlap with the benchmark, forecast series it has never seen?</p>
+              <p class="project-summary">A decoder-only transformer, its tokenizers, training loop and sampling written by hand in PyTorch, pretrained on a free Colab GPU and scored zero-shot with the official GIFT-Eval code. An audit of the pretraining corpus found copies of benchmark series inside it; every one was removed before training. Evaluation rules were fixed in git before scoring.</p>
+              <div class="readouts">
+                <div class="readout"><b>{vh["crps_gmean"]:.3f}</b><span>zero-shot CRPS relative to Seasonal Naive on held-out datasets, down from {s0["crps_gmean"]:.3f} for the smallest model</span></div>
+                <div class="readout"><b>{r1["series_with_hits"]:,}</b><span>pretraining series found to overlap the benchmark, removed before training</span></div>
+                <div class="readout"><b>{hsum["params_total"] / 1e6:.1f}M</b><span>parameters, every layer written by hand in PyTorch</span></div>
+              </div>
+              <div class="miss"><span class="label">What didn't work</span><p>Prediction intervals are too narrow: the 80% interval covers {vh["coverage_mean"]["80"]:.0%} of outcomes, because long forecasts feed back medians. The first GPU run also diverged in half precision until extreme values were clipped.</p></div>
+              <ul class="tags" aria-label="Technologies"><li>Python</li><li>PyTorch</li><li>GluonTS</li><li>statsforecast</li><li>NumPy</li><li>pandas</li><li>pytest</li><li>Hypothesis</li><li>GitHub Actions</li></ul>
+              <div class="project-links">
+                <a class="button primary" href="projects/tsfm.html">Case study <span aria-hidden="true">→</span></a>
+                <a class="button ghost" href="{REPO}" target="_blank" rel="noopener noreferrer">Code and results <span aria-hidden="true">↗</span></a>
+                <a class="text-link" href="{REPO}/blob/main/RESEARCH_NOTE.md" target="_blank" rel="noopener noreferrer">Research note ↗</a>
+              </div>
+            </div>
+          </article>
+"""
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--card", type=Path, help="also write the home-page project card here")
     a = ap.parse_args()
     a.out.write_text(build())
+    if a.card:
+        a.card.write_text(card())
     print("wrote", a.out)
     return 0
 
