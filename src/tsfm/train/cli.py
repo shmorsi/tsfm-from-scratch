@@ -71,8 +71,15 @@ def _bench(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     p.add_argument("--steps", type=int, default=10)
     p.add_argument("--precision", choices=["fp32", "fp16", "bf16"])
     p.add_argument("--run-root", type=Path, default=Path("/tmp/tsfm-bench"))
+    p.add_argument("--profile", action="store_true", help="print a torch.profiler table instead")
 
     def run(a: argparse.Namespace) -> int:
+        if a.profile:
+            from tsfm.train.bench import profile_config
+
+            for c in a.configs:
+                print(profile_config(c, a.steps, a.precision, a.run_root))
+            return 0
         from tsfm.train.bench import run_bench
 
         print("wrote", run_bench(a.configs, a.steps, a.precision, a.run_root))

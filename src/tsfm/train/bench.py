@@ -71,3 +71,28 @@ def run_bench(paths: list[Path], steps: int, precision: str | None, run_root: Pa
         out, {"device": dev, "rows": rows, "timed_steps": steps}, split="none", label="M3-bench"
     )
     return out
+
+
+def profile_config(path: Path, steps: int, precision: str | None, run_root: Path) -> str:
+    """torch.profiler table (CPU and CUDA time) for a few optimiser steps."""
+    from torch.profiler import ProfilerActivity, profile
+
+    rc = RunConfig.load(path)
+    if precision:
+        rc.train.precision = precision
+    rc.train.steps = 10**9
+    tr = Trainer(rc, run_root / f"profile-{rc.name}")
+    for _ in range(3):
+        tr.train_step()
+    acts = [ProfilerActivity.CPU] + ([ProfilerActivity.CUDA] if torch.cuda.is_available() else [])
+    t0 = time.time()
+    with profile(activities=acts) as prof:
+        for _ in range(steps):
+            tr.train_step()
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+    wall = (time.time() - t0) / steps
+    key = "cuda_time_total" if torch.cuda.is_available() else "cpu_time_total"
+    table = prof.key_averages().table(sort_by=key, row_limit=25)
+    cpu_table = prof.key_averages().table(sort_by="self_cpu_time_total", row_limit=15)
+    return f"profile {path.name}: {wall:.3f} s/step under the profiler\n{table}\n{cpu_table}"

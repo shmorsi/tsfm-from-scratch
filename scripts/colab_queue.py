@@ -190,6 +190,16 @@ def main() -> int:
                 log,
             )
             done(drive, "bench")
+        if stage(drive, "profile"):
+            # Where does step time go on this GPU? (printed into the notebook output)
+            status(drive, stage="profile")
+            prof_log = drive / "queue" / "profile.txt"
+            sh(
+                f"uv run tsfm bench --profile --configs configs/scaling/patch_s3.yaml --steps 5 --precision {a.precision} > {prof_log}",
+                log,
+            )
+            print(prof_log.read_text()[:12000], flush=True)
+            done(drive, "profile")
         for name in GRID:
             if not stage(drive, f"train_{name}"):
                 continue
