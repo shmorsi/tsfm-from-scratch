@@ -90,19 +90,25 @@ import os
 
 os.environ["TSFM_HOME"] = "/content/tsfm_home"
 os.environ["TSFM_PACKED"] = "/content/tsfm_home/processed/packed"
-if not os.path.exists("/content/tsfm_home/processed/packed/synthetic/meta.json"):
+# Phase B without extra seeds only scores the test split: GIFT-Eval data is enough.
+choice_p = "results/analysis/headline_choice.json"
+test_only = PHASE == "B" and os.path.exists(choice_p) and not json.load(open(choice_p)).get("extra_seeds", [1, 2])
+if test_only:
+    !uv run tsfm data download --which gifteval --workers 16
+elif not os.path.exists("/content/tsfm_home/processed/packed/synthetic/meta.json"):
     !uv run tsfm data download --which both --workers 16
     !uv run tsfm data build
     !uv run python scripts/fetch_synthetic.py --repo {REPO} --tag data-v1
     !uv run tsfm pack
-with open("results/data/corpus_manifest.json") as f:
-    man = json.load(f)["files"]
-for n in ["pretrain", "val"]:
-    with open(f"/content/tsfm_home/processed/packed/{n}/meta.json") as f:
-        src = json.load(f)["sources"]
-    expect = {k.split("/")[-1]: v["sha256"] for k, v in man.items() if k.startswith(n + "/") and "kernelsynth" not in k}
-    bad = sorted(k for k in expect if src.get(k) != expect[k])
-    print(n, "Parquet hashes match the committed manifest" if not bad else f"MISMATCH: {bad[:5]}")""",
+if not test_only:
+    with open("results/data/corpus_manifest.json") as f:
+        man = json.load(f)["files"]
+    for n in ["pretrain", "val"]:
+        with open(f"/content/tsfm_home/processed/packed/{n}/meta.json") as f:
+            src = json.load(f)["sources"]
+        expect = {k.split("/")[-1]: v["sha256"] for k, v in man.items() if k.startswith(n + "/") and "kernelsynth" not in k}
+        bad = sorted(k for k in expect if src.get(k) != expect[k])
+        print(n, "Parquet hashes match the committed manifest" if not bad else f"MISMATCH: {bad[:5]}")""",
     ),
     (
         "code",
