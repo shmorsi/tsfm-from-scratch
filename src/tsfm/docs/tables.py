@@ -294,3 +294,22 @@ def vol_regimes(root: Path) -> str:
         ],
         rows,
     )
+
+
+@table("model_card_headline")
+def model_card_headline(root: Path) -> str:
+    h = _load(root, "results/analysis/headline_choice.json")
+    name = h["headline"]
+    s = _load(root, f"results/runs/{name}/summary.json")
+    m = s["config"]["model"]
+    t = s["config"]["train"]
+    rows = [
+        ["run", f"`{name}`"],
+        ["parameters (total / transformer body)", f"{s['params_total']:,} / {s['params_body']:,}"],
+        ["layers x width x heads", f"{m['n_layers']} x {m['d_model']} x {m['n_heads']}"],
+        ["training steps x batch", f"{t['steps']:,} x {t['batch_size']}"],
+        ["training tokens (patches)", f"{s['train_tokens']:,}"],
+        ["training compute (6ND)", f"{s['train_flops_6ND']:.2e} FLOPs"],
+        ["precision / hardware", f"{t['precision']} on one Colab T4"],
+    ]
+    return md_table(["", ""], rows)

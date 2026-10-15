@@ -14,3 +14,7 @@
 4,096       # tokenizer (a) vocabulary size (design choice)
 97          # number of GIFT-Eval configurations (benchmark definition)
 1.8         # include_all_below_mb in configs/data.yaml, shown as GB (design choice)
+100         # SCALED_CLIP: patch values clipped at 100x the context scale (design constant)
+32          # patch length (design constant)
+64          # patch-head horizon in steps (design constant)
+13          # number of predicted quantile levels (design constant)

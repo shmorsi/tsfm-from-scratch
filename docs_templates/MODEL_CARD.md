@@ -1,27 +1,37 @@
 # Model card
 
-*Pending: filled in from `results/runs/*/summary.json` and `results/analysis/*` once the
-headline model is trained (milestones 6-7).*
+## Model
+
+{{ table:model_card_headline | default:*The headline model is chosen on the validation split by the pre-registered rule once the scaling grid has finished; until then this section is pending.* }}
+
+Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary position
+embeddings, SwiGLU feed-forward layers, a key/value cache for incremental decoding.
+Inputs are patches of 32 steps scaled by the mean absolute value of the context (values
+clipped at 100 times that scale in magnitude); the head predicts 13 non-crossing quantiles of the next
+64 steps. Longer horizons are produced by feeding the predicted median back in.
 
 ## Intended use
 
-Research and portfolio demonstration of pretraining a small time-series forecaster from
-scratch and evaluating it honestly. **Not** intended for production forecasting, and in
-particular not for trading or any financial decision.
-
-## Architecture
-
-Decoder-only transformer (pre-norm RMSNorm, rotary position embeddings, SwiGLU, KV
-cache), written in plain PyTorch. Two input/output variants:
-
-* patch tokens with a non-crossing quantile head (pinball loss);
-* mean-scaled values quantised into a 4,096-token vocabulary (cross-entropy).
+Research and demonstration: how far a small model pretrained from scratch on public,
+leakage-checked data gets on zero-shot forecasting. **Not** intended for production
+forecasting or for any financial or trading decision.
 
 ## Training data
 
-See `DATA_CARD.md`. GIFT-Eval train/validation splits are not used.
+`DATA_CARD.md`: a pinned subset of GiftEvalPretrain with every series that overlaps
+GIFT-Eval removed, plus synthetic Gaussian-process series. GIFT-Eval's own train and
+validation splits are never used, so the model is zero-shot in the leaderboard's sense.
 
 ## Evaluation
 
-See `README.md`. Test-split numbers come only from runs that were scored once, after the
-pre-registration tag; anything else is labelled exploratory.
+Validation (model selection): ten held-out datasets and held-out synthetic series.
+Test: the 97 GIFT-Eval configurations, scored once per model after the pre-registration
+tag (`PREREGISTRATION.md`). Results are in `README.md` and `RESEARCH_NOTE.md`.
+
+## Known limitations
+
+* Intervals are too narrow, most at long horizons where the median roll-out ignores the
+  uncertainty of earlier steps (measured coverage is in the results tables).
+* Short yearly and quarterly series are its weakest frequencies on the validation split.
+* Values beyond 100 times the context's mean magnitude cannot be predicted (clipping).
+* Univariate only; covariates and cross-series information are ignored.
