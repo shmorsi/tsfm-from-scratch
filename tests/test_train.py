@@ -276,3 +276,35 @@ def test_short_series_loss_is_on_the_scale_of_the_data():
         loss, n = patch_loss(m, x, ctx)
     assert n > 0
     assert loss.item() < 10  # scaled units (~1), not raw units (~5000)
+
+
+def test_fp16_forward_stays_finite_with_huge_future_values():
+    """Regression test for the T4 divergence: a near-zero context followed by values ~1e6
+    must not overflow half precision (inputs and targets are clipped in scaled units)."""
+    from tsfm.train.objective import patch_loss
+
+    torch.manual_seed(0)
+    m = TSModel(
+        ModelConfig(d_model=64, n_layers=2, n_heads=4, patch_len=32, horizon=64, max_seq_len=64)
+    )
+    x = torch.full((4, 2048), 1e-3)
+    x[:, 1024:] = 1e6 * torch.rand(4, 1024)
+    ctx = torch.full((4,), 1024)
+    with torch.autocast("cpu", dtype=torch.float16):
+        loss, n = patch_loss(m, x, ctx)
+    assert torch.isfinite(loss)
+    assert n > 0
+    loss.backward()
+    assert all(torch.isfinite(p.grad).all() for p in m.parameters() if p.grad is not None)
+
+
+def test_fresh_start_resets_metrics_log(
+    packed_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setenv("TSFM_PACKED", str(packed_root))
+    d = tmp_path / "r"
+    d.mkdir()
+    (d / "metrics.jsonl").write_text('{"step": 99, "loss": 1}\n')  # stale log, no checkpoint
+    Trainer(rc("patch", packed_root, steps=2), d).run()
+    steps = [json.loads(x)["step"] for x in (d / "metrics.jsonl").read_text().splitlines()]
+    assert steps == [1, 2]

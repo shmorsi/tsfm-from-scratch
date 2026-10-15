@@ -1,0 +1,7 @@
+[
+ {
+  "id": "fp16-divergence-2026-10-15",
+  "runs": ["patch_s0", "patch_s1"],
+  "reason": "Trained before scaled inputs/targets were clipped: fp16 overflow on the T4 froze patch_s0 at step ~300 (grad norm 0, val loss 0.37 -> 3.95); patch_s1 was interrupted mid-run. Both are discarded and retrained."
+ }
+]

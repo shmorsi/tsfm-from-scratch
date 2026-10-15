@@ -99,6 +99,27 @@ def done(drive: Path, name: str) -> None:
     dump(drive)
 
 
+def apply_resets(drive: Path) -> None:
+    """Discard runs listed in scripts/queue_resets.json (each reset applied once):
+    run directory, done marker and exported results."""
+    applied_p = drive / "queue" / "resets_applied.json"
+    applied = set(json.loads(applied_p.read_text())) if applied_p.exists() else set()
+    for r in json.loads((ROOT / "scripts" / "queue_resets.json").read_text()):
+        if r["id"] in applied:
+            continue
+        for name in r["runs"]:
+            for p in (
+                drive / "runs" / name,
+                drive / "export" / "results" / "runs" / name,
+                drive / "export" / "results" / "eval" / "val" / name,
+            ):
+                shutil.rmtree(p, ignore_errors=True)
+            (drive / "queue" / f"train_{name}.done").unlink(missing_ok=True)
+        say(f"applied reset {r['id']}: {r['runs']} ({r['reason'][:80]}...)")
+        applied.add(r["id"])
+    applied_p.write_text(json.dumps(sorted(applied)) + "\n")
+
+
 def run_config(
     drive: Path, cfg_path: Path, name: str, precision: str, log: Path, budget_min: float
 ) -> bool:
@@ -145,6 +166,7 @@ def main() -> int:
     sha = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True
     ).stdout.strip()
+    apply_resets(drive)
     status(drive, phase=a.phase, git_sha=sha, state="running")
     say(
         f"phase {a.phase} at {sha[:7]}; finished stages: {sorted(p.stem for p in (drive / 'queue').glob('*.done'))}"

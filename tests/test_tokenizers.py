@@ -16,6 +16,7 @@ from tsfm.tokenizers import (
     N_SPECIAL,
     PAD_ID,
     QUANTILES,
+    SCALED_CLIP,
     BinTokenizer,
     PatchTokenizer,
     QuantileHead,
@@ -102,7 +103,8 @@ def test_patch_round_trip(x: np.ndarray, p: int):
     n = -(-x.size // p)
     assert patches.shape == (1, n, p)
     back = pt.decode(patches, s)[:, -x.size :]
-    torch.testing.assert_close(back, xt, rtol=1e-5, atol=1e-5 * float(s))
+    expect = torch.clamp(xt, -SCALED_CLIP * s, SCALED_CLIP * s)  # extreme values are clipped
+    torch.testing.assert_close(back, expect, rtol=1e-5, atol=1e-5 * float(s))
     assert obs[0].reshape(-1)[-x.size :].all()
     assert not obs[0].reshape(-1)[: n * p - x.size].any()
     assert not patch_pad.any()  # left padding never fills a whole patch

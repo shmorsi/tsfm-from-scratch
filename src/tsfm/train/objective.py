@@ -22,7 +22,14 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from tsfm.model import TSModel
-from tsfm.tokenizers import MISSING_ID, N_SPECIAL, PatchTokenizer, mean_scale, pinball_loss
+from tsfm.tokenizers import (
+    MISSING_ID,
+    N_SPECIAL,
+    SCALED_CLIP,
+    PatchTokenizer,
+    mean_scale,
+    pinball_loss,
+)
 
 
 def leading_pad(x: Tensor) -> Tensor:
@@ -97,7 +104,7 @@ def patch_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, Tensor]:
     tok = PatchTokenizer(p)
     patches, observed, patch_pad = tok.encode(x, scale)
     pred = model(patches=patches, observed=observed, pad=patch_pad)  # (B, N, H, Q)
-    tgt = patch_targets(x / scale, p, cfg.horizon)
+    tgt = patch_targets((x / scale).clamp(-SCALED_CLIP, SCALED_CLIP), p, cfg.horizon)
     tok_idx = torch.arange(t // p, device=x.device)
     use_tok = (tok_idx[None, :] >= (ctx_p - 1)[:, None]) & ~patch_pad
     use_tok = use_tok & (ctx_p >= 1)[:, None] & obs_ctx.any(dim=1, keepdim=True)

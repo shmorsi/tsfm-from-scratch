@@ -340,7 +340,10 @@ class Trainer:
         self, *, max_steps_this_session: int | None = None, time_budget_min: float | None = None
     ) -> dict[str, Any]:
         resumed = self.try_resume()
+        if not resumed and self.metrics_path.exists():
+            self.metrics_path.unlink()  # a fresh start must not append to an old log
         tc = self.rc.train
+        bad_steps = 0
         t_start = time.time()
         last_ckpt = time.time()
         steps_done = 0
@@ -348,6 +351,11 @@ class Trainer:
             t0 = time.time()
             rec: dict[str, Any] = dict(self.train_step())
             steps_done += 1
+            bad_steps = bad_steps + 1 if not math.isfinite(rec["loss"]) else 0
+            if bad_steps >= 50:
+                raise RuntimeError(
+                    f"training diverged: 50 consecutive non-finite losses at step {self.step}"
+                )
             rec["step"] = self.step
             rec["step_seconds"] = time.time() - t0
             if self.step % tc.eval_every == 0 or self.step == tc.steps:

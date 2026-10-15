@@ -22,6 +22,11 @@ from torch import Tensor, nn
 PAD_ID = 0
 MISSING_ID = 1
 N_SPECIAL = 2
+# Patch values are clipped to +-SCALED_CLIP times the context's mean |x|. A decoder-only
+# model also receives the *future* patches as inputs; with a near-zero context they can
+# reach ~1e6 in scaled units, which overflows fp16 (max 65504) on GPUs and diverged a T4
+# run. Values past 100x the context's mean magnitude are extreme outliers anyway.
+SCALED_CLIP = 100.0
 
 # Quantile levels predicted by the patch head. They contain the nine official GIFT-Eval
 # levels (0.1..0.9) plus 0.05/0.25/0.75/0.95 so 50/80/90% intervals can be scored.
@@ -94,7 +99,7 @@ class PatchTokenizer:
         n = -(-t // p)
         pad = n * p - t
         obs = torch.isfinite(x)
-        z = torch.where(obs, x / scale, torch.zeros_like(x))
+        z = torch.where(obs, (x / scale).clamp(-SCALED_CLIP, SCALED_CLIP), torch.zeros_like(x))
         if pad:
             z = torch.cat([z.new_zeros(b, pad), z], dim=1)
             obs = torch.cat([obs.new_zeros(b, pad), obs], dim=1)
