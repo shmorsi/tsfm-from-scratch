@@ -134,6 +134,9 @@ def main() -> int:
     # Results (bench, evals) are written straight to Drive, so per-config eval progress
     # survives a disconnect and the files land in export/ with repo-relative paths.
     os.environ["TSFM_RESULTS"] = str(drive / "export" / "results")
+    # Read the packed corpus into RAM: random window reads from Colab's disk were the
+    # bottleneck (T4 benchmark, results/bench/Tesla_T4.json).
+    os.environ.setdefault("TSFM_IN_MEMORY", "1")
     t0 = time.time()
 
     def left_min() -> float:

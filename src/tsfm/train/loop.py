@@ -258,27 +258,61 @@ class Trainer:
             g["lr"] = lr
         self.model.train()
         self.opt.zero_grad(set_to_none=True)
-        total, n_tok = 0.0, 0
-        for m in range(n_micro):
+        batches = self._next_batches()
+        total = torch.zeros((), device=self.device)
+        n_tok = torch.zeros((), device=self.device, dtype=torch.long)
+        for m, (xn, cn) in enumerate(batches):
             torch.manual_seed(int(step_rng(self.rc.seed, self.step, m, stream=1).integers(2**62)))
-            x, ctx = batch_tensors(
-                self.sampler,
-                self.rc,
-                step_rng(self.rc.seed, self.step, m),
-                tc.micro_batch,
-                self.device,
-            )
+            x = torch.from_numpy(xn).to(self.device, non_blocking=True)
+            ctx = torch.from_numpy(cn).to(self.device, non_blocking=True)
             with autocast(self.device, tc.precision):
                 loss, k = compute_loss(self.model, x, ctx)
             self.scaler.scale(loss / n_micro).backward()
-            total += float(loss.detach()) / n_micro
+            total += loss.detach() / n_micro
             n_tok += k
         self.scaler.unscale_(self.opt)
-        gnorm = float(torch.nn.utils.clip_grad_norm_(self.model.parameters(), tc.grad_clip))
+        gnorm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), tc.grad_clip)
         self.scaler.step(self.opt)
         self.scaler.update()
         self.step += 1
-        return {"loss": total, "lr": lr, "grad_norm": gnorm, "loss_targets": n_tok}
+        return {
+            "loss": float(total),
+            "lr": lr,
+            "grad_norm": float(gnorm),
+            "loss_targets": int(n_tok),
+        }
+
+    # ------------------------------------------------------------------ data prefetch
+    def _make_batches(self, step: int) -> list[tuple[np.ndarray, np.ndarray]]:
+        """CPU work for one optimiser step: every micro-batch's windows and contexts. A pure
+        function of (seed, step), so prefetching it in a thread keeps runs bit-exact."""
+        tc = self.rc.train
+        out = []
+        for m in range(tc.batch_size // tc.micro_batch):
+            rng = step_rng(self.rc.seed, step, m)
+            w = window_len(self.rc)
+            x = self.sampler.sample(rng, tc.micro_batch, w)
+            ctx = draw_context(
+                rng, x, self.rc.data.min_context, self.rc.data.max_context or (w - 1)
+            )
+            out.append((x, ctx))
+        return out
+
+    def _next_batches(self) -> list[tuple[np.ndarray, np.ndarray]]:
+        from concurrent.futures import ThreadPoolExecutor
+
+        if not hasattr(self, "_pool"):
+            self._pool = ThreadPoolExecutor(1)
+            self._pending: tuple[int, Any] | None = None
+        if self._pending is not None and self._pending[0] == self.step:
+            batches: list[tuple[np.ndarray, np.ndarray]] = self._pending[1].result()
+        else:
+            batches = self._make_batches(self.step)
+        if self.step + 1 < self.rc.train.steps:
+            self._pending = (self.step + 1, self._pool.submit(self._make_batches, self.step + 1))
+        else:
+            self._pending = None
+        return batches
 
     @torch.no_grad()
     def val_loss(self) -> float | None:

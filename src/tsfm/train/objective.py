@@ -57,7 +57,7 @@ def align_to_patches(x: Tensor, ctx: Tensor, p: int) -> tuple[Tensor, Tensor]:
     return shifted, ctx - r
 
 
-def bins_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
+def bins_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, Tensor]:
     """x (B, T) values (NaN = missing/pad); ctx (B,) context lengths in steps."""
     _b, t = x.shape
     pos = torch.arange(t, device=x.device)
@@ -70,10 +70,9 @@ def bins_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
     target = ids[:, 1:]
     use = (pos[None, 1:] >= ctx[:, None]) & (target >= N_SPECIAL) & (target != MISSING_ID)
     use = use & obs_ctx.any(dim=1, keepdim=True)
-    if not use.any():
-        return logits.sum() * 0.0, 0
-    loss = F.cross_entropy(logits[use].float(), target[use])
-    return loss, int(use.sum())
+    n = use.sum()
+    loss = F.cross_entropy(logits[use].float(), target[use]) if bool(n) else logits.sum() * 0.0
+    return loss, n
 
 
 def patch_targets(x: Tensor, p: int, horizon: int) -> Tensor:
@@ -83,7 +82,7 @@ def patch_targets(x: Tensor, p: int, horizon: int) -> Tensor:
     return ext[:, p:].unfold(1, horizon, p)[:, : t // p]
 
 
-def patch_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
+def patch_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, Tensor]:
     """x (B, T) with T a multiple of patch_len; ctx (B,) context ends in steps."""
     cfg = model.cfg
     p = cfg.patch_len
@@ -105,10 +104,12 @@ def patch_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
     obs = torch.isfinite(tgt) & use_tok[..., None]
     levels = torch.tensor(cfg.quantiles, device=x.device, dtype=pred.dtype)
     loss = pinball_loss(pred.float(), tgt.float(), levels.float(), obs)
-    return loss, int(obs.sum())
+    return loss, obs.sum()
 
 
-def compute_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, int]:
+def compute_loss(model: TSModel, x: Tensor, ctx: Tensor) -> tuple[Tensor, Tensor]:
+    """(loss, number of target values in the loss). Both are tensors, so callers can avoid
+    a GPU synchronisation per micro-batch."""
     if model.cfg.tokenizer == "bins":
         return bins_loss(model, x, ctx)
     return patch_loss(model, x, ctx)

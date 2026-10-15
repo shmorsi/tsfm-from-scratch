@@ -70,10 +70,19 @@ class Packed:
     meta: dict[str, Any]
 
     @classmethod
-    def open(cls, d: Path) -> Packed:
+    def open(cls, d: Path, in_memory: bool | None = None) -> Packed:
+        """Memory-map the values, or (``in_memory`` / ``TSFM_IN_MEMORY=1``) read them into
+        RAM: random window reads from a network disk dominate step time on Colab."""
+        import os
+
         meta = json.loads((d / "meta.json").read_text())
         idx = np.load(d / "index.npz")
-        vals = np.memmap(d / "values.f32", dtype=np.float32, mode="r")
+        if in_memory is None:
+            in_memory = os.environ.get("TSFM_IN_MEMORY") == "1"
+        if in_memory:
+            vals = np.fromfile(d / "values.f32", dtype=np.float32)
+        else:
+            vals = np.memmap(d / "values.f32", dtype=np.float32, mode="r")
         if vals.size != meta["n_points"]:
             raise ValueError(
                 f"{d}: values.f32 has {vals.size} points, meta says {meta['n_points']}"
