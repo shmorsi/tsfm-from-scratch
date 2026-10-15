@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-15T00:10:23+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "python": "3.12.15",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "33de4d86d44b13e7ba6a74766c28904f37758b67",
+    "label": "M8-har",
+    "split": "test"
+  },
+  "info": {
+    "kind": "baseline"
+  },
+  "model": "har",
+  "n_rows": 4886
+}

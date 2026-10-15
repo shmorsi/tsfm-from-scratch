@@ -6,7 +6,8 @@ Phase A: throughput benchmark, the scaling grid and the bins model (train + vali
 eval each), and the published FlowState-9.1M checkpoint on the test split.
 Phase B: needs ``results/analysis/headline_choice.json`` committed in the repo (the
 pre-registered selection, made on the validation split). Trains seeds 1 and 2 of the
-headline config, then scores the three seeds on the test split, once.
+headline config, scores the three seeds on the test split (once), then runs the
+realized-volatility study for the seed-0 checkpoint (zero-shot and fine-tuned).
 
 Every stage leaves ``<drive>/queue/<stage>.done``; re-running skips finished stages and
 training resumes from its checkpoint, so a disconnected session just runs the cell again.
@@ -187,6 +188,17 @@ def main() -> int:
                 log,
             )
             done(drive, f"test_{name}")
+        # Milestones 8-9 (PREREGISTRATION_VOL.md): the seed-0 headline checkpoint,
+        # zero-shot and fine-tuned, on the realized-volatility test period.
+        for vname, flag in (("tsfm_zero_shot", ""), ("tsfm_finetuned", "--finetune")):
+            if not stage(drive, f"vol_{vname}"):
+                continue
+            status(drive, stage=f"vol_{vname}")
+            sh(
+                f'uv run tsfm vol model --model "{drive}/runs/{base}" --name {vname} {flag} --device cuda',
+                log,
+            )
+            done(drive, f"vol_{vname}")
     status(drive, state=f"phase {a.phase} complete")
     return 0
 
