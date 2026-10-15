@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "created_utc": "2026-10-14T23:09:16+00:00",
+    "created_utc": "2026-10-15T00:41:09+00:00",
     "env": {
       "gluonts": "0.15.1",
       "numpy": "1.26.4",
@@ -12,12 +12,103 @@
       "tsfm": "0.1.0"
     },
     "git_dirty": true,
-    "git_sha": "e00dbfb5be66756a5a2fada231d394eb7b38b2cf",
+    "git_sha": "ce72d846af5188075c1566d57fb76f86b96541b9",
     "label": "report-val",
     "split": "none"
   },
   "baseline": "seasonal_naive",
   "models": {
+    "patch_s0": {
+      "by": {
+        "domain": {
+          "validation": {
+            "crps": 0.7403048319135199,
+            "mase": 1.1386755082356979,
+            "n": 16
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.5378587958677079,
+            "mase": 0.6625866228361558,
+            "n": 2
+          },
+          "hourly": {
+            "crps": 0.6229613716328087,
+            "mase": 1.3620906006754434,
+            "n": 6
+          },
+          "minutely": {
+            "crps": 0.7130209544098473,
+            "mase": 0.8754153726348478,
+            "n": 4
+          },
+          "monthly": {
+            "crps": 1.136228981583871,
+            "mase": 1.4175042467924726,
+            "n": 1
+          },
+          "quarterly": {
+            "crps": 1.3960252856503392,
+            "mase": 1.761169346441228,
+            "n": 1
+          },
+          "weekly": {
+            "crps": 0.817147984362402,
+            "mase": 0.9543171550157669,
+            "n": 1
+          },
+          "yearly": {
+            "crps": 1.4368024252110565,
+            "mase": 2.0361205009433694,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 0.639080752176409,
+            "mase": 1.227563567599599,
+            "n": 5
+          },
+          "short": {
+            "crps": 0.7914719248524571,
+            "mase": 1.100428406143683,
+            "n": 11
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.3956704244204132,
+        "80": 0.6860757367031841,
+        "90": 0.7995071672728271
+      },
+      "crps_gmean": 0.7403048319135199,
+      "mase_gmean": 1.1386755082356979,
+      "rank_crps": 1.5625,
+      "rank_mase": 2.25,
+      "worst_configs_crps": [
+        [
+          "monash_m3_yearly/A-DEC/short",
+          1.4368024252110565
+        ],
+        [
+          "tourism_quarterly/Q-DEC/short",
+          1.3960252856503392
+        ],
+        [
+          "m1_monthly/M/short",
+          1.136228981583871
+        ],
+        [
+          "australian_electricity_demand/30T/short",
+          1.0713991728843075
+        ],
+        [
+          "bdg-2_bear/H/short",
+          0.8353964014079444
+        ]
+      ]
+    },
     "pilot_patch_s0_cpu": {
       "by": {
         "domain": {
@@ -84,8 +175,8 @@
       },
       "crps_gmean": 0.7329016837442155,
       "mase_gmean": 1.1228366170705768,
-      "rank_crps": 1.25,
-      "rank_mase": 1.75,
+      "rank_crps": 1.9375,
+      "rank_mase": 2.25,
       "worst_configs_crps": [
         [
           "monash_m3_yearly/A-DEC/short",
@@ -175,8 +266,8 @@
       },
       "crps_gmean": 1.0,
       "mase_gmean": 1.0,
-      "rank_crps": 1.75,
-      "rank_mase": 1.25,
+      "rank_crps": 2.5,
+      "rank_mase": 1.5,
       "worst_configs_crps": [
         [
           "australian_electricity_demand/30T/long",

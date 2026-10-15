@@ -80,12 +80,21 @@ def status(drive: Path, **kw: object) -> None:
 
 
 def export_run(drive: Path, name: str) -> None:
+    """summary.json, config.yaml and a thinned training log (every validation point and
+    every 500th step) for the repo; the full log stays on Drive with the checkpoint."""
     run = drive / "runs" / name
     dst = drive / "export" / "results" / "runs" / name
     dst.mkdir(parents=True, exist_ok=True)
-    for f in ("summary.json", "metrics.jsonl", "config.yaml"):
+    for f in ("summary.json", "config.yaml"):
         if (run / f).exists():
             shutil.copy2(run / f, dst / f)
+    if (run / "metrics.jsonl").exists():
+        keep = [
+            ln
+            for ln in (run / "metrics.jsonl").read_text().splitlines()
+            if '"val_loss"' in ln or json.loads(ln)["step"] % 500 == 0
+        ]
+        (dst / "metrics_thin.jsonl").write_text("".join(ln + "\n" for ln in keep))
 
 
 def stage(drive: Path, name: str) -> bool:
