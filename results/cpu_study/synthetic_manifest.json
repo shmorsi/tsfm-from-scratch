@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-20T18:21:50+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cpu",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+    "label": "M1-synthetic",
+    "split": "none"
+  },
+  "files": {
+    "pretrain/kernelsynth.parquet": {
+      "dataset": "kernelsynth",
+      "n_kernels_histogram": {
+        "1": 1572,
+        "2": 1604,
+        "3": 1620,
+        "4": 1608,
+        "5": 1596
+      },
+      "points_kept": 3072000,
+      "seed": 20261020,
+      "series_kept": 8000,
+      "sha256": "5bdc7cb500f03cf78da88978b09790c16090d39783e9c30585b30a42b35428a1",
+      "split": "pretrain"
+    },
+    "val/kernelsynth.parquet": {
+      "dataset": "kernelsynth",
+      "n_kernels_histogram": {
+        "1": 68,
+        "2": 76,
+        "3": 87,
+        "4": 83,
+        "5": 86
+      },
+      "points_kept": 153600,
+      "seed": 20261020,
+      "series_kept": 400,
+      "sha256": "f63db8edbd6b7f98b63a9be9e48dd833849360809e7b0de7c40e2d6210d10af8",
+      "split": "val"
+    }
+  }
+}

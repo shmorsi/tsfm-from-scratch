@@ -1,0 +1,169 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-20T18:31:11+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cpu",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+    "label": "eval-cpu_s0_seed1_cqr",
+    "partial": true,
+    "split": "val"
+  },
+  "model": "cpu_s0_seed1_cqr",
+  "model_info": {
+    "checkpoint_sha256": "66309ae44970eb0a1f183dbb7d518cbb85347e78c8653899adb3d8a35444552e",
+    "cqr": true,
+    "kind": "tsfm",
+    "leaderboard": {
+      "model": "cpu_s0_seed1",
+      "model_dtype": "float32",
+      "model_type": "zero-shot",
+      "replication_code_available": "Yes",
+      "testdata_leakage": "No"
+    },
+    "max_context": 512,
+    "model_config": {
+      "bin_limit": 15.0,
+      "d_model": 128,
+      "dropout": 0.0,
+      "ffn_mult": 2.6666666666666665,
+      "horizon": 32,
+      "max_seq_len": 128,
+      "n_bins": 4094,
+      "n_heads": 4,
+      "n_layers": 4,
+      "patch_len": 16,
+      "position": "rope",
+      "quantiles": [
+        0.05,
+        0.1,
+        0.2,
+        0.25,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.75,
+        0.8,
+        0.9,
+        0.95
+      ],
+      "rope_base": 10000.0,
+      "tokenizer": "patch"
+    },
+    "params_total": 833440,
+    "reference_summary": false,
+    "study": "cpu_prereg"
+  },
+  "model_info_hash": "40e8dd21c4357787",
+  "per_config": {
+    "australian_electricity_demand/30T/long": {
+      "coverage_50": 0.5483194444444445,
+      "coverage_80": 0.9941805555555555,
+      "coverage_90": 1.0,
+      "n_instances": 100,
+      "seconds": 3.7065110206604004
+    },
+    "australian_electricity_demand/30T/short": {
+      "coverage_50": 0.9725,
+      "coverage_80": 1.0,
+      "coverage_90": 1.0,
+      "n_instances": 100,
+      "seconds": 3.6170942783355713
+    },
+    "bdg-2_bear/H/long": {
+      "coverage_50": 0.45354244694132334,
+      "coverage_80": 0.9749063670411985,
+      "coverage_90": 0.9990324594257178,
+      "n_instances": 178,
+      "seconds": 0.9321527481079102
+    },
+    "bdg-2_bear/H/short": {
+      "coverage_50": 0.9265597279716145,
+      "coverage_80": 0.9936674551547408,
+      "coverage_90": 0.9991375911689335,
+      "n_instances": 1691,
+      "seconds": 4.913542032241821
+    },
+    "kdd2022/10T/long": {
+      "coverage_50": 0.3462749627143148,
+      "coverage_80": 0.64537678275428,
+      "coverage_90": 0.8142030418472097,
+      "n_instances": 670,
+      "seconds": 4.833597183227539
+    },
+    "kdd2022/10T/short": {
+      "coverage_50": 0.6584587110238919,
+      "coverage_80": 0.8808834065352148,
+      "coverage_90": 0.9545525340310874,
+      "n_instances": 2680,
+      "seconds": 14.994092226028442
+    },
+    "m1_monthly/M/short": {
+      "coverage_50": 0.9235772357723577,
+      "coverage_80": 0.9953929539295393,
+      "coverage_90": 0.9989159891598915,
+      "n_instances": 615,
+      "seconds": 0.4701516628265381
+    },
+    "monash_m3_yearly/A-DEC/short": {
+      "coverage_50": 0.8631346578366446,
+      "coverage_80": 0.9841795437821927,
+      "coverage_90": 0.9955849889624724,
+      "n_instances": 453,
+      "seconds": 0.32330751419067383
+    },
+    "nn5_daily_with_missing/D/short": {
+      "coverage_50": 0.6676142131979695,
+      "coverage_80": 0.964263959390863,
+      "coverage_90": 0.9991878172588833,
+      "n_instances": 333,
+      "seconds": 0.32389068603515625
+    },
+    "pedestrian_counts/H/long": {
+      "coverage_50": 0.7302631578947368,
+      "coverage_80": 0.9776315789473684,
+      "coverage_90": 0.9965643274853802,
+      "n_instances": 19,
+      "seconds": 0.11379003524780273
+    },
+    "pedestrian_counts/H/short": {
+      "coverage_50": 0.7854166666666667,
+      "coverage_80": 0.9786458333333333,
+      "coverage_90": 0.99375,
+      "n_instances": 40,
+      "seconds": 0.11001229286193848
+    },
+    "tourism_quarterly/Q-DEC/short": {
+      "coverage_50": 0.6299882629107981,
+      "coverage_80": 0.9445422535211268,
+      "coverage_90": 0.9953051643192489,
+      "n_instances": 426,
+      "seconds": 0.31818056106567383
+    },
+    "traffic_weekly/W-SUN/short": {
+      "coverage_50": 0.9740429234338747,
+      "coverage_80": 0.9978973317865429,
+      "coverage_90": 0.9997824825986079,
+      "n_instances": 1724,
+      "seconds": 1.4013314247131348
+    },
+    "uber_tlc_daily/D/short": {
+      "coverage_50": 0.8562340966921119,
+      "coverage_80": 0.9807888040712468,
+      "coverage_90": 0.9907124681933842,
+      "n_instances": 262,
+      "seconds": 0.2083606719970703
+    }
+  },
+  "split": "val"
+}
