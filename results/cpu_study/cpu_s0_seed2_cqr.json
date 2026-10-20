@@ -1,0 +1,61 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-20T18:29:47+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cpu",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+    "label": "cqr-cpu_s0_seed2",
+    "split": "val"
+  },
+  "checkpoint_sha256": "9b6e8200361776d1f605940d82e37caf49b71c970ada40d1a23b75a84cc9f887",
+  "cqr": {
+    "expansion_scaled": {
+      "50": 0.487943119413631,
+      "80": 1.2594921434779993,
+      "90": 2.021536428279742
+    },
+    "levels": [
+      0.05,
+      0.1,
+      0.2,
+      0.25,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.75,
+      0.8,
+      0.9,
+      0.95
+    ]
+  },
+  "model": "cpu_s0_seed2",
+  "n_80_points": 956566,
+  "n_scores": {
+    "50": 956566,
+    "80": 956566,
+    "90": 956566
+  },
+  "val_datasets": [
+    "m1_monthly",
+    "tourism_quarterly",
+    "monash_m3_yearly",
+    "nn5_daily_with_missing",
+    "uber_tlc_daily",
+    "traffic_weekly",
+    "pedestrian_counts",
+    "bdg-2_bear",
+    "australian_electricity_demand",
+    "kdd2022"
+  ]
+}

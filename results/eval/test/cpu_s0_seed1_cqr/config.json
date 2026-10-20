@@ -1,0 +1,7 @@
+{
+    "model": "cpu_s0_seed1",
+    "model_type": "zero-shot",
+    "model_dtype": "float32",
+    "testdata_leakage": "No",
+    "replication_code_available": "Yes"
+}

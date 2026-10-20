@@ -1,0 +1,104 @@
+{
+  "done": true,
+  "step": 2000,
+  "resumed": false,
+  "session_seconds": 70.73093914985657,
+  "params_total": 833440,
+  "params_body": 754688,
+  "train_tokens": 1536000,
+  "train_flops_6ND": 6955204608000,
+  "train_flops_attention": 113246208000,
+  "val_loss_final": 0.33623037301003933,
+  "val_loss_batches": [
+    0.2724883556365967,
+    0.27118346095085144,
+    0.24914437532424927,
+    0.27141183614730835,
+    0.7135886549949646,
+    0.2703125774860382,
+    0.23103655874729156,
+    0.4106771647930145
+  ],
+  "config": {
+    "name": "cpu_s0_seed0",
+    "seed": 0,
+    "model": {
+      "tokenizer": "patch",
+      "d_model": 128,
+      "n_layers": 4,
+      "n_heads": 4,
+      "ffn_mult": 2.6666666666666665,
+      "dropout": 0.0,
+      "rope_base": 10000.0,
+      "position": "rope",
+      "max_seq_len": 128,
+      "n_bins": 4094,
+      "bin_limit": 15.0,
+      "patch_len": 16,
+      "horizon": 32,
+      "quantiles": [
+        0.05,
+        0.1,
+        0.2,
+        0.25,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.75,
+        0.8,
+        0.9,
+        0.95
+      ]
+    },
+    "data": {
+      "corpora": [
+        {
+          "path": "pretrain"
+        },
+        {
+          "path": "synthetic",
+          "synthetic": true
+        }
+      ],
+      "val": [
+        {
+          "path": "synthetic_val",
+          "synthetic": true
+        }
+      ],
+      "window": 384,
+      "min_context": 32,
+      "max_context": null,
+      "synthetic_share": 0.75,
+      "temperature": 0.5,
+      "val_batches": 8,
+      "val_batch_size": 64,
+      "val_seed": 12345
+    },
+    "train": {
+      "steps": 2000,
+      "batch_size": 32,
+      "micro_batch": 16,
+      "lr": 0.003,
+      "warmup": 40,
+      "min_lr_ratio": 0.1,
+      "weight_decay": 0.1,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "grad_clip": 1.0,
+      "precision": "fp32",
+      "device": "cpu",
+      "ckpt_minutes": 10.0,
+      "ckpt_every_steps": null,
+      "eval_every": 200,
+      "log_every": 20
+    }
+  },
+  "config_hash": "47597b2068b4be54",
+  "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+  "git_dirty": false
+}
