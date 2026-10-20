@@ -44,14 +44,34 @@ def _left_pad(contexts: Sequence[np.ndarray], length: int, multiple: int = 1) ->
     return out
 
 
+def effective_max_context(model: TSModel, prediction_length: int, max_context: int) -> int:
+    """Context length ``forecast_patch`` actually uses.
+
+    Roll-out tokens have to fit in ``max_seq_len`` beside the context, so a long
+    horizon shortens the context. The scale and the conformal scores must use this
+    same length.
+    """
+    cfg = model.cfg
+    room = cfg.max_seq_len - math.ceil(prediction_length / cfg.patch_len)
+    if room < 1:
+        raise ValueError(
+            f"prediction_length {prediction_length} does not fit in max_seq_len {cfg.max_seq_len}"
+        )
+    return min(max_context, room * cfg.patch_len)
+
+
 @torch.no_grad()
 def forecast_patch(
-    model: TSModel, contexts: Sequence[np.ndarray], prediction_length: int, max_context: int
+    model: TSModel,
+    contexts: Sequence[np.ndarray],
+    prediction_length: int,
+    max_context: int,
+    adjustment: object | None = None,
 ) -> Forecast:
     cfg = model.cfg
     dev = next(model.parameters()).device
     p = cfg.patch_len
-    max_context = min(max_context, (cfg.max_seq_len - math.ceil(prediction_length / p)) * p)
+    max_context = effective_max_context(model, prediction_length, max_context)
     x = torch.from_numpy(_left_pad(contexts, max_context, p)).to(dev)
     b = x.shape[0]
     obs = torch.isfinite(x)
@@ -80,8 +100,17 @@ def forecast_patch(
         chunks.append(keep)
         have += keep.shape[1]
         median_path = torch.cat([median_path, keep[..., mid]], dim=1)
-    qs = torch.cat(chunks, dim=1)[:, :prediction_length] * scale[..., None]
+    qs = torch.cat(chunks, dim=1)[:, :prediction_length]
     qn = qs.float().cpu().numpy()
+    if adjustment is not None:
+        from tsfm.calibrate import CQR, apply_cqr
+
+        if not isinstance(adjustment, CQR):
+            raise TypeError("patch adjustment must be a CQR")
+        # Expansions are in scaled units; the median column is left alone.
+        qn = apply_cqr(qn, adjustment).astype(np.float32)
+    scale_np = scale.float().cpu().numpy()[..., None]
+    qn = qn * scale_np
     return Forecast(qn, qn[..., mid].copy(), tuple(cfg.quantiles))
 
 
@@ -157,7 +186,10 @@ def forecast(
     **kw: object,
 ) -> Forecast:
     if model.cfg.tokenizer == "patch":
-        return forecast_patch(model, contexts, prediction_length, max_context)
+        adjustment = kw.pop("adjustment", None)
+        if kw:
+            raise TypeError(f"unexpected forecast arguments: {sorted(kw)}")
+        return forecast_patch(model, contexts, prediction_length, max_context, adjustment)
     return forecast_bins(model, contexts, prediction_length, max_context, **kw)  # type: ignore[arg-type]
 
 

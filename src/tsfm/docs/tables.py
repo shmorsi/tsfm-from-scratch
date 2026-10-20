@@ -323,6 +323,158 @@ def vol_regimes(root: Path) -> str:
     )
 
 
+def _cpu_row(block: dict[str, Any], label: str) -> list[str]:
+    summary = block["summary"]
+    cov = summary["coverage_mean"].get("80")
+    cmp = next(
+        c for c in block["comparisons"] if c["b"] == "seasonal_naive" and c["metric"] == "crps"
+    )
+    lo, hi = cmp["ci95"]
+    seeds = block["crps_gmean_across_seeds"]
+    seed_ci = seeds.get("ci95")
+    seed_txt = f"[{seed_ci[0]:.3f}, {seed_ci[1]:.3f}]" if seed_ci else "n/a"
+    return [
+        label,
+        f"{summary['mase_gmean']:.3f}",
+        f"{summary['crps_gmean']:.3f}",
+        f"{cmp['ratio']:.3f} [{lo:.3f}, {hi:.3f}]",
+        seed_txt,
+        f"{cov:.3f}" if cov is not None else "n/a",
+        cmp["verdict"],
+    ]
+
+
+@table("cpu_test")
+def cpu_test(root: Path) -> str:
+    """CPU study on the official test split. Missing until that study has been scored."""
+    from tsfm.docs.build import MissingResult
+
+    doc = _load(root, "results/analysis/cpu_study.json")
+    if "test" not in doc:
+        raise MissingResult("cpu test results")
+    rows = [_cpu_row(doc["test"], "cpu_s0, raw quantiles")]
+    if "test_cqr" in doc:
+        rows.append(_cpu_row(doc["test_cqr"], "cpu_s0, split-conformal"))
+    note = (
+        f"Official GIFT-Eval test split, {doc['test']['n_configs']} configurations, "
+        f"{doc['test']['crps_gmean_across_seeds']['n']} seeds. "
+        "MASE and CRPS are geometric means of each score divided by Seasonal Naive. "
+        "The interval next to the ratio is a 95% paired bootstrap over configurations "
+        "of the seed-averaged scores (10,000 resamples). "
+        "The other interval is a 95% Student-t interval across seed-level CRPS ratios; "
+        "with three seeds it is wide on purpose. "
+        "Conformal expansions were fit on the validation split only. "
+        "A ratio below 1 is better than Seasonal Naive."
+    )
+    return (
+        note
+        + "\n\n"
+        + md_table(
+            [
+                "model",
+                "MASE",
+                "CRPS",
+                "CRPS ratio vs Seasonal Naive [95% config CI]",
+                "CRPS ratio across seeds [95% t CI]",
+                "80% coverage",
+                "vs Seasonal Naive",
+            ],
+            rows,
+        )
+    )
+
+
+@table("cpu_val")
+def cpu_val(root: Path) -> str:
+    from tsfm.docs.build import MissingResult
+
+    doc = _load(root, "results/analysis/cpu_study.json")
+    if "validation" not in doc:
+        raise MissingResult("cpu validation results")
+    rows = [_cpu_row(doc["validation"], "cpu_s0, raw")]
+    if "validation_cqr" in doc:
+        rows.append(_cpu_row(doc["validation_cqr"], "cpu_s0, split-conformal"))
+    extra = ""
+    ab = doc.get("validation_ablation")
+    if ab:
+        extra = (
+            f"\n\nPositional encoding, seed 0, same {ab['n_configs']} validation configurations: "
+            f"RoPE CRPS {ab['rope']['crps_gmean']:.3f}, no positions CRPS {ab['none']['crps_gmean']:.3f}. "
+            "The no-position run was not scored on the test split."
+        )
+    note = (
+        f"Validation split used only for the conformal fit and this ablation "
+        f"({doc['validation']['n_configs']} configurations from the ten held-out datasets; "
+        "synthetic validation series are not included)."
+    )
+    return (
+        note
+        + "\n\n"
+        + md_table(
+            [
+                "model",
+                "MASE",
+                "CRPS",
+                "CRPS ratio vs Seasonal Naive [95% config CI]",
+                "CRPS ratio across seeds [95% t CI]",
+                "80% coverage",
+                "vs Seasonal Naive",
+            ],
+            rows,
+        )
+        + extra
+    )
+
+
+@table("cpu_vs_arima")
+def cpu_vs_arima(root: Path) -> str:
+    from tsfm.docs.build import MissingResult
+
+    doc = _load(root, "results/analysis/cpu_study.json")
+    if "test" not in doc:
+        raise MissingResult("cpu test results")
+    rows = []
+    for key, label in (("test", "cpu_s0 raw"), ("test_cqr", "cpu_s0 split-conformal")):
+        block = doc.get(key)
+        if not block:
+            continue
+        for metric in ("crps", "mase"):
+            cmp = next(
+                (
+                    c
+                    for c in block["comparisons"]
+                    if c["b"] == "upstream:Auto_Arima" and c["metric"] == metric
+                ),
+                None,
+            )
+            if cmp is None:
+                continue
+            lo, hi = cmp["ci95"]
+            rows.append(
+                [
+                    label,
+                    metric,
+                    f"{cmp['ratio']:.3f}",
+                    f"[{lo:.3f}, {hi:.3f}]",
+                    cmp["verdict"],
+                ]
+            )
+    if not rows:
+        raise MissingResult("cpu vs AutoARIMA")
+    note = (
+        "Ratio of seed-averaged geometric means, model divided by upstream AutoARIMA, "
+        "both already divided by Seasonal Naive. "
+        "Below 1 would be better than AutoARIMA. "
+        "The pre-registered decision rule: better if the interval is entirely below 1, "
+        "worse if it is entirely above 1, otherwise no detectable difference."
+    )
+    return (
+        note
+        + "\n\n"
+        + md_table(["model", "metric", "ratio to AutoARIMA", "95% CI", "verdict"], rows)
+    )
+
+
 @table("model_card_headline")
 def model_card_headline(root: Path) -> str:
     h = _load(root, "results/analysis/headline_choice.json")

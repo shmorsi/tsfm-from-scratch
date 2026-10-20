@@ -147,3 +147,31 @@ def test_overfits_a_tiny_batch(kind: str):
         opt.step()
     last = loss_fn().item()
     assert last < 0.05 * first, (first, last)
+
+
+def test_no_position_differs_from_rope_with_the_same_weights():
+    torch.manual_seed(0)
+    rope = tiny("patch")
+    none = tiny("patch", position="none")
+    none.load_state_dict(rope.state_dict())
+    x, obs = patch_inputs(t=8)
+    a, b = run(rope, x, obs), run(none, x, obs)
+    assert not torch.allclose(a, b)
+
+
+def test_recorded_attention_matches_fused_and_is_causal():
+    m = tiny("patch")
+    x, obs = patch_inputs(b=2, t=6)
+    fused = run(m, x, obs)
+    captured: list[torch.Tensor] = []
+    explicit = run(m, x, obs, attn_out=captured)
+    torch.testing.assert_close(explicit, fused, rtol=1e-4, atol=1e-5)
+    assert len(captured) == m.cfg.n_layers
+    last = captured[-1]
+    assert last.shape[:3] == (2, m.cfg.n_heads, 6)
+    # Future keys have zero mass. The last query may attend everywhere causal.
+    assert torch.all(last[:, :, :, :] >= -1e-6)
+    mass = last.sum(-1)
+    torch.testing.assert_close(mass, torch.ones_like(mass), rtol=1e-4, atol=1e-5)
+    # A query at position 0 has no mass on later keys.
+    assert torch.all(last[:, :, 0, 1:] < 1e-5)

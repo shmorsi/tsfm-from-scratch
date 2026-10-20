@@ -14,6 +14,7 @@ import os
 from collections.abc import Callable
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pyarrow as pa
@@ -137,6 +138,7 @@ def build_synthetic(
     max_kernels: int | None = None,
     val_series: int | None = None,
     workers: int | None = None,
+    manifest_path: Path | None = None,
 ) -> dict[str, object]:
     from tsfm.data.sources import load_data_config
 
@@ -196,7 +198,7 @@ def build_synthetic(
             "seed": seed,
         }
     write_result(
-        results_dir() / "data" / "synthetic_manifest.json",
+        manifest_path or (results_dir() / "data" / "synthetic_manifest.json"),
         {"files": out},
         split="none",
         label="M1-synthetic",

@@ -10,4 +10,6 @@ __pycache__/
 /runs/
 *.ckpt
 *.pt
+# Inference weights for the CPU study are small and are the only way to re-score it.
+!results/runs/*/model.pt
 .DS_Store
