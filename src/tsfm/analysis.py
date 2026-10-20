@@ -43,7 +43,9 @@ def read_csv(p: Path) -> dict[str, dict[str, Any]]:
         return out
 
 
-def load_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
+def load_models(
+    split: str, *, include_partial: bool = False
+) -> dict[str, dict[str, dict[str, Any]]]:
     models: dict[str, dict[str, dict[str, Any]]] = {}
     d = results_dir() / "eval" / split
     if d.exists():
@@ -54,7 +56,10 @@ def load_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
                     if (sub / "run.json").exists()
                     else {}
                 )
-                if run.get("_meta", {}).get("partial"):
+                # ``partial`` means the run did not cover every config of the split.
+                # The CPU study's validation run is partial relative to kernelsynth,
+                # which that study excludes on purpose, so its report opts in.
+                if run.get("_meta", {}).get("partial") and not include_partial:
                     continue
                 rows = read_csv(sub / "all_results.csv")
                 for k, v in run.get("per_config", {}).items():
@@ -155,8 +160,25 @@ def compare(
     return {"a": a, "b": b, "metric": metric, "ratio": pt, "ci95": [lo, hi], "verdict": verdict}
 
 
+def _in_reference_summary(split: str, name: str) -> bool:
+    """Models from the CPU study set ``reference_summary`` false so they do not change
+    the published-reference ranks in ``test_summary.json`` / ``val_summary.json``."""
+    if name.startswith("upstream:"):
+        return True
+    path = results_dir() / "eval" / split / name / "run.json"
+    if not path.exists():
+        return True
+    info = json.loads(path.read_text()).get("model_info") or {}
+    flag = info.get("reference_summary", True)
+    return bool(flag)
+
+
+def reference_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
+    return {n: rows for n, rows in load_models(split).items() if _in_reference_summary(split, n)}
+
+
 def report(split: str) -> Path:
-    models = load_models(split)
+    models = reference_models(split)
     baseline = "seasonal_naive" if "seasonal_naive" in models else "upstream:Seasonal_Naive"
     if baseline not in models:
         raise SystemExit(f"no Seasonal Naive results for split {split}")
@@ -263,4 +285,169 @@ def select_headline(tolerance: float = 0.005, extra_seeds: tuple[int, ...] = (1,
         out,
         split="val",
         label="M7-headline-choice",
+    )
+
+
+# Student-t critical value, two-sided 95%, df = 2 (three seeds).
+_T_CRIT_DF2 = 4.302652729911275
+
+
+def seed_t_interval(values: list[float]) -> dict[str, Any]:
+    """Mean and a 95% Student-t interval across seeds.
+
+    With three seeds the interval is an honest description of seed noise and is
+    usually wide. It is not a substitute for the paired bootstrap over configurations.
+    """
+    a = np.asarray(values, np.float64)
+    n = int(a.size)
+    mean = float(a.mean())
+    out: dict[str, Any] = {"n": n, "mean": mean, "values": [float(v) for v in a]}
+    if n < 2:
+        out["ci95"] = None
+        return out
+    sd = float(a.std(ddof=1))
+    half = _T_CRIT_DF2 * sd / float(np.sqrt(n))
+    out["sd"] = sd
+    out["ci95"] = [mean - half, mean + half]
+    return out
+
+
+def _subset_models(
+    models: dict[str, dict[str, dict[str, Any]]], names: list[str], baseline: str
+) -> dict[str, dict[str, dict[str, Any]]]:
+    """Keep configs present in every named model and in the baseline."""
+    keys = set(models[baseline])
+    for n in names:
+        keys &= set(models[n])
+    if not keys:
+        raise SystemExit(f"no configs in common between {names} and {baseline}")
+    keep = sorted(keys)
+
+    def cut(rows: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+        return {k: rows[k] for k in keep}
+
+    out = {baseline: cut(models[baseline])}
+    for n in names:
+        out[n] = cut(models[n])
+    return out
+
+
+def _family_block(
+    models: dict[str, dict[str, dict[str, Any]]],
+    seed_names: list[str],
+    label: str,
+    baseline: str,
+    opponents: list[str],
+) -> dict[str, Any]:
+    """Seed-averaged scores, per-seed ratios to Seasonal Naive, config bootstrap, seed t interval."""
+    present = [n for n in seed_names if n in models]
+    missing = [n for n in seed_names if n not in models]
+    if not present:
+        raise SystemExit(f"no results for {seed_names}")
+    sub = _subset_models(models, present, baseline)
+    sub[label] = seed_average(sub, present)
+    summary = summarise(sub, baseline)
+    keys = sorted(sub[baseline])
+    # The seed average only pools MASE and CRPS. Coverage is the mean across seeds
+    # of each config, then the mean across configs, matching summarise's coverage.
+    cov_rows: dict[str, dict[str, float]] = {}
+    for k in keys:
+        cov_rows[k] = {}
+        for lvl in (50, 80, 90):
+            raw = [sub[n][k].get(f"coverage_{lvl}") for n in present]
+            vals = [float(v) for v in raw if v is not None]
+            if len(vals) != len(raw) or not all(np.isfinite(v) for v in vals):
+                continue
+            cov_rows[k][f"coverage_{lvl}"] = float(np.mean(vals))
+    summary["models"][label]["coverage_mean"] = {
+        str(lvl): (
+            float(np.mean([cov_rows[k][f"coverage_{lvl}"] for k in keys]))
+            if all(f"coverage_{lvl}" in cov_rows[k] for k in keys)
+            else None
+        )
+        for lvl in (50, 80, 90)
+    }
+    per_seed_crps = []
+    per_seed = {}
+    for n in present:
+        crps = gmean([sub[n][k][CRPS] / sub[baseline][k][CRPS] for k in keys])
+        mase = gmean([sub[n][k][MASE] / sub[baseline][k][MASE] for k in keys])
+        per_seed[n] = {"crps_gmean": crps, "mase_gmean": mase}
+        per_seed_crps.append(crps)
+    comparisons = []
+    for other in opponents:
+        if other not in models or other == label:
+            continue
+        opp_keys = [k for k in keys if k in models[other]]
+        if not opp_keys:
+            continue
+        both = {
+            baseline: {k: sub[baseline][k] for k in opp_keys},
+            label: {k: sub[label][k] for k in opp_keys},
+            other: {k: models[other][k] for k in opp_keys},
+        }
+        for metric in ("crps", "mase"):
+            comparisons.append(compare(both, label, other, baseline, metric))
+    return {
+        "label": label,
+        "seed_runs": present,
+        "missing_seed_runs": missing,
+        "n_configs": summary["n_configs"],
+        "summary": summary["models"][label],
+        "per_seed": per_seed,
+        "crps_gmean_across_seeds": seed_t_interval(per_seed_crps),
+        "comparisons": comparisons,
+    }
+
+
+def cpu_study_report(prefix: str = "cpu_s0") -> Path:
+    """Validation and test summaries for the CPU study.
+
+    The test comparison follows PREREGISTRATION.md section 5: seed-average the
+    per-configuration scores, then a 95% paired bootstrap over configurations.
+    A Student-t interval across the three seed-level geometric means is reported
+    beside it. Conformalised runs are a separate, pre-specified family.
+    """
+    # Validation runs are marked partial because they skip synthetic series.
+    val = load_models("val", include_partial=True)
+    test = load_models("test")
+    seeds = [f"{prefix}_seed{i}" for i in (0, 1, 2)]
+    cqr = [f"{n}_cqr" for n in seeds]
+    ablation = f"{prefix}_norope"
+    opponents = ["seasonal_naive", "upstream:Auto_Arima"]
+    out: dict[str, Any] = {"prefix": prefix}
+    if any(n in val for n in seeds):
+        block = _family_block(val, seeds, prefix, "seasonal_naive", ["seasonal_naive"])
+        out["validation"] = block
+        if ablation in val:
+            ab = _subset_models(val, [ablation, seeds[0]], "seasonal_naive")
+            sm = summarise(ab, "seasonal_naive")
+            out["validation_ablation"] = {
+                "rope": {
+                    "name": seeds[0],
+                    "crps_gmean": sm["models"][seeds[0]]["crps_gmean"],
+                    "mase_gmean": sm["models"][seeds[0]]["mase_gmean"],
+                },
+                "none": {
+                    "name": ablation,
+                    "crps_gmean": sm["models"][ablation]["crps_gmean"],
+                    "mase_gmean": sm["models"][ablation]["mase_gmean"],
+                },
+                "n_configs": sm["n_configs"],
+            }
+        if any(n in val for n in cqr):
+            out["validation_cqr"] = _family_block(
+                val, cqr, f"{prefix}_cqr", "seasonal_naive", ["seasonal_naive"]
+            )
+    if any(n in test for n in seeds):
+        out["test"] = _family_block(test, seeds, prefix, "seasonal_naive", opponents)
+    if any(n in test for n in cqr):
+        out["test_cqr"] = _family_block(test, cqr, f"{prefix}_cqr", "seasonal_naive", opponents)
+    if "test" not in out and "validation" not in out:
+        raise SystemExit(f"no {prefix} results to summarise")
+    return write_result(
+        results_dir() / "analysis" / "cpu_study.json",
+        out,
+        split="test" if "test" in out else "val",
+        label="cpu-study",
     )

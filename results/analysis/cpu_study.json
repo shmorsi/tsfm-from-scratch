@@ -1,0 +1,709 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-20T21:28:55+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cpu",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+    "label": "cpu-study",
+    "split": "test"
+  },
+  "prefix": "cpu_s0",
+  "test": {
+    "comparisons": [
+      {
+        "a": "cpu_s0",
+        "b": "seasonal_naive",
+        "ci95": [
+          0.9782600475831633,
+          1.2653159462044836
+        ],
+        "metric": "crps",
+        "ratio": 1.1092987590834293,
+        "verdict": "no detectable difference"
+      },
+      {
+        "a": "cpu_s0",
+        "b": "seasonal_naive",
+        "ci95": [
+          1.5647009156864935,
+          2.173352271379465
+        ],
+        "metric": "mase",
+        "ratio": 1.834619697615795,
+        "verdict": "worse"
+      },
+      {
+        "a": "cpu_s0",
+        "b": "upstream:Auto_Arima",
+        "ci95": [
+          1.0913085430469947,
+          1.3617670492606726
+        ],
+        "metric": "crps",
+        "ratio": 1.2167562149962476,
+        "verdict": "worse"
+      },
+      {
+        "a": "cpu_s0",
+        "b": "upstream:Auto_Arima",
+        "ci95": [
+          1.3425499522275937,
+          2.088469946027356
+        ],
+        "metric": "mase",
+        "ratio": 1.7088144996608143,
+        "verdict": "worse"
+      }
+    ],
+    "crps_gmean_across_seeds": {
+      "ci95": [
+        0.6539384780939577,
+        1.5160644925502142
+      ],
+      "mean": 1.085001485322086,
+      "n": 3,
+      "sd": 0.17352621200222787,
+      "values": [
+        0.9346378591173505,
+        1.0454905297432324,
+        1.2748760671056747
+      ]
+    },
+    "label": "cpu_s0",
+    "missing_seed_runs": [],
+    "n_configs": 97,
+    "per_seed": {
+      "cpu_s0_seed0": {
+        "crps_gmean": 0.9346378591173505,
+        "mase_gmean": 1.4912687884889508
+      },
+      "cpu_s0_seed1": {
+        "crps_gmean": 1.0454905297432324,
+        "mase_gmean": 1.811824506993434
+      },
+      "cpu_s0_seed2": {
+        "crps_gmean": 1.2748760671056747,
+        "mase_gmean": 2.0514285923658857
+      }
+    },
+    "seed_runs": [
+      "cpu_s0_seed0",
+      "cpu_s0_seed1",
+      "cpu_s0_seed2"
+    ],
+    "summary": {
+      "by": {
+        "domain": {
+          "": {
+            "crps": 1.1092987590834293,
+            "mase": 1.834619697615795,
+            "n": 97
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.6030398217736013,
+            "mase": 0.9487944906286429,
+            "n": 15
+          },
+          "hourly": {
+            "crps": 1.1457428064036224,
+            "mase": 1.8349028616309062,
+            "n": 31
+          },
+          "minutely": {
+            "crps": 1.210949179559588,
+            "mase": 2.59684391108786,
+            "n": 30
+          },
+          "monthly": {
+            "crps": 1.0181458337330407,
+            "mase": 1.056790966299235,
+            "n": 5
+          },
+          "quarterly": {
+            "crps": 0.9186715416869712,
+            "mase": 0.9449935282294509,
+            "n": 1
+          },
+          "secondly": {
+            "crps": 4.181186882434612,
+            "mase": 6.307686755979105,
+            "n": 6
+          },
+          "weekly": {
+            "crps": 0.8797651524253586,
+            "mase": 1.0907037050626895,
+            "n": 8
+          },
+          "yearly": {
+            "crps": 1.1326525315020568,
+            "mase": 1.2727837534491186,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 1.5639310534538333,
+            "mase": 3.3618938728829835,
+            "n": 21
+          },
+          "medium": {
+            "crps": 1.5752304804904125,
+            "mase": 2.9613320281798274,
+            "n": 21
+          },
+          "short": {
+            "crps": 0.851027982964211,
+            "mase": 1.2126003991698056,
+            "n": 55
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.40116141456248844,
+        "80": 0.6424559614433931,
+        "90": 0.730123407861466
+      },
+      "crps_gmean": 1.1092987590834293,
+      "mase_gmean": 1.834619697615795,
+      "rank_crps": 3.154639175257732,
+      "rank_mase": 3.3092783505154637,
+      "worst_configs_crps": [
+        [
+          "bizitobs_application/10S/medium",
+          7.5216562654802095
+        ],
+        [
+          "bizitobs_service/10S/medium",
+          6.9708438575942475
+        ],
+        [
+          "bizitobs_application/10S/long",
+          6.860986965622633
+        ],
+        [
+          "bizitobs_service/10S/long",
+          6.510249681695005
+        ],
+        [
+          "electricity/15T/long",
+          3.850213885229138
+        ]
+      ]
+    }
+  },
+  "test_cqr": {
+    "comparisons": [
+      {
+        "a": "cpu_s0_cqr",
+        "b": "seasonal_naive",
+        "ci95": [
+          1.1302126417778942,
+          1.4554282472222924
+        ],
+        "metric": "crps",
+        "ratio": 1.2773097153527573,
+        "verdict": "worse"
+      },
+      {
+        "a": "cpu_s0_cqr",
+        "b": "seasonal_naive",
+        "ci95": [
+          1.5647009156864935,
+          2.173352271379465
+        ],
+        "metric": "mase",
+        "ratio": 1.834619697615795,
+        "verdict": "worse"
+      },
+      {
+        "a": "cpu_s0_cqr",
+        "b": "upstream:Auto_Arima",
+        "ci95": [
+          1.2489595879628612,
+          1.5759759604186896
+        ],
+        "metric": "crps",
+        "ratio": 1.4010423449086968,
+        "verdict": "worse"
+      },
+      {
+        "a": "cpu_s0_cqr",
+        "b": "upstream:Auto_Arima",
+        "ci95": [
+          1.3425499522275937,
+          2.088469946027356
+        ],
+        "metric": "mase",
+        "ratio": 1.7088144996608143,
+        "verdict": "worse"
+      }
+    ],
+    "crps_gmean_across_seeds": {
+      "ci95": [
+        0.6029893775603494,
+        1.9201892118249761
+      ],
+      "mean": 1.2615892946926628,
+      "n": 3,
+      "sd": 0.2651221443933129,
+      "values": [
+        1.0299885762681176,
+        1.2040097765643558,
+        1.5507695312455154
+      ]
+    },
+    "label": "cpu_s0_cqr",
+    "missing_seed_runs": [],
+    "n_configs": 97,
+    "per_seed": {
+      "cpu_s0_seed0_cqr": {
+        "crps_gmean": 1.0299885762681176,
+        "mase_gmean": 1.4912687884889508
+      },
+      "cpu_s0_seed1_cqr": {
+        "crps_gmean": 1.2040097765643558,
+        "mase_gmean": 1.811824506993434
+      },
+      "cpu_s0_seed2_cqr": {
+        "crps_gmean": 1.5507695312455154,
+        "mase_gmean": 2.0514285923658857
+      }
+    },
+    "seed_runs": [
+      "cpu_s0_seed0_cqr",
+      "cpu_s0_seed1_cqr",
+      "cpu_s0_seed2_cqr"
+    ],
+    "summary": {
+      "by": {
+        "domain": {
+          "": {
+            "crps": 1.2773097153527573,
+            "mase": 1.834619697615795,
+            "n": 97
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.8376396388648409,
+            "mase": 0.9487944906286429,
+            "n": 15
+          },
+          "hourly": {
+            "crps": 1.200001900064981,
+            "mase": 1.8349028616309062,
+            "n": 31
+          },
+          "minutely": {
+            "crps": 1.2422355057927745,
+            "mase": 2.59684391108786,
+            "n": 30
+          },
+          "monthly": {
+            "crps": 1.529890665284503,
+            "mase": 1.056790966299235,
+            "n": 5
+          },
+          "quarterly": {
+            "crps": 1.2668915665133123,
+            "mase": 0.9449935282294509,
+            "n": 1
+          },
+          "secondly": {
+            "crps": 4.846974062884409,
+            "mase": 6.307686755979105,
+            "n": 6
+          },
+          "weekly": {
+            "crps": 1.310823329140967,
+            "mase": 1.0907037050626895,
+            "n": 8
+          },
+          "yearly": {
+            "crps": 1.2732028686752053,
+            "mase": 1.2727837534491186,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 1.4504222460699567,
+            "mase": 3.3618938728829835,
+            "n": 21
+          },
+          "medium": {
+            "crps": 1.489394525142091,
+            "mase": 2.9613320281798274,
+            "n": 21
+          },
+          "short": {
+            "crps": 1.147487817471023,
+            "mase": 1.2126003991698056,
+            "n": 55
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.7125867939514899,
+        "80": 0.931818184474651,
+        "90": 0.9752900642744429
+      },
+      "crps_gmean": 1.2773097153527573,
+      "mase_gmean": 1.834619697615795,
+      "rank_crps": 3.4948453608247423,
+      "rank_mase": 3.3092783505154637,
+      "worst_configs_crps": [
+        [
+          "bizitobs_application/10S/medium",
+          6.677093100964103
+        ],
+        [
+          "bizitobs_service/10S/medium",
+          6.23753434837954
+        ],
+        [
+          "bizitobs_application/10S/long",
+          6.109628672481283
+        ],
+        [
+          "bizitobs_service/10S/long",
+          5.798806335420728
+        ],
+        [
+          "us_births/M/short",
+          5.162113398295333
+        ]
+      ]
+    }
+  },
+  "validation": {
+    "comparisons": [
+      {
+        "a": "cpu_s0",
+        "b": "seasonal_naive",
+        "ci95": [
+          0.7294578829696686,
+          1.3530814740025576
+        ],
+        "metric": "crps",
+        "ratio": 0.988288471604408,
+        "verdict": "no detectable difference"
+      },
+      {
+        "a": "cpu_s0",
+        "b": "seasonal_naive",
+        "ci95": [
+          0.9666620033094543,
+          1.7649986102036062
+        ],
+        "metric": "mase",
+        "ratio": 1.3120370801492987,
+        "verdict": "no detectable difference"
+      }
+    ],
+    "crps_gmean_across_seeds": {
+      "ci95": [
+        0.6584568820594886,
+        1.2765473907815883
+      ],
+      "mean": 0.9675021364205385,
+      "n": 3,
+      "sd": 0.12440745651402446,
+      "values": [
+        0.8532763389306248,
+        0.9491725694904274,
+        1.1000575008405633
+      ]
+    },
+    "label": "cpu_s0",
+    "missing_seed_runs": [],
+    "n_configs": 14,
+    "per_seed": {
+      "cpu_s0_seed0": {
+        "crps_gmean": 0.8532763389306248,
+        "mase_gmean": 1.145955809289082
+      },
+      "cpu_s0_seed1": {
+        "crps_gmean": 0.9491725694904274,
+        "mase_gmean": 1.2794282011409113
+      },
+      "cpu_s0_seed2": {
+        "crps_gmean": 1.1000575008405633,
+        "mase_gmean": 1.4480916481375365
+      }
+    },
+    "seed_runs": [
+      "cpu_s0_seed0",
+      "cpu_s0_seed1",
+      "cpu_s0_seed2"
+    ],
+    "summary": {
+      "by": {
+        "domain": {
+          "": {
+            "crps": 0.988288471604408,
+            "mase": 1.3120370801492987,
+            "n": 14
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.5386330360738217,
+            "mase": 0.6702900001968933,
+            "n": 2
+          },
+          "hourly": {
+            "crps": 1.0567984714166916,
+            "mase": 1.9950594197652072,
+            "n": 4
+          },
+          "minutely": {
+            "crps": 1.1254962659509828,
+            "mase": 1.2883891110929717,
+            "n": 4
+          },
+          "monthly": {
+            "crps": 1.0724116030876492,
+            "mase": 1.0038373342651994,
+            "n": 1
+          },
+          "quarterly": {
+            "crps": 1.3660911540735137,
+            "mase": 1.6978121595295268,
+            "n": 1
+          },
+          "weekly": {
+            "crps": 0.8468535372229742,
+            "mase": 0.9759958450912285,
+            "n": 1
+          },
+          "yearly": {
+            "crps": 1.177041590515751,
+            "mase": 1.3731170844363365,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 1.315872319121759,
+            "mase": 2.141149576582503,
+            "n": 4
+          },
+          "short": {
+            "crps": 0.8813567208971496,
+            "mase": 1.0786132468370369,
+            "n": 10
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.42278929784023955,
+        "80": 0.6923340917474213,
+        "90": 0.7880141882423557
+      },
+      "crps_gmean": 0.988288471604408,
+      "mase_gmean": 1.3120370801492987,
+      "rank_crps": 3.0714285714285716,
+      "rank_mase": 3.0714285714285716,
+      "worst_configs_crps": [
+        [
+          "australian_electricity_demand/30T/long",
+          3.302287827841126
+        ],
+        [
+          "bdg-2_bear/H/long",
+          2.4454591937562538
+        ],
+        [
+          "australian_electricity_demand/30T/short",
+          1.7790486044299385
+        ],
+        [
+          "tourism_quarterly/Q-DEC/short",
+          1.366091154073514
+        ],
+        [
+          "bdg-2_bear/H/short",
+          1.2687078685640991
+        ]
+      ]
+    }
+  },
+  "validation_ablation": {
+    "n_configs": 14,
+    "none": {
+      "crps_gmean": 0.9212674594884792,
+      "mase_gmean": 1.2320567221209338,
+      "name": "cpu_s0_norope"
+    },
+    "rope": {
+      "crps_gmean": 0.8532763389306248,
+      "mase_gmean": 1.145955809289082,
+      "name": "cpu_s0_seed0"
+    }
+  },
+  "validation_cqr": {
+    "comparisons": [
+      {
+        "a": "cpu_s0_cqr",
+        "b": "seasonal_naive",
+        "ci95": [
+          0.815533849182391,
+          1.5471982140081042
+        ],
+        "metric": "crps",
+        "ratio": 1.1320019533278356,
+        "verdict": "no detectable difference"
+      },
+      {
+        "a": "cpu_s0_cqr",
+        "b": "seasonal_naive",
+        "ci95": [
+          0.9666620033094543,
+          1.7649986102036062
+        ],
+        "metric": "mase",
+        "ratio": 1.3120370801492987,
+        "verdict": "no detectable difference"
+      }
+    ],
+    "crps_gmean_across_seeds": {
+      "ci95": [
+        0.5673111423323247,
+        1.6729624959594829
+      ],
+      "mean": 1.1201368191459038,
+      "n": 3,
+      "sd": 0.22254228265117643,
+      "values": [
+        0.9235956616225732,
+        1.0750416153193305,
+        1.3617731804958078
+      ]
+    },
+    "label": "cpu_s0_cqr",
+    "missing_seed_runs": [],
+    "n_configs": 14,
+    "per_seed": {
+      "cpu_s0_seed0_cqr": {
+        "crps_gmean": 0.9235956616225732,
+        "mase_gmean": 1.145955809289082
+      },
+      "cpu_s0_seed1_cqr": {
+        "crps_gmean": 1.0750416153193305,
+        "mase_gmean": 1.2794282011409113
+      },
+      "cpu_s0_seed2_cqr": {
+        "crps_gmean": 1.3617731804958078,
+        "mase_gmean": 1.4480916481375365
+      }
+    },
+    "seed_runs": [
+      "cpu_s0_seed0_cqr",
+      "cpu_s0_seed1_cqr",
+      "cpu_s0_seed2_cqr"
+    ],
+    "summary": {
+      "by": {
+        "domain": {
+          "": {
+            "crps": 1.1320019533278356,
+            "mase": 1.3120370801492987,
+            "n": 14
+          }
+        },
+        "frequency": {
+          "daily": {
+            "crps": 0.6282853318174118,
+            "mase": 0.6702900001968933,
+            "n": 2
+          },
+          "hourly": {
+            "crps": 1.1939621090408006,
+            "mase": 1.9950594197652072,
+            "n": 4
+          },
+          "minutely": {
+            "crps": 1.178620576973216,
+            "mase": 1.2883891110929717,
+            "n": 4
+          },
+          "monthly": {
+            "crps": 1.2578570031121619,
+            "mase": 1.0038373342651994,
+            "n": 1
+          },
+          "quarterly": {
+            "crps": 1.4830782055163956,
+            "mase": 1.6978121595295268,
+            "n": 1
+          },
+          "weekly": {
+            "crps": 1.399463553021558,
+            "mase": 0.9759958450912285,
+            "n": 1
+          },
+          "yearly": {
+            "crps": 1.4038847462219197,
+            "mase": 1.3731170844363365,
+            "n": 1
+          }
+        },
+        "term": {
+          "long": {
+            "crps": 1.239406265123137,
+            "mase": 2.141149576582503,
+            "n": 4
+          },
+          "short": {
+            "crps": 1.0916931163778874,
+            "mase": 1.0786132468370369,
+            "n": 10
+          }
+        }
+      },
+      "coverage_mean": {
+        "50": 0.7434585679006116,
+        "80": 0.9483012249825066,
+        "90": 0.9813775771922025
+      },
+      "crps_gmean": 1.1320019533278356,
+      "mase_gmean": 1.3120370801492987,
+      "rank_crps": 3.357142857142857,
+      "rank_mase": 3.0714285714285716,
+      "worst_configs_crps": [
+        [
+          "australian_electricity_demand/30T/long",
+          2.961517668401693
+        ],
+        [
+          "australian_electricity_demand/30T/short",
+          2.475996534278542
+        ],
+        [
+          "bdg-2_bear/H/long",
+          2.2434762010389817
+        ],
+        [
+          "bdg-2_bear/H/short",
+          2.0631253417323565
+        ],
+        [
+          "tourism_quarterly/Q-DEC/short",
+          1.4830782055163956
+        ]
+      ]
+    }
+  }
+}

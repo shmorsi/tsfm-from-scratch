@@ -135,3 +135,56 @@ def test_select_headline_tie_goes_to_smaller(tmp_path: Path, monkeypatch: pytest
     assert h["headline"] == "patch_s0"  # within 0.5% of the best (patch_s1), and smaller
     h = json.loads(A.select_headline(tolerance=0.001).read_text())
     assert h["headline"] == "patch_s1"
+
+
+def test_seed_t_interval_with_three_points():
+    s = A.seed_t_interval([1.0, 2.0, 3.0])
+    assert s["mean"] == pytest.approx(2.0)
+    assert s["sd"] == pytest.approx(1.0)
+    half = 4.302652729911275 / 3**0.5
+    assert s["ci95"][0] == pytest.approx(2.0 - half)
+    assert s["ci95"][1] == pytest.approx(2.0 + half)
+
+
+def test_reference_summary_flag_excludes_cpu_runs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(A, "results_dir", lambda: tmp_path)
+    cfgs = ["a/H/short", "b/D/short"]
+    write_model(tmp_path, "test", "seasonal_naive", dict.fromkeys(cfgs, 1.0))
+    write_model(tmp_path, "test", "cpu_s0_seed0", dict.fromkeys(cfgs, 1.2))
+    run = tmp_path / "eval" / "test" / "cpu_s0_seed0" / "run.json"
+    doc = json.loads(run.read_text())
+    doc["model_info"] = {"reference_summary": False}
+    run.write_text(json.dumps(doc))
+    kept = A.reference_models("test")
+    assert "cpu_s0_seed0" not in kept
+    assert "seasonal_naive" in kept
+
+
+def test_cpu_train_and_val_datasets_are_disjoint():
+    from tsfm.cpu_study import TRAIN_DATASETS, VAL_DATASETS
+
+    assert set(TRAIN_DATASETS).isdisjoint(VAL_DATASETS)
+
+
+def test_family_block_keeps_seed_averaged_coverage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(A, "results_dir", lambda: tmp_path)
+    cfgs = ["a/H/short", "b/D/short"]
+    write_model(tmp_path, "val", "seasonal_naive", dict.fromkeys(cfgs, 2.0))
+    write_model(tmp_path, "val", "cpu_s0_seed0", dict.fromkeys(cfgs, 1.0))
+    write_model(tmp_path, "val", "cpu_s0_seed1", dict.fromkeys(cfgs, 1.4))
+    # A partial validation run is skipped by the default loader and included when asked.
+    d = tmp_path / "eval" / "val" / "cpu_s0_seed0"
+    doc = json.loads((d / "run.json").read_text())
+    doc["_meta"]["partial"] = True
+    doc["per_config"][cfgs[0]]["coverage_80"] = 0.6
+    doc["per_config"][cfgs[1]]["coverage_80"] = 0.7
+    (d / "run.json").write_text(json.dumps(doc))
+    assert "cpu_s0_seed0" not in A.load_models("val")
+    models = A.load_models("val", include_partial=True)
+    block = A._family_block(
+        models, ["cpu_s0_seed0", "cpu_s0_seed1"], "cpu_s0", "seasonal_naive", ["seasonal_naive"]
+    )
+    # seed0 coverage_80 is 0.65 across configs; seed1 is 0.8; the mean is 0.725.
+    assert block["summary"]["coverage_mean"]["80"] == pytest.approx(0.725)
+    assert block["summary"]["coverage_mean"]["50"] == pytest.approx(0.5)
+    assert block["n_configs"] == 2

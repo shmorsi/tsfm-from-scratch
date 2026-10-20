@@ -1,0 +1,41 @@
+name: cpu_s0_seed1
+seed: 1
+model:
+  tokenizer: patch
+  d_model: 128
+  n_layers: 4
+  n_heads: 4
+  patch_len: 16
+  horizon: 32
+  max_seq_len: 128
+  dropout: 0.0
+  position: rope
+data:
+  corpora:
+  - path: pretrain
+  - path: synthetic
+    synthetic: true
+  val:
+  - path: synthetic_val
+    synthetic: true
+  window: 384
+  min_context: 32
+  synthetic_share: 0.75
+  temperature: 0.5
+  val_batches: 8
+  val_batch_size: 64
+  val_seed: 12345
+train:
+  steps: 2000
+  batch_size: 32
+  micro_batch: 16
+  lr: 0.003
+  warmup: 40
+  min_lr_ratio: 0.1
+  weight_decay: 0.1
+  grad_clip: 1.0
+  precision: fp32
+  device: cpu
+  ckpt_minutes: 10
+  eval_every: 200
+  log_every: 20
