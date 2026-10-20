@@ -25,3 +25,6 @@ A separate, smaller study is pre-registered in `PREREGISTRATION_CPU.md` and
 `configs/cpu_study.yaml`. It trains its own model, commits the weights, and scores
 the official test split once. It does not change the T4 validation tables and it is
 not a second look at `patch_s2`.
+
+That CPU study has now been scored once. The seed-averaged test comparison is in
+`results/analysis/cpu_study.json`. It does not fill in a test score for `patch_s2`.
