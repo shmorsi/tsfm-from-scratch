@@ -42,9 +42,25 @@ Seasonal Naive reproduces upstream's on all official metrics and configurations)
 
 {{ table:tokenizers | default:*Not concluded. `bins_s2` was trained at the same size and token budget as `patch_s2`, but its validation scoring (20 sampled paths per window) did not finish within the compute budget, so no tokenizer comparison is reported (`DEVIATIONS.md`).* }}
 
-### Zero-shot GIFT-Eval (test split, pre-registered)
+### Zero-shot GIFT-Eval (test split)
 
-{{ table:headline | default:*Not run. The pre-registered test scoring of the headline model did not complete before the deadline (`DEVIATIONS.md`); no test-set result is claimed. Published reference results for other models are in `README.md`.* }}
+`patch_s2`, the T4 headline, was not scored on the test split. Its checkpoint is not in the repository (`DEVIATIONS.md`). No test number is claimed for it.
+
+A smaller model was pre-registered separately (`PREREGISTRATION_CPU.md`) and scored once, three seeds, on all {{ results/analysis/cpu_study.json#test.n_configs }} official configurations. Seed-averaged CRPS is {{ results/analysis/cpu_study.json#test.summary.crps_gmean | .3f }}× Seasonal Naive (95% configuration interval [{{ results/analysis/cpu_study.json#test.comparisons.0.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.0.ci95.1 | .3f }}], no detectable difference) and {{ results/analysis/cpu_study.json#test.comparisons.2.ratio | .3f }}× upstream AutoARIMA (interval entirely above 1, worse).
+
+{{ table:cpu_test }}
+
+{{ table:cpu_vs_arima }}
+
+The same three seeds on the validation split average CRPS {{ results/analysis/cpu_study.json#validation.summary.crps_gmean | .3f }}× Seasonal Naive. The test ratio is higher. Nothing was changed after the test scores were written.
+
+Split-conformal expansions were fit per seed on validation forecasts only. On the test split they leave MASE unchanged and move CRPS to {{ results/analysis/cpu_study.json#test_cqr.summary.crps_gmean | .3f }}× Seasonal Naive, which is worse. Empirical 80% coverage moves from {{ results/analysis/cpu_study.json#test.summary.coverage_mean.80 | .3f }} to {{ results/analysis/cpu_study.json#test_cqr.summary.coverage_mean.80 | .3f }}. The validation conformal row in the table below reuses the fit set.
+
+{{ table:cpu_val }}
+
+RoPE against no positions is validation only (seed 0, {{ results/analysis/cpu_study.json#validation_ablation.n_configs }} configurations): CRPS {{ results/analysis/cpu_study.json#validation_ablation.rope.crps_gmean | .3f }} with RoPE and {{ results/analysis/cpu_study.json#validation_ablation.none.crps_gmean | .3f }} without. The no-position run was not test-scored.
+
+One held-out hourly series, last-layer attention of the final query: mass {{ results/analysis/attention_cpu_s0.json#profile.mass_last_patch | .3f }} on the latest patch and {{ results/analysis/attention_cpu_s0.json#profile.mass_last_4_patches | .3f }} on the last four (`results/analysis/attention_cpu_s0.json`). Descriptive only.
 
 ### Fine-tuning on realized volatility, and regime robustness
 
@@ -67,23 +83,34 @@ performance, and none is claimed.
 
 ## Scope
 
-`DEVIATIONS.md` records, before any of our models was scored on the test split, what was
-cut from the pre-registered plan to fit a free T4 GPU and a deadline: three model sizes
-instead of four to six, no tokenizer conclusion, one seed, and no test-split scoring of
-our model.
+`DEVIATIONS.md` records, before any T4 model was scored on the test split, what was
+cut from that pre-registered plan: three model sizes instead of four to six, no
+tokenizer conclusion, one seed, and no test-split scoring of `patch_s2`. The later CPU
+study is a separate pre-registration. It did score its own model once.
 
 ## Not established
 
 Things this project does **not** show, whatever the numbers above say:
 
-* How the model ranks on the GIFT-Eval test split or against AutoARIMA there: that
-  pre-registered comparison was not run. Validation datasets are held out of
-  pretraining but are not the benchmark.
+* A test score for `patch_s2`. The test numbers in this note are the CPU model
+  ({{ results/runs/cpu_s0_seed0/summary.json#params_total | int }} parameters). On that
+  model, CRPS against Seasonal Naive is not distinguishable from 1, and both CRPS and
+  MASE are worse than upstream AutoARIMA.
+* That the CPU result would survive a larger training budget. It is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps on CPU.
 * That the model is useful for any real forecasting or trading decision. Nothing here
   measures economic value, and no trading performance is claimed.
 * That scaling trends continue beyond the sizes trained: the fit describes three runs.
-* That the headline result holds across training seeds: it was scored with one seed, so
-  the bootstrap interval covers variation across configurations, not across seeds.
+* That the T4 headline holds across training seeds: `patch_s2` was scored with one seed.
+  The CPU study has three seeds. Their test CRPS ratios are
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.0 | .3f }},
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.1 | .3f }} and
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.2 | .3f }}.
+  The mean of those three is
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.mean | .3f }},
+  and the Student-t interval on that mean is
+  [{{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.ci95.0 | .3f }},
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.ci95.1 | .3f }}].
+  That is not the interval on the seed-averaged ratio.
 * Which tokenizer is better: the comparison did not complete.
 * That the corpus is free of *all* benchmark overlap: the check finds exact and affine
   copies, not noisy, warped or differently aggregated ones.

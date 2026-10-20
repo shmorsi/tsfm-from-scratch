@@ -1,0 +1,127 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-20T18:21:27+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cpu",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": false,
+    "git_sha": "9ff06fe2da4bfd1cfcda842652f520d5ec922519",
+    "label": "cpu-protocol",
+    "split": "none"
+  },
+  "ablation": "position=none, seed 0, validation only, not eligible for the test split",
+  "config_file": "configs/cpu_study.yaml",
+  "data": {
+    "corpora": [
+      {
+        "path": "pretrain"
+      },
+      {
+        "path": "synthetic",
+        "synthetic": true
+      }
+    ],
+    "min_context": 32,
+    "synthetic_share": 0.75,
+    "temperature": 0.5,
+    "val": [
+      {
+        "path": "synthetic_val",
+        "synthetic": true
+      }
+    ],
+    "val_batch_size": 64,
+    "val_batches": 8,
+    "val_seed": 12345,
+    "window": 384
+  },
+  "eval_batch_size": 64,
+  "max_context": 512,
+  "model": {
+    "d_model": 128,
+    "dropout": 0.0,
+    "horizon": 32,
+    "max_seq_len": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "patch_len": 16,
+    "position": "rope",
+    "tokenizer": "patch"
+  },
+  "n_train_datasets": 12,
+  "n_val_datasets": 10,
+  "not_test_scored": [
+    "cpu_s0_norope"
+  ],
+  "preregistration": "PREREGISTRATION_CPU.md",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "study": "cpu_s0",
+  "synthetic": {
+    "length": 384,
+    "max_kernels": 5,
+    "n_series": 8000,
+    "seed": 20261020,
+    "val_series": 400
+  },
+  "t4_checkpoint_note": "patch_s2 weights are not in the repository; this study does not score that checkpoint",
+  "test_models": [
+    "cpu_s0_seed0",
+    "cpu_s0_seed1",
+    "cpu_s0_seed2",
+    "cpu_s0_seed0_cqr",
+    "cpu_s0_seed1_cqr",
+    "cpu_s0_seed2_cqr"
+  ],
+  "train": {
+    "batch_size": 32,
+    "ckpt_minutes": 10,
+    "device": "cpu",
+    "eval_every": 200,
+    "grad_clip": 1.0,
+    "log_every": 20,
+    "lr": 0.003,
+    "micro_batch": 16,
+    "min_lr_ratio": 0.1,
+    "precision": "fp32",
+    "steps": 2000,
+    "warmup": 40,
+    "weight_decay": 0.1
+  },
+  "train_datasets": [
+    "tourism_monthly",
+    "tourism_yearly",
+    "m1_quarterly",
+    "m1_yearly",
+    "nn5_weekly",
+    "monash_m3_quarterly",
+    "monash_m3_other",
+    "fred_md",
+    "cif_2016_12",
+    "vehicle_trips_with_missing",
+    "bitcoin_with_missing",
+    "favorita_transactions"
+  ],
+  "val_datasets": [
+    "m1_monthly",
+    "tourism_quarterly",
+    "monash_m3_yearly",
+    "nn5_daily_with_missing",
+    "uber_tlc_daily",
+    "traffic_weekly",
+    "pedestrian_counts",
+    "bdg-2_bear",
+    "australian_electricity_demand",
+    "kdd2022"
+  ]
+}
