@@ -75,14 +75,14 @@ The same three seeds on the validation split average CRPS 0.988× Seasonal Naive
 
 Split-conformal expansions were fit per seed on validation forecasts only. On the test split they leave MASE unchanged and move CRPS to 1.277× Seasonal Naive, which is worse. Empirical 80% coverage moves from 0.642 to 0.932. The validation conformal row in the table below reuses the fit set.
 
-Validation split used only for the conformal fit and this ablation (14 configurations from the ten held-out datasets; synthetic validation series are not included). The split-conformal row is scored on the same forecasts the expansions were fit on, so its coverage is not a held-out check. The test table is.
+Validation split used only for the conformal fit and this ablation (14 configurations from the ten held-out datasets; synthetic validation series are not included). The split-conformal row is scored on the same forecasts the expansions were fit on, so its coverage is not a held-out check. The test table is the held-out calibration result.
 
 | model | MASE | CRPS | CRPS ratio vs Seasonal Naive [95% config CI] | CRPS ratio across seeds [95% t CI] | 80% coverage | vs Seasonal Naive |
 |---|---|---|---|---|---|---|
 | cpu_s0, raw | 1.312 | 0.988 | 0.988 [0.729, 1.353] | [0.658, 1.277] | 0.692 | no detectable difference |
 | cpu_s0, split-conformal | 1.312 | 1.132 | 1.132 [0.816, 1.547] | [0.567, 1.673] | 0.948 | no detectable difference |
 
-Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853, no positions CRPS 0.921. The no-position run was not scored on the test split.
+Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853 and MASE 1.146; no positions CRPS 0.921 and MASE 1.232. The no-position run was not scored on the test split.
 
 RoPE against no positions is validation only (seed 0, 14 configurations): CRPS 0.853 with RoPE and 0.921 without. The no-position run was not test-scored.
 
@@ -142,8 +142,13 @@ Things this project does **not** show, whatever the numbers above say:
   The CPU study has three seeds. Their test CRPS ratios are
   0.935,
   1.045 and
-  1.275, and the
-  Student-t interval across those three means is wide.
+  1.275.
+  The mean of those three is
+  1.085,
+  and the Student-t interval on that mean is
+  [0.654,
+  1.516].
+  That is not the interval on the seed-averaged ratio.
 * Which tokenizer is better: the comparison did not complete.
 * That the corpus is free of *all* benchmark overlap: the check finds exact and affine
   copies, not noisy, warped or differently aggregated ones.
