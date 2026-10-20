@@ -43,7 +43,9 @@ def read_csv(p: Path) -> dict[str, dict[str, Any]]:
         return out
 
 
-def load_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
+def load_models(
+    split: str, *, include_partial: bool = False
+) -> dict[str, dict[str, dict[str, Any]]]:
     models: dict[str, dict[str, dict[str, Any]]] = {}
     d = results_dir() / "eval" / split
     if d.exists():
@@ -54,7 +56,10 @@ def load_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
                     if (sub / "run.json").exists()
                     else {}
                 )
-                if run.get("_meta", {}).get("partial"):
+                # ``partial`` means the run did not cover every config of the split.
+                # The CPU study's validation run is partial relative to kernelsynth,
+                # which that study excludes on purpose, so its report opts in.
+                if run.get("_meta", {}).get("partial") and not include_partial:
                     continue
                 rows = read_csv(sub / "all_results.csv")
                 for k, v in run.get("per_config", {}).items():
@@ -343,6 +348,25 @@ def _family_block(
     sub[label] = seed_average(sub, present)
     summary = summarise(sub, baseline)
     keys = sorted(sub[baseline])
+    # The seed average only pools MASE and CRPS. Coverage is the mean across seeds
+    # of each config, then the mean across configs, matching summarise's coverage.
+    cov_rows: dict[str, dict[str, float]] = {}
+    for k in keys:
+        cov_rows[k] = {}
+        for lvl in (50, 80, 90):
+            raw = [sub[n][k].get(f"coverage_{lvl}") for n in present]
+            vals = [float(v) for v in raw if v is not None]
+            if len(vals) != len(raw) or not all(np.isfinite(v) for v in vals):
+                continue
+            cov_rows[k][f"coverage_{lvl}"] = float(np.mean(vals))
+    summary["models"][label]["coverage_mean"] = {
+        str(lvl): (
+            float(np.mean([cov_rows[k][f"coverage_{lvl}"] for k in keys]))
+            if all(f"coverage_{lvl}" in cov_rows[k] for k in keys)
+            else None
+        )
+        for lvl in (50, 80, 90)
+    }
     per_seed_crps = []
     per_seed = {}
     for n in present:
@@ -384,7 +408,8 @@ def cpu_study_report(prefix: str = "cpu_s0") -> Path:
     A Student-t interval across the three seed-level geometric means is reported
     beside it. Conformalised runs are a separate, pre-specified family.
     """
-    val = load_models("val")
+    # Validation runs are marked partial because they skip synthetic series.
+    val = load_models("val", include_partial=True)
     test = load_models("test")
     seeds = [f"{prefix}_seed{i}" for i in (0, 1, 2)]
     cqr = [f"{n}_cqr" for n in seeds]

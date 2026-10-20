@@ -91,22 +91,24 @@ def coverage_series(
     if cpu.exists():
         doc = json.loads(cpu.read_text())
         series: list[tuple[str, list[tuple[float, float]]]] = []
+
+        def points(cov: dict[str, float | None]) -> list[tuple[float, float]] | None:
+            out: list[tuple[float, float]] = []
+            for nominal, key in ((0.5, "50"), (0.8, "80"), (0.9, "90")):
+                value = cov.get(key)
+                if value is None:
+                    return None
+                out.append((nominal, float(value)))
+            return out
+
         if "test" in doc:
-            cov = doc["test"]["summary"]["coverage_mean"]
-            series.append(
-                (
-                    "test, raw quantiles",
-                    [(0.5, float(cov["50"])), (0.8, float(cov["80"])), (0.9, float(cov["90"]))],
-                )
-            )
+            pts = points(doc["test"]["summary"]["coverage_mean"])
+            if pts:
+                series.append(("test, raw quantiles", pts))
         if "test_cqr" in doc:
-            cov = doc["test_cqr"]["summary"]["coverage_mean"]
-            series.append(
-                (
-                    "test, split-conformal",
-                    [(0.5, float(cov["50"])), (0.8, float(cov["80"])), (0.9, float(cov["90"]))],
-                )
-            )
+            pts = points(doc["test_cqr"]["summary"]["coverage_mean"])
+            if pts:
+                series.append(("test, split-conformal", pts))
         if series:
             return "GIFT-Eval test coverage", series
     val = json.loads((root / "results" / "analysis" / "val_summary.json").read_text())

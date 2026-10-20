@@ -164,3 +164,27 @@ def test_cpu_train_and_val_datasets_are_disjoint():
     from tsfm.cpu_study import TRAIN_DATASETS, VAL_DATASETS
 
     assert set(TRAIN_DATASETS).isdisjoint(VAL_DATASETS)
+
+
+def test_family_block_keeps_seed_averaged_coverage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(A, "results_dir", lambda: tmp_path)
+    cfgs = ["a/H/short", "b/D/short"]
+    write_model(tmp_path, "val", "seasonal_naive", dict.fromkeys(cfgs, 2.0))
+    write_model(tmp_path, "val", "cpu_s0_seed0", dict.fromkeys(cfgs, 1.0))
+    write_model(tmp_path, "val", "cpu_s0_seed1", dict.fromkeys(cfgs, 1.4))
+    # A partial validation run is skipped by the default loader and included when asked.
+    d = tmp_path / "eval" / "val" / "cpu_s0_seed0"
+    doc = json.loads((d / "run.json").read_text())
+    doc["_meta"]["partial"] = True
+    doc["per_config"][cfgs[0]]["coverage_80"] = 0.6
+    doc["per_config"][cfgs[1]]["coverage_80"] = 0.7
+    (d / "run.json").write_text(json.dumps(doc))
+    assert "cpu_s0_seed0" not in A.load_models("val")
+    models = A.load_models("val", include_partial=True)
+    block = A._family_block(
+        models, ["cpu_s0_seed0", "cpu_s0_seed1"], "cpu_s0", "seasonal_naive", ["seasonal_naive"]
+    )
+    # seed0 coverage_80 is 0.65 across configs; seed1 is 0.8; the mean is 0.725.
+    assert block["summary"]["coverage_mean"]["80"] == pytest.approx(0.725)
+    assert block["summary"]["coverage_mean"]["50"] == pytest.approx(0.5)
+    assert block["n_configs"] == 2
