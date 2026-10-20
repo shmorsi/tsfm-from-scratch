@@ -104,8 +104,13 @@ Things this project does **not** show, whatever the numbers above say:
   The CPU study has three seeds. Their test CRPS ratios are
   {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.0 | .3f }},
   {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.1 | .3f }} and
-  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.2 | .3f }}, and the
-  Student-t interval across those three means is wide.
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.values.2 | .3f }}.
+  The mean of those three is
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.mean | .3f }},
+  and the Student-t interval on that mean is
+  [{{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.ci95.0 | .3f }},
+  {{ results/analysis/cpu_study.json#test.crps_gmean_across_seeds.ci95.1 | .3f }}].
+  That is not the interval on the seed-averaged ratio.
 * Which tokenizer is better: the comparison did not complete.
 * That the corpus is free of *all* benchmark overlap: the check finds exact and affine
   copies, not noisy, warped or differently aggregated ones.

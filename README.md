@@ -3,13 +3,13 @@
 
 A decoder-only patch transformer (pre-norm RMSNorm, rotary positions, SwiGLU, a non-crossing quantile head) in plain PyTorch. It is pretrained on a pinned, leakage-checked public corpus plus synthetic series, and scored with the official GIFT-Eval metric code.
 
-On the frozen test split, the committed CPU model (833,440 parameters, 3 seeds, 97 configurations) has CRPS 1.109× Seasonal Naive (95% CI over configurations [0.978, 1.265]: no detectable difference) and 1.217× upstream AutoARIMA (95% CI [1.091, 1.362]: worse). MASE is 1.835× Seasonal Naive, and that interval sits entirely above 1.
+On the frozen test split, the committed CPU model (833,440 parameters, 3 seeds, 97 configurations) has CRPS 1.109× Seasonal Naive (95% CI over configurations [0.978, 1.265]: no detectable difference) and 1.217× upstream AutoARIMA (95% CI [1.091, 1.362]: worse). MASE is 1.835× Seasonal Naive (95% CI [1.565, 2.173]: worse).
 
 The 0.605× Seasonal Naive CRPS for `patch_s2` is a validation result: 16 held-out configurations, one seed, 10,083,392 parameters. Those weights are not in this repository, so that checkpoint has no test score.
 
 ![GIFT-Eval test coverage, raw quantiles against split-conformal](docs/figures/coverage.svg)
 
-Nominal coverage against empirical coverage on the test split, after averaging the three seeds. Raw quantiles cover 0.401 / 0.642 / 0.730 at the 50/80/90% levels. Split-conformal adjustment, fit on the validation split only, covers 0.713 / 0.932 / 0.975. A calibrated model would sit on the diagonal. The conformal 80% point is above the diagonal, and CRPS gets worse (below).
+Nominal coverage against empirical coverage on the test split, after averaging the three seeds. Raw quantiles cover 0.401 / 0.642 / 0.730 at the 50/80/90% levels. Split-conformal adjustment, fit on the validation split only, covers 0.713 / 0.932 / 0.975. A calibrated model would sit on the diagonal. The conformal 80% point is above the diagonal, and the CRPS comparison below is worse.
 
 ## Test results
 
@@ -31,7 +31,7 @@ Ratio of seed-averaged geometric means, model divided by upstream AutoARIMA, bot
 
 The pre-registered comparison is CRPS against upstream AutoARIMA. Both families are worse on that comparison. Conformal adjustment leaves MASE unchanged, because the median is not moved, and it makes CRPS worse.
 
-Reproduce the study on CPU. If a result file is already present, that stage is skipped rather than scored again:
+Reproduce the study on CPU. An eval that already has `all_results.csv` is skipped, so the committed test scores are not recomputed:
 
 ```bash
 uv run tsfm cpu-study --config configs/cpu_study.yaml
@@ -41,13 +41,13 @@ uv run tsfm cpu-study --config configs/cpu_study.yaml
 
 I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The 10,083,392-parameter run that produced the validation headline never had its checkpoint committed, so I did not invent a test number for it.
 
-Seed-averaged validation CRPS is 0.988× Seasonal Naive (14 configurations, 95% CI [0.729, 1.353]). The same model on the test split is 1.109×. The three seed-level test ratios are 0.935, 1.045 and 1.275. A 95% Student-t interval on those three means is [0.654, 1.516]. That interval is across seeds. The interval in the table above is across configurations of the seed-averaged scores. They are different statistics, and I did not drop the seed that landed above 1.
+Seed-averaged validation CRPS is 0.988× Seasonal Naive (14 configurations, 95% CI [0.729, 1.353]). The same statistic on the test split is 1.109×. The three seed-level test ratios are 0.935, 1.045 and 1.275. Their mean is 1.085, and the 95% Student-t interval on that mean is [0.654, 1.516]. That interval belongs to the mean of the three seed-level geometric means. It is not the interval on the seed-averaged ratio in the table, which is a paired bootstrap over configurations. I kept all three seeds.
 
-Split conformal, one pooled expansion per seed fit only on validation, pushes the test 80% coverage from 0.642 to 0.932 and moves CRPS from 1.109 to 1.277 (worse than Seasonal Naive; the configuration interval is entirely above 1). Seed 0's 80% expansion is 0.433 mean-absolute-scaled units, and its 90% expansion is 1.443. A single expansion does not calibrate this model. The validation coverage after conformal is the fit set, not a held-out check.
+Split conformal, one pooled expansion per seed fit only on validation, widens the intervals and pushes the test 80% coverage from 0.642 to 0.932, above the nominal 80% level. CRPS moves from 1.109 to 1.277 (worse than Seasonal Naive; the configuration interval is entirely above 1). Seed 0's expansions, in mean-absolute-scaled units, are 0.139 at 50%, 0.433 at 80% and 1.443 at 90%. The validation conformal row is scored on the same forecasts the expansions were fit on, so that coverage is not a held-out check. The test table is the held-out calibration result.
 
-Turning rotary positions off, seed 0 only, on the same 14 validation configurations, moves CRPS from 0.853 to 0.921. That run was not scored on the test split.
+Turning rotary positions off, seed 0 only, on the same 14 validation configurations, moves CRPS from 0.853 to 0.921 and MASE from 1.146 to 1.232. That run was not scored on the test split.
 
-On one held-out hourly series (`bdg-2_bear`, context 384 steps, patches of length 16), the last query puts 0.272 of its attention on the most recent patch and 0.581 on the last four. Entropy is 2.568 nats against 3.178 for a uniform distribution over the patches. The forecast is mostly local. The series is hourly and the patch length is 16 steps, so I am not reading a daily cycle out of that peak.
+On one held-out hourly series (`bdg-2_bear`, context 384 steps, patches of length 16), the last query puts 0.272 of its attention on the most recent patch and 0.581 on the last four. The peak is at lag 0 patches. Entropy is 2.568 nats against 3.178 for a uniform distribution over the patches. The mass is local. The series is hourly and each patch is 16 steps, so a day is not patch-aligned and I am not reading a daily cycle out of that peak.
 
 ## Validation study that selected `patch_s2`
 
@@ -65,14 +65,14 @@ Validation split (16 configurations from datasets held out of pretraining); geom
 
 The CPU study's own validation numbers, used to fit conformal intervals and to compare positional encodings, are separate:
 
-Validation split used only for the conformal fit and this ablation (14 configurations from the ten held-out datasets; synthetic validation series are not included). The split-conformal row is scored on the same forecasts the expansions were fit on, so its coverage is not a held-out check. The test table is.
+Validation split used only for the conformal fit and this ablation (14 configurations from the ten held-out datasets; synthetic validation series are not included). The split-conformal row is scored on the same forecasts the expansions were fit on, so its coverage is not a held-out check. The test table is the held-out calibration result.
 
 | model | MASE | CRPS | CRPS ratio vs Seasonal Naive [95% config CI] | CRPS ratio across seeds [95% t CI] | 80% coverage | vs Seasonal Naive |
 |---|---|---|---|---|---|---|
 | cpu_s0, raw | 1.312 | 0.988 | 0.988 [0.729, 1.353] | [0.658, 1.277] | 0.692 | no detectable difference |
 | cpu_s0, split-conformal | 1.312 | 1.132 | 1.132 [0.816, 1.547] | [0.567, 1.673] | 0.948 | no detectable difference |
 
-Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853, no positions CRPS 0.921. The no-position run was not scored on the test split.
+Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853 and MASE 1.146; no positions CRPS 0.921 and MASE 1.232. The no-position run was not scored on the test split.
 
 ## Published reference points (other models)
 
@@ -102,7 +102,7 @@ Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in 
 
 * **Data.** A pinned subset of GiftEvalPretrain, whole datasets held out for validation, plus Gaussian-process series. A content check removed exact and rescaled copies of GIFT-Eval series (`DATA_CARD.md`).
 * **Model.** Decoder-only transformer in plain PyTorch. The committed CPU model uses patch length 16, horizon 32, width 128, 4 layers and 4 heads (`MODEL_CARD.md`). The T4 headline used patch length 32 and a horizon of 64.
-* **Training.** The CPU study is 2,000 steps, batch 32, fp32. Seed 0 finished in 71 seconds. The T4 loop supports mixed precision and resumable checkpoints.
+* **Training.** The CPU study is 2,000 steps, batch 32, fp32. Seed 0 finished in 70.7 seconds. The T4 loop supports mixed precision and resumable checkpoints.
 * **Evaluation.** GluonTS, the same way upstream scores GIFT-Eval: MASE and quantile-loss CRPS, each divided by Seasonal Naive, geometric mean over configurations, plus 50/80/90% coverage.
 
 ## Reproduce the rest

@@ -399,7 +399,8 @@ def cpu_val(root: Path) -> str:
     if ab:
         extra = (
             f"\n\nPositional encoding, seed 0, same {ab['n_configs']} validation configurations: "
-            f"RoPE CRPS {ab['rope']['crps_gmean']:.3f}, no positions CRPS {ab['none']['crps_gmean']:.3f}. "
+            f"RoPE CRPS {ab['rope']['crps_gmean']:.3f} and MASE {ab['rope']['mase_gmean']:.3f}; "
+            f"no positions CRPS {ab['none']['crps_gmean']:.3f} and MASE {ab['none']['mase_gmean']:.3f}. "
             "The no-position run was not scored on the test split."
         )
     note = (
@@ -407,7 +408,7 @@ def cpu_val(root: Path) -> str:
         f"({doc['validation']['n_configs']} configurations from the ten held-out datasets; "
         "synthetic validation series are not included). "
         "The split-conformal row is scored on the same forecasts the expansions were fit on, "
-        "so its coverage is not a held-out check. The test table is."
+        "so its coverage is not a held-out check. The test table is the held-out calibration result."
     )
     return (
         note
