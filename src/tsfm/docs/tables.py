@@ -405,7 +405,9 @@ def cpu_val(root: Path) -> str:
     note = (
         f"Validation split used only for the conformal fit and this ablation "
         f"({doc['validation']['n_configs']} configurations from the ten held-out datasets; "
-        "synthetic validation series are not included)."
+        "synthetic validation series are not included). "
+        "The split-conformal row is scored on the same forecasts the expansions were fit on, "
+        "so its coverage is not a held-out check. The test table is."
     )
     return (
         note
