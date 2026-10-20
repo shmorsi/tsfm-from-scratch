@@ -13,3 +13,15 @@ pre-registered analysis (`PREREGISTRATION.md`, tag `prereg-v1`) is otherwise unc
 
 The headline was chosen by the pre-registered rule (lowest validation CRPS among the
 runs that have validation results): see `results/analysis/headline_choice.json`.
+
+## 2026-10-20 — the T4 checkpoint is not in the repository
+
+`patch_s2`'s weights were never committed (sha256
+`85c46256cefa665b7eb0822f9877831563df85e22345670b40c4a115c16d0fd2` in
+`results/eval/val/patch_s2/run.json`; the file lived on Colab Drive). A clone cannot
+score that checkpoint. No test-set number is claimed for it.
+
+A separate, smaller study is pre-registered in `PREREGISTRATION_CPU.md` and
+`configs/cpu_study.yaml`. It trains its own model, commits the weights, and scores
+the official test split once. It does not change the T4 validation tables and it is
+not a second look at `patch_s2`.

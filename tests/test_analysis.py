@@ -135,3 +135,32 @@ def test_select_headline_tie_goes_to_smaller(tmp_path: Path, monkeypatch: pytest
     assert h["headline"] == "patch_s0"  # within 0.5% of the best (patch_s1), and smaller
     h = json.loads(A.select_headline(tolerance=0.001).read_text())
     assert h["headline"] == "patch_s1"
+
+
+def test_seed_t_interval_with_three_points():
+    s = A.seed_t_interval([1.0, 2.0, 3.0])
+    assert s["mean"] == pytest.approx(2.0)
+    assert s["sd"] == pytest.approx(1.0)
+    half = 4.302652729911275 / 3**0.5
+    assert s["ci95"][0] == pytest.approx(2.0 - half)
+    assert s["ci95"][1] == pytest.approx(2.0 + half)
+
+
+def test_reference_summary_flag_excludes_cpu_runs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(A, "results_dir", lambda: tmp_path)
+    cfgs = ["a/H/short", "b/D/short"]
+    write_model(tmp_path, "test", "seasonal_naive", dict.fromkeys(cfgs, 1.0))
+    write_model(tmp_path, "test", "cpu_s0_seed0", dict.fromkeys(cfgs, 1.2))
+    run = tmp_path / "eval" / "test" / "cpu_s0_seed0" / "run.json"
+    doc = json.loads(run.read_text())
+    doc["model_info"] = {"reference_summary": False}
+    run.write_text(json.dumps(doc))
+    kept = A.reference_models("test")
+    assert "cpu_s0_seed0" not in kept
+    assert "seasonal_naive" in kept
+
+
+def test_cpu_train_and_val_datasets_are_disjoint():
+    from tsfm.cpu_study import TRAIN_DATASETS, VAL_DATASETS
+
+    assert set(TRAIN_DATASETS).isdisjoint(VAL_DATASETS)

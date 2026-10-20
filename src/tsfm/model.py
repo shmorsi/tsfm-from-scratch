@@ -32,6 +32,9 @@ class ModelConfig:
     ffn_mult: float = 8 / 3  # SwiGLU hidden = ffn_mult * d_model, rounded to a multiple of 64
     dropout: float = 0.0
     rope_base: float = 10_000.0
+    # "rope" is rotary position embeddings. "none" leaves positions unencoded so an
+    # ablation can measure what RoPE is worth; it is not a second headline model.
+    position: Literal["rope", "none"] = "rope"
     max_seq_len: int = 2048
     # bins
     n_bins: int = 4094
@@ -88,11 +91,26 @@ def rope_tables(
 
 
 def apply_rope(x: Tensor, cos: Tensor, sin: Tensor) -> Tensor:
-    """x (B, H, T, Dh); cos/sin (T, Dh/2). Rotates (even, odd) pairs."""
+    """x (B, H, T, Dh); cos/sin (T, Dh/2). Rotates (even, odd) pairs.
+
+    ``cos = 1`` and ``sin = 0`` is the identity, which is how ``position="none"``
+    turns rotary embeddings off without a second code path in the cache."""
     x1, x2 = x[..., 0::2], x[..., 1::2]
     c, s = cos.to(x.dtype), sin.to(x.dtype)
     out = torch.stack([x1 * c - x2 * s, x1 * s + x2 * c], dim=-1)
     return out.flatten(-2)
+
+
+def manual_attention(q: Tensor, k: Tensor, v: Tensor, mask: Tensor) -> tuple[Tensor, Tensor]:
+    """Scaled dot-product attention with an explicit weight tensor.
+
+    ``mask`` is the same boolean tensor passed to ``scaled_dot_product_attention``
+    (True = may attend). Used only when a caller asks for the weights; the training
+    path stays on the fused kernel."""
+    logits = torch.matmul(q, k.transpose(-2, -1)) * (q.shape[-1] ** -0.5)
+    logits = logits.masked_fill(~mask, torch.finfo(logits.dtype).min)
+    weights = torch.softmax(logits, dim=-1)
+    return torch.matmul(weights, v), weights
 
 
 @dataclass
@@ -163,6 +181,7 @@ class Attention(nn.Module):
         cache: KVCache | None,
         layer: int,
         start: int,
+        attn_out: list[Tensor] | None = None,
     ) -> Tensor:
         b, t, _ = x.shape
         h, dh = self.cfg.n_heads, self.cfg.head_dim
@@ -175,7 +194,14 @@ class Attention(nn.Module):
             k = cache.k[layer][:, :, : start + t].to(q.dtype)
             v = cache.v[layer][:, :, : start + t].to(q.dtype)
         drop = self.cfg.dropout if self.training else 0.0
-        y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=drop)
+        weights: Tensor | None = None
+        if attn_out is None:
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=drop)
+        else:
+            if drop:
+                raise ValueError("attention weights are only recorded in eval mode")
+            y, weights = manual_attention(q, k, v, mask)
+            attn_out.append(weights)
         return self.out(y.transpose(1, 2).reshape(b, t, h * dh))
 
 
@@ -208,8 +234,9 @@ class Block(nn.Module):
         cache: KVCache | None,
         layer: int,
         start: int,
+        attn_out: list[Tensor] | None = None,
     ) -> Tensor:
-        x = x + self.drop(self.attn(self.n1(x), cos, sin, mask, cache, layer, start))
+        x = x + self.drop(self.attn(self.n1(x), cos, sin, mask, cache, layer, start, attn_out))
         return x + self.drop(self.mlp(self.n2(x)))
 
 
@@ -240,9 +267,15 @@ class TSModel(nn.Module):
             self.head = QuantileHead(cfg.d_model, cfg.horizon, cfg.quantiles)
         else:
             raise ValueError(cfg.tokenizer)
+        if cfg.position not in ("rope", "none"):
+            raise ValueError(f"position must be 'rope' or 'none', got {cfg.position!r}")
         self.blocks = nn.ModuleList(Block(cfg) for _ in range(cfg.n_layers))
         self.norm = RMSNorm(cfg.d_model)
         cos, sin = rope_tables(cfg.head_dim, cfg.max_seq_len, cfg.rope_base)
+        if cfg.position == "none":
+            # Identity rotation: the rest of the model, including the KV cache, is unchanged.
+            cos = torch.ones_like(cos)
+            sin = torch.zeros_like(sin)
         self.register_buffer("rope_cos", cos, persistent=False)
         self.register_buffer("rope_sin", sin, persistent=False)
         self.apply(self._init)
@@ -272,6 +305,7 @@ class TSModel(nn.Module):
         observed: Tensor | None = None,
         pad: Tensor | None = None,
         cache: KVCache | None = None,
+        attn_out: list[Tensor] | None = None,
     ) -> Tensor:
         """Run the transformer on new positions.
 
@@ -301,7 +335,7 @@ class TSModel(nn.Module):
             key_pad, k_pos = pad, q_pos
         mask = attention_mask(q_pos, k_pos, key_pad)
         for i, blk in enumerate(self.blocks):
-            x = blk(x, self.rope_cos, self.rope_sin, mask, cache, i, start)
+            x = blk(x, self.rope_cos, self.rope_sin, mask, cache, i, start, attn_out)
         if cache is not None:
             cache.length = start + t
         out: Tensor = self.head(self.norm(x))
