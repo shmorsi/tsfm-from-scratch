@@ -21,7 +21,11 @@ Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary posi
 
 {{ table:model_card_headline }}
 
+{{ if exists:results/analysis/headline.json }}
+`patch_s2` was selected on the validation split (CRPS {{ results/analysis/val_summary.json#models.patch_s2.crps_gmean | .3f }}× Seasonal Naive, {{ results/analysis/val_summary.json#n_configs }} configurations, one seed). Its weights are not in this repository. It was scored once on the test split from its Drive checkpoint, one seed: CRPS {{ results/analysis/headline.json#comparisons.0.ratio | .3f }}× upstream AutoARIMA ({{ results/analysis/headline.json#comparisons.0.verdict }}; `results/analysis/headline.json`). The CPU test numbers above are a different model.
+{{ else }}
 `patch_s2` was selected on the validation split (CRPS {{ results/analysis/val_summary.json#models.patch_s2.crps_gmean | .3f }}× Seasonal Naive, {{ results/analysis/val_summary.json#n_configs }} configurations, one seed). Its weights are not in this repository. It has no test score. The CPU test numbers above are a different model.
+{{ end }}
 
 Inputs for that run are patches of 32 steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next 64 steps.
 
@@ -45,4 +49,8 @@ Test: the {{ results/analysis/cpu_study.json#test.n_configs }} GIFT-Eval configu
 * The no-position ablation was scored on validation only.
 * No comparison against Chronos, TimesFM, or FlowState was run for this model. Upstream files for other models are context, not a claim that this model beat them.
 * Univariate only. Values beyond the clipping range of the T4 patch head cannot be represented by that head.
+{{ if exists:results/analysis/headline.json }}
+* `patch_s2` has a test score from one seed only.
+{{ else }}
 * `patch_s2` still has no test score.
+{{ end }}
