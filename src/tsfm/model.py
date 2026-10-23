@@ -25,6 +25,8 @@ from tsfm.tokenizers import QUANTILES, BinTokenizer, QuantileHead
 
 @dataclass
 class ModelConfig:
+    """Architecture and tokenizer settings. ``to_dict`` / ``from_dict`` are the checkpoint form."""
+
     tokenizer: Literal["bins", "patch"] = "patch"
     d_model: int = 256
     n_layers: int = 4
@@ -68,6 +70,8 @@ class ModelConfig:
 
 
 class RMSNorm(nn.Module):
+    """Root-mean-square normalization with a learned scale, reduced in float32."""
+
     def __init__(self, d: int, eps: float = 1e-6):
         super().__init__()
         self.eps = eps
@@ -82,6 +86,7 @@ class RMSNorm(nn.Module):
 def rope_tables(
     head_dim: int, max_len: int, base: float, device: torch.device | None = None
 ) -> tuple[Tensor, Tensor]:
+    """Cosine and sine tables for rotary embeddings, shape ``(max_len, head_dim / 2)``."""
     inv = 1.0 / (
         base ** (torch.arange(0, head_dim, 2, dtype=torch.float32, device=device) / head_dim)
     )
@@ -166,6 +171,8 @@ def attention_mask(q_pos: Tensor, k_pos: Tensor, key_pad: Tensor) -> Tensor:
 
 
 class Attention(nn.Module):
+    """Multi-head attention with rotary positions and an optional key/value cache."""
+
     def __init__(self, cfg: ModelConfig):
         super().__init__()
         self.cfg = cfg
@@ -206,6 +213,8 @@ class Attention(nn.Module):
 
 
 class SwiGLU(nn.Module):
+    """SwiGLU feed-forward block: a SiLU gate and a linear down-projection, no bias."""
+
     def __init__(self, cfg: ModelConfig):
         super().__init__()
         self.gate_up = nn.Linear(cfg.d_model, 2 * cfg.d_ff, bias=False)
@@ -217,6 +226,8 @@ class SwiGLU(nn.Module):
 
 
 class Block(nn.Module):
+    """Pre-norm residual block: attention, then the feed-forward block."""
+
     def __init__(self, cfg: ModelConfig):
         super().__init__()
         self.n1 = RMSNorm(cfg.d_model)
@@ -255,6 +266,8 @@ class PatchEmbed(nn.Module):
 
 
 class TSModel(nn.Module):
+    """Decoder-only time-series transformer. The module docstring describes the two heads."""
+
     def __init__(self, cfg: ModelConfig):
         super().__init__()
         self.cfg = cfg

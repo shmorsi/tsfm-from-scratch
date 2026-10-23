@@ -114,8 +114,17 @@ def render(template: str, root: Path) -> str:
     return _PLACEHOLDER_RE.sub(lambda m: render_placeholder(m.group(1), root), template)
 
 
+def _sync(path: Path, text: str, rel: str, *, check: bool, stale: list[str]) -> None:
+    if check:
+        if not path.exists() or path.read_text() != text:
+            stale.append(rel)
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+
+
 def build(root: Path | None = None, *, check: bool = False) -> list[str]:
-    """Render all documents. With ``check=True`` return the names of stale outputs."""
+    """Render documents and figures. With ``check=True``, return the stale output paths."""
     root = root or repo_root()
     stale: list[str] = []
     for tpl_name, out_name in OUTPUTS.items():
@@ -123,10 +132,10 @@ def build(root: Path | None = None, *, check: bool = False) -> list[str]:
         if not tpl.exists():
             continue
         text = HEADER.format(src=f"{TEMPLATE_DIR}/{tpl_name}") + render(tpl.read_text(), root)
-        out = root / out_name
-        if check:
-            if not out.exists() or out.read_text() != text:
-                stale.append(out_name)
-        else:
-            out.write_text(text)
+        _sync(root / out_name, text, out_name, check=check, stale=stale)
+    # Imported lazily: figure drawing is independent of the template language.
+    from tsfm.docs.figures import figure_svgs
+
+    for rel, text in figure_svgs(root).items():
+        _sync(root / rel, text, rel, check=check, stale=stale)
     return stale

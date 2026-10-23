@@ -98,6 +98,29 @@ def test_generated_docs_are_up_to_date():
     assert build(check=True) == []
 
 
+def test_figures_match_results_and_images_have_alt_text():
+    """Figures are redrawn from committed results, and every generated image has alt text."""
+    import re
+
+    from tsfm.docs.figures import figure_svgs
+
+    root = repo_root()
+    svgs = figure_svgs(root)
+    fit = json.loads((root / "results/analysis/scaling.json").read_text())["fit"]
+    scaling = svgs["docs/figures/scaling.svg"]
+    for point in fit["points"]:
+        assert point["name"] in scaling
+    for rel, text in svgs.items():
+        assert (root / rel).read_text() == text
+        assert 'role="img"' in text
+        assert "<title" in text
+    for out in OUTPUTS.values():
+        doc = (root / out).read_text()
+        images = re.findall(r"!\[([^\]]*)\]\(([^)]+)\)", doc)
+        for alt, src in images:
+            assert alt.strip(), f"{out} image {src} has no alt text"
+
+
 def test_generated_docs_contain_only_backed_numbers():
     root = repo_root()
     values = collect_result_values(_result_files(root))

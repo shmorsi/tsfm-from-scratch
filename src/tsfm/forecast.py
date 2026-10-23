@@ -68,6 +68,7 @@ def forecast_patch(
     max_context: int,
     adjustment: object | None = None,
 ) -> Forecast:
+    """Quantiles for a patch model. Horizons past one patch feed the median back in."""
     cfg = model.cfg
     dev = next(model.parameters()).device
     p = cfg.patch_len
@@ -139,6 +140,7 @@ def forecast_bins(
     generator: torch.Generator | None = None,
     kv_budget_bytes: int = 3 * 2**30,
 ) -> Forecast:
+    """Empirical quantiles of sample paths from the bins model, drawn at temperature 1."""
     cfg = model.cfg
     dev = next(model.parameters()).device
     dtype = next(model.parameters()).dtype
@@ -185,6 +187,7 @@ def forecast(
     max_context: int,
     **kw: object,
 ) -> Forecast:
+    """Dispatch on ``model.cfg.tokenizer``. Patch models accept ``adjustment`` (a ``CQR``)."""
     if model.cfg.tokenizer == "patch":
         adjustment = kw.pop("adjustment", None)
         if kw:
@@ -194,6 +197,7 @@ def forecast(
 
 
 def load_model(path: str, device: str | torch.device = "cpu") -> TSModel:
+    """Load a training checkpoint (``config`` and ``model`` state dict) and set eval mode."""
     from tsfm.model import ModelConfig
 
     st = torch.load(path, map_location=device, weights_only=False)

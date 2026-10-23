@@ -38,6 +38,8 @@ Seasonal Naive reproduces upstream's on all official metrics and configurations)
 
 {{ table:scaling | default:*not available* }}
 
+![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
+
 ### Tokenizer comparison at a fixed budget (validation split)
 
 {{ table:tokenizers | default:*Not concluded. `bins_s2` was trained at the same size and token budget as `patch_s2`, but its validation scoring (20 sampled paths per window) did not finish within the compute budget, so no tokenizer comparison is reported (`DEVIATIONS.md`).* }}

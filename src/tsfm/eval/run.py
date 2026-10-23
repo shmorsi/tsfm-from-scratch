@@ -26,7 +26,7 @@ from typing import Any
 
 import numpy as np
 
-from tsfm.eval.gifteval import VENDOR, Config, configs, load_dataset, properties
+from tsfm.eval.gifteval import VENDOR, Config, configs, load_dataset
 from tsfm.paths import repo_root, results_dir
 from tsfm.provenance import config_hash, stamp
 
@@ -424,7 +424,3 @@ def _write(
     (out / "config.json").write_text(
         json.dumps(model_info.get("leaderboard", {"model": model}), indent=4) + "\n"
     )
-
-
-def domain_of(key: str) -> str:
-    return str(properties()[key]["domain"])

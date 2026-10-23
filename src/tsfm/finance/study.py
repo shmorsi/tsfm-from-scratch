@@ -9,7 +9,6 @@ day in the test period, for BTCUSDT and ETHUSDT. Scores per origin (pooled over 
 from __future__ import annotations
 
 import csv
-import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -334,7 +333,3 @@ def baseline_runs() -> None:
         rows = evaluate(fn, series, TEST_START, end)
         save(name, rows, {"kind": "baseline"})
         print(name, len(rows), "origins")
-
-
-def json_dump(x: Any) -> str:
-    return json.dumps(x, indent=1, default=str)
