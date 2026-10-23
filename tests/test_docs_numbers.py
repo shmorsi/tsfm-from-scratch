@@ -67,6 +67,29 @@ def test_render_and_default(tmp_path: Path):
     assert out == "a 0.487 b pending"
 
 
+def test_render_if_exists_block(tmp_path: Path):
+    (tmp_path / "results").mkdir()
+    tpl = (
+        "a\n{{ if exists:results/r.json }}\nyes {{ results/r.json#v | .1f }}\n"
+        "{{ else }}\nno\n{{ end }}\nb\n{{ if exists:results/none.json }}\nhidden\n{{ end }}\nc\n"
+    )
+    assert render(tpl, tmp_path) == "a\nno\nb\nc\n"
+    (tmp_path / "results" / "r.json").write_text(json.dumps({"v": 0.25}))
+    assert render(tpl, tmp_path) == "a\nyes 0.2\nb\nc\n"
+    # A tag inside a line is not a block tag, so it is left for the placeholder pass.
+    with pytest.raises(KeyError):
+        render("x {{ if exists:results/r.json }} y", tmp_path)
+
+
+def test_millions_format_is_checked_by_the_guard(tmp_path: Path):
+    (tmp_path / "results").mkdir()
+    (tmp_path / "results" / "r.json").write_text(json.dumps({"n": 10_083_392}))
+    out = render("{{ results/r.json#n | M }} and {{ results/r.json#n | M2 }}", tmp_path)
+    assert out == "10.1M and 10.08M"
+    assert unverified_numbers(out, [10_083_392.0], set()) == []
+    assert [b.text for b in unverified_numbers("10.2M", [10_083_392.0], set())] == ["10.2M"]
+
+
 def _result_files(root: Path) -> list[Path]:
     return sorted(p for p in (root / "results").rglob("*") if p.suffix in {".json", ".csv"})
 
