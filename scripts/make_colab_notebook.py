@@ -12,15 +12,33 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
+def _json(rel: str) -> dict:
+    return json.loads((ROOT / rel).read_text())
+
+
+# Printed into the score notebook from committed results, so the parameter count and
+# checkpoint hash cannot drift from the validation run.
+_PATCH_S2 = _json("results/runs/patch_s2/summary.json")
+_PATCH_S2_VAL = _json("results/eval/val/patch_s2/run.json")
+PATCH_S2_PARAMS = f"{int(_PATCH_S2['params_total']):,}"
+PATCH_S2_SHA = str(_PATCH_S2_VAL["model_info"]["checkpoint_sha256"])
+
 CELLS: list[tuple[str, str]] = [
     (
         "markdown",
         """# tsfm Colab runner
 
-Runs the GPU work as a resumable queue (`scripts/colab_queue.py`). Checkpoints, logs and
-small result files go to Google Drive; if the session disconnects, run all cells again
-and the queue continues where it stopped (training resumes exactly from the last
-checkpoint, written every <= 10 minutes).
+Historical training queue (`scripts/colab_queue.py`). Checkpoints, logs and small result
+files go to Google Drive; if the session disconnects, run all cells again and the queue
+continues where it stopped (training resumes exactly from the last checkpoint, written
+every <= 10 minutes).
+
+This is not the remaining `patch_s2` test score. Use
+`notebooks/score_patch_s2_test.ipynb` for that. Phase B of this queue can resume the
+discarded partial test outputs from 2026-10-15, and it also starts the volatility-model
+stages that `DEVIATIONS.md` records as not run. Run all does nothing until `CONFIRM`
+below is set.
 
 * Phase **A**: throughput benchmark, scaling grid and bins model (train + validation
   eval each), FlowState-9.1M on the test split.
@@ -31,6 +49,12 @@ checkpoint, written every <= 10 minutes).
     (
         "code",
         """# Parameters
+# Set CONFIRM only when you mean to continue this historical queue.
+CONFIRM = ""
+assert CONFIRM == "run-queue", (
+    "This queue is not the patch_s2 test score. "
+    "Open notebooks/score_patch_s2_test.ipynb on a T4 runtime."
+)
 PHASE = "B"                # "A" or "B" (see above)
 REPO = "shmorsi/tsfm-from-scratch"
 COMMIT = "main"            # or a full commit SHA
@@ -85,7 +109,7 @@ import os
 
 os.environ["PATH"] = os.path.expanduser("~/.local/bin") + ":" + os.environ["PATH"]
 %cd /content/tsfm
-!uv sync --frozen --extra cu126 -q
+!uv sync --locked --extra cu126 -q
 !uv run python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'""",
     ),
     (
@@ -126,14 +150,26 @@ if not test_only:
 ]
 
 
-SCORE_CELLS: list[tuple[str, str]] = [
-    (
-        "markdown",
-        """# Score `patch_s2` on the GIFT-Eval test split (once)
+SCORE_INTRO = f"""# Score `patch_s2` on the GIFT-Eval test split (once)
 
-`patch_s2` (10,083,392 parameters) was chosen on the validation split by the rule in
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/score_patch_s2_test.ipynb)
+
+`patch_s2` ({PATCH_S2_PARAMS} parameters) was chosen on the validation split by the rule in
 `PREREGISTRATION.md` section 4. Its checkpoint stayed on Google Drive, so it has no
-test score yet. This notebook gives it the pre-registered one.
+test score yet. This notebook gives it the pre-registered one, on a Colab T4. Do not
+paste in outputs from another machine. The parameter count and the checkpoint hash
+below are read from the committed validation run when this notebook is generated.
+
+The weights file recorded with that run has SHA-256 `{PATCH_S2_SHA}`.
+`ckpt.pt` or the sibling `model.pt` both work; the script scores the file with that hash.
+
+**Before Run all**
+
+1. Merge the commit you want scored, or set `COMMIT` below to that branch. The notebook
+   clones `COMMIT` (default `main`) and scores that revision.
+2. Runtime -> Change runtime type -> T4 GPU.
+3. Leave `CHECKPOINT_PATH` when the run folder is already at the default Drive path.
+   It has to be that `patch_s2` run, not a neighbour such as `bins_s2`.
 
 **What the pre-registration fixes, and this notebook follows**
 
@@ -149,42 +185,55 @@ test score yet. This notebook gives it the pre-registered one.
 that seeds 1 and 2 were not trained, so the interval covers configurations, not seeds.
 It is not a second look: the 2026-10-15 attempt disconnected partway and its partial
 outputs were never inspected. This notebook writes to a new folder and never reads them.
+Do not use `notebooks/colab_runner.ipynb` for this score. That queue can resume those
+partial outputs, and it would also start the volatility-model stages that the same file
+records as not run.
 `PREREGISTRATION_CPU.md` does not authorise or forbid this run; the CPU study is a
 separate model with its own test score.
 
-**Steps.** Set `CHECKPOINT_PATH` below, then Runtime -> Run all on a T4 GPU runtime.
-Cell 5 checks the checkpoint and stops before the test split if it is not `patch_s2`.
-After a disconnect, Run all again: finished configurations are kept on Drive. The last
-cell prints the result files with SHA-256 for `scripts/harvest_colab_output.py`.""",
-    ),
+**After it finishes, on a local clone of the same commit.** Download
+`harvest_patch_s2.txt` from the Drive `WORK` folder. A copied notebook print can
+truncate, and a truncated file fails the SHA-256 check. Then:
+
+    uv run python scripts/harvest_colab_output.py harvest_patch_s2.txt
+    uv run tsfm docs build
+
+Commit the harvested result files and the docs that command regenerates. Do not
+hand-edit numbers. The harvest file is what the doc generators read:
+
+* `results/eval/test/patch_s2/all_results.csv`, `run.json` and `config.json`
+* `results/analysis/test_summary.json` (rebuilt by `tsfm report`; this replaces the previous file)
+* `results/analysis/headline.json` (new)
+
+`scripts/harvest_colab_output.py` also appends `results/sync_log.json`.
+`results/analysis/cpu_study.json` is not in the harvest. Ranks inside the rebuilt
+`test_summary.json` include `patch_s2`. CRPS and MASE for the other models are
+recomputed from the same vendored files.
+
+Re-run the notebook after a disconnect. Finished configurations stay on Drive, and the
+script does not score the test split a second time once `all_results.csv` is complete.
+"""
+
+SCORE_CELLS: list[tuple[str, str]] = [
+    ("markdown", SCORE_INTRO),
     (
         "code",
         """# Parameters
 # ============================================================================
-# CHECKPOINT_PATH: the only value to set. The patch_s2 run folder on Drive.
+# CHECKPOINT_PATH: the patch_s2 run folder on Drive. Set COMMIT as well when the
+# revision to score is not on main yet.
 # ckpt.pt (training checkpoint) or model.pt (inference weights) both work: the
-# script checks the run config and the 10,083,392 parameters, then scores the
-# file whose SHA-256 matches the validation run.
+# script checks the run config and the parameter count, then scores the file
+# whose SHA-256 matches the validation run (printed in the cell above).
 CHECKPOINT_PATH = "/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt"
 # ============================================================================
 REPO = "shmorsi/tsfm-from-scratch"
-COMMIT = "main"  # or a full commit SHA
+COMMIT = "main"  # or a full commit SHA, or a branch name
 WORK = "/content/drive/MyDrive/tsfm/score_patch_s2"  # resumable outputs""",
     ),
     (
         "code",
-        """# 1. GPU check
-import subprocess
-
-import torch
-
-print(subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout)
-assert torch.cuda.is_available(), "No GPU: Runtime -> Change runtime type -> T4 GPU"
-print(torch.cuda.get_device_name(0))""",
-    ),
-    (
-        "code",
-        """# 2. Mount Drive (checkpoint in, resumable results out)
+        """# 1. Mount Drive (checkpoint in, resumable results out)
 import os
 
 from google.colab import drive
@@ -195,7 +244,7 @@ os.makedirs(WORK, exist_ok=True)""",
     ),
     (
         "code",
-        """# 3. Clone the repo at COMMIT, with tags (tsfm eval checks for prereg-v1)
+        """# 2. Clone the repo at COMMIT, with tags (tsfm eval checks for prereg-v1)
 import os
 import subprocess
 
@@ -210,15 +259,40 @@ print(subprocess.run(["git", "-C", "/content/tsfm", "log", "-1", "--oneline"], c
     ),
     (
         "code",
-        """# 4. Install (uv, locked dependencies, CUDA 12.6 PyTorch build)
+        """# 3. Install (uv, locked dependencies, CUDA 12.6 PyTorch build)
 !curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null
 import os
 
 os.environ["PATH"] = os.path.expanduser("~/.local/bin") + ":" + os.environ["PATH"]
 os.environ["TSFM_HOME"] = "/content/tsfm_home"
 %cd /content/tsfm
-!uv sync --frozen --extra cu126 -q
-!uv run python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'""",
+!uv sync --locked --extra cu126 -q
+""",
+    ),
+    (
+        "code",
+        """# 4. GPU check with the PyTorch this repo pins (not Colab's preinstalled build)
+import subprocess
+
+smi = subprocess.run(["nvidia-smi"], capture_output=True, text=True)
+print(smi.stdout)
+probe = subprocess.run(
+    [
+        "uv",
+        "run",
+        "python",
+        "-c",
+        "import torch; name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else ''; print(torch.__version__); print(torch.cuda.is_available()); print(name)",
+    ],
+    check=True,
+    capture_output=True,
+    text=True,
+)
+print(probe.stdout)
+lines = probe.stdout.splitlines()
+assert len(lines) >= 3, "GPU probe did not print version, availability and device name"
+assert lines[1] == "True", "No GPU: Runtime -> Change runtime type -> T4 GPU"
+assert "T4" in lines[2], "Need a T4 GPU: Runtime -> Change runtime type -> T4 GPU. Got: " + lines[2]""",
     ),
     (
         "code",
@@ -233,8 +307,11 @@ os.environ["TSFM_HOME"] = "/content/tsfm_home"
     ),
     (
         "code",
-        """# 7. Result files with SHA-256. Copy this output into a text file, then, in the repo:
-#    uv run python scripts/harvest_colab_output.py <that file> && uv run tsfm docs build
+        """# 7. Harvest file on Drive. Download WORK/harvest_patch_s2.txt (do not copy a
+#    truncated print). On a local clone of this COMMIT:
+#    uv run python scripts/harvest_colab_output.py harvest_patch_s2.txt
+#    uv run tsfm docs build
+print("download this file from Drive:", f"{WORK}/harvest_patch_s2.txt")
 print(open(f"{WORK}/harvest_patch_s2.txt").read())
 !git -C /content/tsfm status --short""",
     ),

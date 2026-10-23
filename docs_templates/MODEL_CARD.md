@@ -27,7 +27,7 @@ Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary posi
 `patch_s2` was selected on the validation split (CRPS {{ results/analysis/val_summary.json#models.patch_s2.crps_gmean | .3f }}× Seasonal Naive, {{ results/analysis/val_summary.json#n_configs }} configurations, one seed). Its weights are not in this repository. It has no test score. The CPU test numbers above are a different model.
 {{ end }}
 
-Inputs for that run are patches of 32 steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next 64 steps.
+Inputs for that run are patches of {{ results/runs/patch_s2/summary.json#config.model.patch_len }} steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next {{ results/runs/patch_s2/summary.json#config.model.horizon }} steps.
 
 ## Intended use
 

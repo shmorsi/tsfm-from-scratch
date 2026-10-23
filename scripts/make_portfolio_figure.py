@@ -90,14 +90,15 @@ def scaling_panel(x0: float, y0: float, w: float, h: float) -> str:
 
 
 def test_panel(x0: float, y0: float, w: float, h: float) -> str:
-    tm = load("results/analysis/test_summary.json")["models"]
+    summary = load("results/analysis/test_summary.json")
+    tm = summary["models"]
     head = load("results/analysis/headline.json")
     hl = load("results/analysis/headline_choice.json")["headline"]
     n = len(head["seed_runs"])
     rows = [
         ("headline", f"Ours, {hl} ({'1 seed' if n == 1 else f'{n} seeds'})", SIGNAL),
-        ("upstream:TimesFM-2.5", "TimesFM-2.5, 231M (reported)", ICE),
-        ("upstream:FlowState-9.1M", "FlowState, 9.1M (reported)", ICE),
+        ("upstream:TimesFM-2.5", "TimesFM-2.5 (reported)", ICE),
+        ("upstream:FlowState-9.1M", "FlowState-9.1M (reported)", ICE),
         ("upstream:Auto_Arima", "AutoARIMA (reported)", INK2),
         ("upstream:Auto_ETS", "AutoETS (reported)", INK2),
         ("seasonal_naive", "Seasonal Naive", MUTED),
@@ -112,7 +113,7 @@ def test_panel(x0: float, y0: float, w: float, h: float) -> str:
         text(
             x0 + 40,
             y0 + 100,
-            "97 configurations · CRPS vs Seasonal Naive, lower is better",
+            f"{summary['n_configs']} configurations · CRPS vs Seasonal Naive, lower is better",
             22,
             MUTED,
         ),
@@ -204,15 +205,16 @@ def build() -> str:
         ),
         scaling_panel(60, 180, 700, 760),
     ]
-    if (ROOT / "results/analysis/headline.json").exists():
+    has_headline = (ROOT / "results/analysis/headline.json").exists()
+    if has_headline:
         body.append(test_panel(800, 180, 740, 760))
+        label = "Validation CRPS by model size and GIFT-Eval test CRPS against baselines"
     else:
         body.append(val_panel(800, 180, 740, 760))
+        label = "Validation CRPS by model size, and zero-shot scores against Seasonal Naive"
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-        f'role="img" aria-label="Validation CRPS by model size and GIFT-Eval test CRPS against baselines">'
-        + "".join(body)
-        + "</svg>\n"
+        f'role="img" aria-label="{html.escape(label)}">' + "".join(body) + "</svg>\n"
     )
 
 

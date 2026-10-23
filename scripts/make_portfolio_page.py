@@ -78,9 +78,9 @@ def build() -> str:
         else ("1 seed" if n_seeds == 1 else f"mean of {n_seeds} seeds")
     )
     labels = {
-        "headline": f"Ours ({hl}, {hsum['params_total'] / 1e6:.0f}M, {seed_txt})",
-        "upstream:TimesFM-2.5": "TimesFM-2.5, 231M (reported)",
-        "upstream:FlowState-9.1M": "FlowState, 9.1M (reported)",
+        "headline": f"Ours ({hl}, {hsum['params_total'] / 1e6:.1f}M, {seed_txt})",
+        "upstream:TimesFM-2.5": "TimesFM-2.5 (reported)",
+        "upstream:FlowState-9.1M": "FlowState-9.1M (reported)",
         "flowstate_9.1m": "FlowState, 9.1M (run by us)",
         "upstream:Auto_Arima": "AutoARIMA (reported)",
         "seasonal_naive": "Seasonal Naive (run by us)",
@@ -123,7 +123,7 @@ def build() -> str:
     scaling_text = ""
     if scaling:
         lo, hi = scaling["b_ci95"]
-        scaling_text = f"<p>Validation loss falls with training compute as a power law with exponent {scaling['b']:.3f} (95% bootstrap interval {lo:.3f} to {hi:.3f}) across {scaling['n_runs']} patch-model sizes.</p>"
+        scaling_text = f"<p>Validation loss falls with training compute as a power law with exponent {scaling['b']:.4f} (95% bootstrap interval {lo:.4f} to {hi:.4f}) across {scaling['n_runs']} patch-model sizes.</p>"
 
     # --- volatility
     vlab = {
@@ -142,7 +142,7 @@ def build() -> str:
             if "wql_ratio_vs_ref" not in g
             else f"{g['wql_ratio_vs_ref']:.3f} [{g['wql_ratio_ci95'][0]:.3f}, {g['wql_ratio_ci95'][1]:.3f}]"
         )
-        volrows.append([lab, ratio, f"{g['cov80']:.2f}"])
+        volrows.append([lab, ratio, f"{g['cov80']:.3f}"])
     vol_table = table(
         "Daily realized volatility, BTC and ETH, 2020-2026 · weighted quantile loss vs random walk [95% CI]",
         ["Model", "Loss ratio", "80% coverage"],
@@ -189,8 +189,8 @@ def build() -> str:
             f"parameters, trained from scratch on one free Colab T4 ({hsum['train_flops_6ND']:.1e} FLOPs)",
         ),
         (
-            "1e-9",
-            "agreement with upstream's Seasonal Naive on all 11 official metrics and 97 configurations",
+            "match",
+            "our Seasonal Naive reproduces upstream on every official metric and configuration (tests/test_eval.py)",
         ),
     ]
     if prim:
@@ -323,7 +323,7 @@ def build() -> str:
             <ul>
               <li>The first GPU run diverged: future patches reach about a million in scaled units when the context is near zero, overflowing half precision. Clipping fixed it; the broken runs are discarded and recorded in the repository.</li>
               <li>Prediction intervals are too narrow, worst at long horizons, because longer forecasts feed back medians.</li>
-              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of five, the second tokenizer trained but not scored, and one seed, so seed-to-seed variation is not measured.{"" if head else " The pre-registered test-split scoring of our model is future work, so no benchmark ranking is claimed."}</li>
+              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of four to six, the second tokenizer trained but not scored, and one seed, so seed-to-seed variation is not measured.{"" if head else " The pre-registered test-split scoring of our model is future work, so no benchmark ranking is claimed."}</li>
               <li>The leakage check finds exact and rescaled copies only, not noisy or re-sampled ones.</li>
             </ul>
           </div>
@@ -381,7 +381,7 @@ def card() -> str:
                 <div class="readout"><b>{r1["series_with_hits"]:,}</b><span>pretraining series found to overlap the benchmark, removed before training</span></div>
                 <div class="readout"><b>{hsum["params_total"] / 1e6:.1f}M</b><span>parameters, every layer written by hand in PyTorch</span></div>
               </div>
-              <div class="miss"><span class="label">What didn't work</span><p>Prediction intervals are too narrow: the 80% interval covers {vh["coverage_mean"]["80"]:.0%} of outcomes, because long forecasts feed back medians. The first GPU run also diverged in half precision until extreme values were clipped.</p></div>
+              <div class="miss"><span class="label">What didn't work</span><p>Prediction intervals are too narrow: the 80% interval covers {vh["coverage_mean"]["80"]:.3f} of outcomes, because long forecasts feed back medians. The first GPU run also diverged in half precision until extreme values were clipped.</p></div>
               <ul class="tags" aria-label="Technologies"><li>Python</li><li>PyTorch</li><li>GluonTS</li><li>statsforecast</li><li>NumPy</li><li>pandas</li><li>pytest</li><li>Hypothesis</li><li>GitHub Actions</li></ul>
               <div class="project-links">
                 <a class="button primary" href="projects/tsfm.html">Case study <span aria-hidden="true">→</span></a>

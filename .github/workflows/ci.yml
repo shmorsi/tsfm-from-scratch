@@ -2,6 +2,9 @@ name: ci
 on:
   push:
   pull_request:
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,8 +21,5 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest -m "not slow and not network and not data" -q
       - name: tiny end-to-end pipeline (must finish in < 5 min)
-        run: |
-          if uv run tsfm --help | grep -q pipeline; then
-            timeout 300 uv run tsfm pipeline --config configs/tiny_cpu.yaml
-          fi
+        run: timeout 300 uv run tsfm pipeline --config configs/tiny_cpu.yaml
       - run: uv run tsfm docs check

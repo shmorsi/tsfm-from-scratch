@@ -28,14 +28,37 @@ Lower is better; 1 equals the reference. Each verdict uses the pre-registered ru
 
 ## Quickstart
 
+Python 3.12 and [uv](https://docs.astral.sh/uv/). From a fresh clone:
+
 ```bash
-uv sync --extra cpu
+uv sync --locked --extra cpu
 uv run pytest -m "not slow and not network and not data"
 uv run tsfm pipeline --config configs/tiny_cpu.yaml
 uv run tsfm docs build
 ```
 
-The pipeline runs the whole loop small on CPU (download, convert, train, score) and writes outside `results/`. To score `patch_s2` on the test split, open `notebooks/score_patch_s2_test.ipynb` in Colab and set `CHECKPOINT_PATH`.
+`uv sync --locked` installs the pinned lockfile, including the CPU PyTorch build. The pipeline downloads a small pinned data subset (network required), then trains and scores a tiny model. It writes to a temporary directory, outside `results/`.
+
+### Score `patch_s2` on the test split (Colab T4)
+
+The validation headline's weights are not in this repository. Scoring them is the one remaining pre-registered test run, and it needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/score_patch_s2_test.ipynb)
+
+1. Merge the commit that contains the notebook, or set `COMMIT` in the notebook to that branch. The notebook clones `COMMIT` (default `main`) and scores that revision.
+2. Put the `patch_s2` checkpoint on Google Drive. The default `CHECKPOINT_PATH` is `/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt`, with `model.pt` beside it.
+3. Open the notebook, choose a T4 GPU runtime, then Runtime -> Run all. The notebook checks that the GPU is a T4 and that the checkpoint is `patch_s2` before it touches the test split.
+4. Download `harvest_patch_s2.txt` from Drive (`/content/drive/MyDrive/tsfm/score_patch_s2/`). A copied notebook print can truncate.
+5. On a local clone of the same commit:
+
+```bash
+uv run python scripts/harvest_colab_output.py harvest_patch_s2.txt
+uv run tsfm docs build
+```
+
+6. Commit the files the harvest script wrote and the docs `tsfm docs build` regenerated. Do not hand-edit numbers.
+
+That harvest file is what the doc generators read. It contains `results/eval/test/patch_s2/` (`all_results.csv`, `run.json`, `config.json`), a rebuilt `results/analysis/test_summary.json`, and a new `results/analysis/headline.json`. The harvest script appends `results/sync_log.json`. `results/analysis/cpu_study.json` is not in the file. Ranks in the rebuilt summary include `patch_s2`. CRPS and MASE for the other models are recomputed from the same vendored files.
 
 ## Results
 
@@ -120,7 +143,7 @@ Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in 
 ## Method in brief
 
 * **Data.** A pinned subset of GiftEvalPretrain, whole datasets held out for validation, plus Gaussian-process series. A content check removed exact and rescaled copies of GIFT-Eval series (`DATA_CARD.md`).
-* **Model.** Decoder-only transformer in plain PyTorch. The committed CPU model uses patch length {{ results/runs/cpu_s0_seed0/summary.json#config.model.patch_len }}, horizon {{ results/runs/cpu_s0_seed0/summary.json#config.model.horizon }}, width {{ results/runs/cpu_s0_seed0/summary.json#config.model.d_model }}, {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_layers }} layers and {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_heads }} heads (`MODEL_CARD.md`). The T4 headline used patch length 32 and a horizon of 64.
+* **Model.** Decoder-only transformer in plain PyTorch. The committed CPU model uses patch length {{ results/runs/cpu_s0_seed0/summary.json#config.model.patch_len }}, horizon {{ results/runs/cpu_s0_seed0/summary.json#config.model.horizon }}, width {{ results/runs/cpu_s0_seed0/summary.json#config.model.d_model }}, {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_layers }} layers and {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_heads }} heads (`MODEL_CARD.md`). The T4 headline used patch length {{ results/runs/patch_s2/summary.json#config.model.patch_len }} and a horizon of {{ results/runs/patch_s2/summary.json#config.model.horizon }}.
 * **Training.** The CPU study is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps, batch {{ results/runs/cpu_s0_seed0/summary.json#config.train.batch_size }}, fp32. Seed 0 finished in {{ results/runs/cpu_s0_seed0/summary.json#session_seconds | .1f }} seconds. The T4 loop supports mixed precision and resumable checkpoints.
 * **Evaluation.** GluonTS, the same way upstream scores GIFT-Eval: MASE and quantile-loss CRPS, each divided by Seasonal Naive, geometric mean over configurations, plus 50/80/90% coverage.
 
@@ -135,3 +158,7 @@ The CPU model does not beat AutoARIMA on the test split, and its CRPS against Se
 {{ else }}
 The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
 {{ end }}
+
+## License
+
+Code in this repository is Apache-2.0 (`LICENSE`). Derived Binance volatility files under `results/finance/` carry the licence stated in `results/finance/README.md`.

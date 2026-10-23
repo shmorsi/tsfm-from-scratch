@@ -1,7 +1,8 @@
 """Filesystem locations.
 
 The repository holds code, configs, lockfiles and small results. Large data lives in
-``$TSFM_HOME`` (default ``~/.cache/tsfm``); on Colab this points at Google Drive.
+``$TSFM_HOME`` (default ``~/.cache/tsfm``). The Colab notebooks set that to local disk
+and keep checkpoints and resumable scores on Google Drive.
 """
 
 from __future__ import annotations
