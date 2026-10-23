@@ -145,6 +145,84 @@ def test_models(root: Path) -> str:
     return note + "\n\n" + md_table(["model", "MASE", "CRPS", "rank", "80% coverage"], rows)
 
 
+def _cmp(comparisons: list[dict[str, Any]], b: str, metric: str) -> str:
+    c = next((c for c in comparisons if c["b"] == b and c["metric"] == metric), None)
+    if c is None:
+        return "n/a"
+    lo, hi = c["ci95"]
+    return f"{c['ratio']:.3f} [{lo:.3f}, {hi:.3f}], {c['verdict']}"
+
+
+@table("score_map")
+def score_map(root: Path) -> str:
+    """Which score belongs to which model, split and seed count."""
+    val = _load(root, "results/analysis/val_summary.json")
+    choice = _load(root, "results/analysis/headline_choice.json")
+    hl = choice["headline"]
+    hl_params = _load(root, f"results/runs/{hl}/summary.json")["params_total"]
+    hl_seeds = 1 + len(choice.get("extra_seeds", []))
+    rows = [
+        [
+            f"`{hl}` (T4)",
+            f"{hl_params:,}",
+            f"validation, {val['n_configs']} configurations",
+            str(hl_seeds),
+            f"{val['models'][hl]['crps_gmean']:.3f} (no interval computed)",
+            "AutoARIMA not run on validation",
+        ]
+    ]
+    hp = root / "results" / "analysis" / "headline.json"
+    test = _load(root, "results/analysis/test_summary.json")
+    if hp.exists() and hl in test["models"]:
+        h = _load(root, "results/analysis/headline.json")
+        rows.append(
+            [
+                f"`{hl}` (T4)",
+                f"{hl_params:,}",
+                f"test, {test['n_configs']} configurations",
+                str(len(h["seed_runs"])),
+                _cmp(h["comparisons"], "seasonal_naive", "crps"),
+                _cmp(h["comparisons"], "upstream:Auto_Arima", "crps"),
+            ]
+        )
+    else:
+        rows.append(
+            [
+                f"`{hl}` (T4)",
+                f"{hl_params:,}",
+                "test",
+                str(hl_seeds),
+                "not scored yet",
+                "not scored yet",
+            ]
+        )
+    cpu = _load(root, "results/analysis/cpu_study.json")
+    if "test" in cpu:
+        t = cpu["test"]
+        cpu_params = _load(root, f"results/runs/{t['seed_runs'][0]}/summary.json")["params_total"]
+        rows.append(
+            [
+                f"`{cpu['prefix']}` (CPU)",
+                f"{cpu_params:,}",
+                f"test, {t['n_configs']} configurations",
+                str(t["crps_gmean_across_seeds"]["n"]),
+                _cmp(t["comparisons"], "seasonal_naive", "crps"),
+                _cmp(t["comparisons"], "upstream:Auto_Arima", "crps"),
+            ]
+        )
+    return md_table(
+        [
+            "model",
+            "parameters",
+            "split",
+            "seeds",
+            "CRPS vs Seasonal Naive [95% CI]",
+            "CRPS vs AutoARIMA [95% CI] (primary)",
+        ],
+        rows,
+    )
+
+
 @table("headline")
 def headline(root: Path) -> str:
     h = _load(root, "results/analysis/headline.json")
