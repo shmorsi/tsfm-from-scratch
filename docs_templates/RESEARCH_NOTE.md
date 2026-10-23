@@ -44,7 +44,13 @@ Seasonal Naive reproduces upstream's on all official metrics and configurations)
 
 ### Zero-shot GIFT-Eval (test split)
 
+{{ if exists:results/analysis/headline.json }}
+`patch_s2`, the T4 headline, was scored once on the test split after the deadline, from its checkpoint on Drive (`notebooks/score_patch_s2_test.ipynb`), with the pre-registered settings and one seed (`DEVIATIONS.md`). The first row is the primary comparison.
+
+{{ table:headline }}
+{{ else }}
 `patch_s2`, the T4 headline, was not scored on the test split. Its checkpoint is not in the repository (`DEVIATIONS.md`). No test number is claimed for it.
+{{ end }}
 
 A smaller model was pre-registered separately (`PREREGISTRATION_CPU.md`) and scored once, three seeds, on all {{ results/analysis/cpu_study.json#test.n_configs }} official configurations. Seed-averaged CRPS is {{ results/analysis/cpu_study.json#test.summary.crps_gmean | .3f }}× Seasonal Naive (95% configuration interval [{{ results/analysis/cpu_study.json#test.comparisons.0.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.0.ci95.1 | .3f }}], no detectable difference) and {{ results/analysis/cpu_study.json#test.comparisons.2.ratio | .3f }}× upstream AutoARIMA (interval entirely above 1, worse).
 
@@ -92,10 +98,17 @@ study is a separate pre-registration. It did score its own model once.
 
 Things this project does **not** show, whatever the numbers above say:
 
+{{ if exists:results/analysis/headline.json }}
+* That the two test results describe one model. The CPU model
+  ({{ results/runs/cpu_s0_seed0/summary.json#params_total | int }} parameters) is separate;
+  on it, CRPS against Seasonal Naive is not distinguishable from 1, and both CRPS and
+  MASE are worse than upstream AutoARIMA.
+{{ else }}
 * A test score for `patch_s2`. The test numbers in this note are the CPU model
   ({{ results/runs/cpu_s0_seed0/summary.json#params_total | int }} parameters). On that
   model, CRPS against Seasonal Naive is not distinguishable from 1, and both CRPS and
   MASE are worse than upstream AutoARIMA.
+{{ end }}
 * That the CPU result would survive a larger training budget. It is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps on CPU.
 * That the model is useful for any real forecasting or trading decision. Nothing here
   measures economic value, and no trading performance is claimed.
