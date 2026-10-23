@@ -11,6 +11,7 @@ A small time-series transformer, written from scratch in plain PyTorch, pretrain
 [Case study](https://shmorsi.github.io/projects/tsfm.html) · [Research note](RESEARCH_NOTE.md) · [Data card](DATA_CARD.md) · [Model card](MODEL_CARD.md) · [Deviations](DEVIATIONS.md) · [Development](DEVELOPMENT.md)
 
 ```mermaid
+%%{init: {"theme": "dark", "themeVariables": {"darkMode": true, "background": "#07090d", "primaryColor": "#12161d", "primaryTextColor": "#f4f7fb", "primaryBorderColor": "#5a626a", "lineColor": "#c5ced8", "fontFamily": "Helvetica, ui-sans-serif, sans-serif"}}}%%
 flowchart LR
   corpus[Pinned corpus] --> audit[Leakage audit]
   audit --> windows[Training windows]
@@ -53,6 +54,7 @@ That is the result. The work around it is a model, a training loop, and an evalu
 ## Architecture
 
 ```mermaid
+%%{init: {"theme": "dark", "themeVariables": {"darkMode": true, "background": "#07090d", "primaryColor": "#12161d", "primaryTextColor": "#f4f7fb", "primaryBorderColor": "#5a626a", "lineColor": "#c5ced8", "fontFamily": "Helvetica, ui-sans-serif, sans-serif"}}}%%
 flowchart TB
   token[Patch or bin token] --> n1[RMSNorm]
   n1 --> attn[Causal attention with RoPE]
@@ -202,6 +204,8 @@ None of this has been run. It is not a result.
 One item. The `patch_s2` test score is pending. The validation run's weights are not in this repository, and giving them the pre-registered test score needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
 
 The weights file recorded with the validation run has SHA-256 85c46256cefa665b7eb0822f9877831563df85e22345670b40c4a115c16d0fd2.
+
+No test-split duration is stored. The validation score of this checkpoint stored a `seconds` field on each of its configurations in `results/eval/val/patch_s2/run.json`. That file is not a forecast of the test split, and the T4 training projection in `results/bench/Tesla_T4.json` is not a scoring time. Finished test configurations are written to the Drive work folder. Run all again after a disconnect and the score continues from those files. A completed `all_results.csv` is not scored a second time.
 
 1. Merge this commit to `main`, or set `COMMIT` in the notebook to the branch that contains it. The notebook clones `COMMIT` (default `main`) and scores that revision. The badge at the top opens the notebook on `main`.
 2. Put the checkpoint on Google Drive at `/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt`, with `model.pt` beside it. `ckpt.pt` or `model.pt` both work. The script scores the file with the SHA-256 above.

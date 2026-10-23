@@ -191,6 +191,14 @@ records as not run.
 `PREREGISTRATION_CPU.md` does not authorise or forbid this run; the CPU study is a
 separate model with its own test score.
 
+**Session.** A free Colab T4 can disconnect. The score writes each finished configuration
+to the Drive `WORK` folder and a second Run all continues from those files. A completed
+`all_results.csv` is not scored again. No test-split duration is stored in this
+repository. The validation score of this checkpoint stored a `seconds` field on each
+configuration in `results/eval/val/patch_s2/run.json`. That is not a forecast of the
+test split, and the T4 training projection in `results/bench/Tesla_T4.json` is a
+training time, not a scoring time.
+
 **After it finishes, on a local clone of the same commit.** Download
 `harvest_patch_s2.txt` from the Drive `WORK` folder. A copied notebook print can
 truncate, and a truncated file fails the SHA-256 check. Then:

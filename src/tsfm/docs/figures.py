@@ -1,8 +1,9 @@
 """SVG figures for the generated documents, drawn from committed results.
 
 No plotting dependency. ``tsfm docs build`` rewrites these files, and ``tsfm docs check``
-fails if they drift from the results they plot. Both charts share one palette and one
-type scale.
+fails if they drift from the results they plot. Both charts share one dark palette:
+near-black ground, cool gray type, thin rules, and one warm accent for this repository's
+series. Text is at least WCAG AA against the ground; grid lines meet the non-text 3:1 bar.
 """
 
 from __future__ import annotations
@@ -15,16 +16,17 @@ from pathlib import Path
 
 from tsfm.paths import repo_root
 
-# Warm paper, one accent for this repository's series, one ink blue for a comparison.
-BG = "#f7f6f3"
-INK = "#1c1917"
-MUTED = "#57534e"
-FAINT = "#a8a29e"
-GRID = "#e7e5e4"
-SIGNAL = "#9a3412"
-SECOND = "#1e3a5f"
-FONT = "ui-sans-serif, system-ui, sans-serif"
-SERIES_COLORS = (SIGNAL, SECOND, "#3f6212")
+# Mission-control ground. One warm accent; the comparison series stays neutral.
+BG = "#07090d"
+PANEL = "#10141b"
+INK = "#f4f7fb"
+MUTED = "#c5ced8"
+FAINT = "#8fa0b3"
+GRID = "#5a626a"  # 3.2:1 on BG, so a thin rule still reads
+SIGNAL = "#e4c48a"
+SECOND = "#d5dde6"
+FONT = "'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
+SERIES_COLORS = (SIGNAL, SECOND, FAINT)
 
 COVERAGE_REL = "docs/figures/coverage.svg"
 SCALING_REL = "docs/figures/scaling.svg"
@@ -70,7 +72,9 @@ def _open(box: _Box, title: str, desc: str) -> list[str]:
         f'<title id="fig-title">{html.escape(title)}</title>',
         f'<desc id="fig-desc">{html.escape(desc)}</desc>',
         f'<rect width="100%" height="100%" fill="{BG}"/>',
-        _text(box.left, 28, title, size=16, weight=600),
+        f'<rect x="0.5" y="0.5" width="{box.width - 1}" height="{box.height - 1}" '
+        f'fill="none" stroke="{GRID}" stroke-width="1"/>',
+        _text(box.left, 28, title, size=15, weight=500),
     ]
 
 
@@ -199,7 +203,7 @@ def coverage_svg(root: Path | None = None) -> str:
         color = SERIES_COLORS[i % len(SERIES_COLORS)]
         coords = " ".join(f"{x(a):.1f},{y(b):.1f}" for a, b in pts)
         parts.append(
-            f'<polyline fill="none" stroke="{color}" stroke-width="2.25" points="{coords}"/>'
+            f'<polyline fill="none" stroke="{color}" stroke-width="1.75" points="{coords}"/>'
         )
         for a, b in pts:
             parts.append(
@@ -208,7 +212,7 @@ def coverage_svg(root: Path | None = None) -> str:
             )
         ly = box.top + 16 + i * 18
         parts.append(
-            f'<line x1="{box.left + 8}" y1="{ly - 4}" x2="{box.left + 26}" y2="{ly - 4}" stroke="{color}" stroke-width="2.25"/>'
+            f'<line x1="{box.left + 8}" y1="{ly - 4}" x2="{box.left + 26}" y2="{ly - 4}" stroke="{color}" stroke-width="1.75"/>'
         )
         parts.append(_text(box.left + 32, ly, name, size=13))
     parts.append("</svg>\n")
@@ -303,10 +307,10 @@ def scaling_svg(root: Path | None = None) -> str | None:
     band += " " + " ".join(
         f"{x(f):.1f},{y(v):.1f}" for f, v in zip(reversed(cflops), reversed(clo), strict=True)
     )
-    parts.append(f'<polygon points="{band}" fill="{SIGNAL}" fill-opacity="0.12"/>')
+    parts.append(f'<polygon points="{band}" fill="{SIGNAL}" fill-opacity="0.22"/>')
     fit_line = " ".join(f"{x(f):.1f},{y(v):.1f}" for f, v in zip(cflops, cfit, strict=True))
     parts.append(
-        f'<polyline fill="none" stroke="{SIGNAL}" stroke-width="2.25" points="{fit_line}"/>'
+        f'<polyline fill="none" stroke="{SIGNAL}" stroke-width="1.75" points="{fit_line}"/>'
     )
     for p in points:
         cx, cy = x(float(p["flops"])), y(float(p["val_loss"]))
@@ -323,10 +327,10 @@ def scaling_svg(root: Path | None = None) -> str | None:
     # Legend sits in the empty corner: high compute, high loss.
     lx, ly = box.left + box.plot_w - 188, box.top + 8
     parts.append(
-        f'<rect x="{lx}" y="{ly}" width="180" height="62" rx="4" fill="{BG}" stroke="{GRID}"/>'
+        f'<rect x="{lx}" y="{ly}" width="180" height="62" rx="2" fill="{PANEL}" stroke="{GRID}"/>'
     )
     parts.append(
-        f'<line x1="{lx + 12}" y1="{ly + 16}" x2="{lx + 32}" y2="{ly + 16}" stroke="{SIGNAL}" stroke-width="2.25"/>'
+        f'<line x1="{lx + 12}" y1="{ly + 16}" x2="{lx + 32}" y2="{ly + 16}" stroke="{SIGNAL}" stroke-width="1.75"/>'
     )
     parts.append(_text(lx + 40, ly + 20, "power-law fit", size=12))
     parts.append(
