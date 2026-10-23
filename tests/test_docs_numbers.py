@@ -119,6 +119,10 @@ def test_figures_match_results_and_images_have_alt_text():
         images = re.findall(r"!\[([^\]]*)\]\(([^)]+)\)", doc)
         for alt, src in images:
             assert alt.strip(), f"{out} image {src} has no alt text"
+    readme = (root / "README.md").read_text()
+    if not (root / "results/analysis/headline.json").exists():
+        assert "| pending | pending |" in readme
+        assert "## Blocked on owner" in readme
 
 
 def test_generated_docs_contain_only_backed_numbers():

@@ -17,19 +17,19 @@ flowchart LR
   windows --> model[Decoder-only transformer]
   model --> val[Validation split]
   val --> choice[Headline chosen here]
-  choice --> test[Test split, scored once]
+  choice --> test[Test split, at most once]
 ```
 
 ![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
 
 ## Key results
 
-`patch_s2` (10.1M parameters) reaches CRPS 0.605× Seasonal Naive on the validation split (16 held-out configurations, one seed). It has no test score yet. The weights are not in this repository.
+`patch_s2` (10.1M parameters) reaches CRPS 0.605× Seasonal Naive on the validation split (16 held-out configurations, one seed). Its test score is pending. The weights are not in this repository. Steps are under [Blocked on owner](#blocked-on-owner).
 
 | model | parameters | split | seeds | CRPS vs Seasonal Naive [95% CI] | CRPS vs AutoARIMA [95% CI] (primary) |
 |---|---|---|---|---|---|
 | `patch_s2` (T4) | 10,083,392 | validation, 16 configurations | 1 | 0.605 (no interval computed) | AutoARIMA not run on validation |
-| `patch_s2` (T4) | 10,083,392 | test | 1 | not scored yet | not scored yet |
+| `patch_s2` (T4) | 10,083,392 | test | 1 | pending | pending |
 | `cpu_s0` (CPU) | 833,440 | test, 97 configurations | 3 | 1.109 [0.978, 1.265], no detectable difference | 1.217 [1.091, 1.362], worse |
 
 Lower is better; 1 equals the reference. Each verdict uses the pre-registered rule: better if the interval is entirely below 1, worse if entirely above, otherwise no detectable difference.
@@ -197,14 +197,16 @@ None of this has been run. It is not a result.
 * **Scaling.** The pre-registration named more sizes than a free T4 could train (`DEVIATIONS.md`). I would add those runs and only then refit. I would not extrapolate the fit that is already reported.
 * **Agents.** I would expose the forecaster as a tool a caller can ask for a context, a frequency, and a baseline, and I would keep every test score behind the same pre-registered gate.
 
-## Score `patch_s2` on the test split (Colab T4)
+## Blocked on owner
 
-The validation headline's weights are not in this repository. Scoring them is the one remaining pre-registered test run, and it needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
+One item. The `patch_s2` test score is pending. The validation run's weights are not in this repository, and giving them the pre-registered test score needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
 
-1. Merge the commit that contains the notebook, or set `COMMIT` in the notebook to that branch. The notebook clones `COMMIT` (default `main`) and scores that revision.
-2. Put the `patch_s2` checkpoint on Google Drive. The default `CHECKPOINT_PATH` is `/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt`, with `model.pt` beside it.
-3. Open the notebook from the badge above, choose a T4 GPU runtime, then Runtime -> Run all. The notebook checks that the GPU is a T4 and that the checkpoint is `patch_s2` before it touches the test split.
-4. Download `harvest_patch_s2.txt` from Drive (`/content/drive/MyDrive/tsfm/score_patch_s2/`). A copied notebook print can truncate.
+The weights file recorded with the validation run has SHA-256 85c46256cefa665b7eb0822f9877831563df85e22345670b40c4a115c16d0fd2.
+
+1. Merge this commit to `main`, or set `COMMIT` in the notebook to the branch that contains it. The notebook clones `COMMIT` (default `main`) and scores that revision. The badge at the top opens the notebook on `main`.
+2. Put the checkpoint on Google Drive at `/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt`, with `model.pt` beside it. `ckpt.pt` or `model.pt` both work. The script scores the file with the SHA-256 above.
+3. Open `notebooks/score_patch_s2_test.ipynb`, choose a T4 GPU runtime, then Runtime -> Run all. The notebook checks that the GPU is a T4 and that the checkpoint is `patch_s2` before it touches the test split.
+4. Download `/content/drive/MyDrive/tsfm/score_patch_s2/harvest_patch_s2.txt`. A copied notebook print can truncate, and a truncated file fails the SHA-256 check.
 5. On a local clone of the same commit:
 
 ```bash

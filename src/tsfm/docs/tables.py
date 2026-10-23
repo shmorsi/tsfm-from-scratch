@@ -192,8 +192,8 @@ def score_map(root: Path) -> str:
                 f"{hl_params:,}",
                 "test",
                 str(hl_seeds),
-                "not scored yet",
-                "not scored yet",
+                "pending",
+                "pending",
             ]
         )
     cpu = _load(root, "results/analysis/cpu_study.json")
