@@ -1,9 +1,11 @@
 """SVG figures for the generated documents, drawn from committed results.
 
 No plotting dependency. ``tsfm docs build`` rewrites these files, and ``tsfm docs check``
-fails if they drift from the results they plot. Both charts share one dark palette:
-near-black ground, cool gray type, thin rules, and one warm accent for this repository's
-series. Text is at least WCAG AA against the ground; grid lines meet the non-text 3:1 bar.
+fails if they drift from the results they plot. Every figure uses the portfolio palette:
+black ground, condensed display type, one accent, and hairline rules. Text is at least
+WCAG AA against the ground; rules that carry information meet the non-text 3:1 bar.
+
+Measured numbers in the diagrams are read from ``results/``. Stage names are labels.
 """
 
 from __future__ import annotations
@@ -13,21 +15,25 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from tsfm.paths import repo_root
 
-# Mission-control ground. One warm accent; the comparison series stays neutral.
-BG = "#07090d"
-PANEL = "#10141b"
-INK = "#f4f7fb"
-MUTED = "#c5ced8"
-FAINT = "#8fa0b3"
-GRID = "#5a626a"  # 3.2:1 on BG, so a thin rule still reads
-SIGNAL = "#e4c48a"
+# Same tokens as https://shmorsi.github.io/ (Inter Tight, black, one blue accent).
+BG = "#000000"
+PANEL = "#0a0a0a"
+INK = "#f5f5f7"
+MUTED = "#a8a8ad"
+FAINT = "#8e8e93"
+GRID = "#5a626a"  # 3.4:1 on black, so a 1px rule still reads
+SIGNAL = "#8ec5ff"
 SECOND = "#d5dde6"
-FONT = "'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
+FONT = "'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif"
 SERIES_COLORS = (SIGNAL, SECOND, FAINT)
 
+HERO_REL = "docs/figures/hero.svg"
+ARCHITECTURE_REL = "docs/figures/architecture.svg"
+INTEGRITY_REL = "docs/figures/integrity.svg"
 COVERAGE_REL = "docs/figures/coverage.svg"
 SCALING_REL = "docs/figures/scaling.svg"
 
@@ -58,10 +64,13 @@ def _text(
     fill: str = INK,
     anchor: str = "start",
     weight: int = 400,
+    tracking: str | None = None,
 ) -> str:
+    """One SVG text node. ``tracking`` is an SVG letter-spacing value, such as ``-0.04em``."""
+    track = f' letter-spacing="{tracking}"' if tracking else ""
     return (
         f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="{anchor}" font-family="{FONT}" '
-        f'font-size="{size}" font-weight="{weight}" fill="{fill}">{html.escape(body)}</text>'
+        f'font-size="{size}" font-weight="{weight}" fill="{fill}"{track}>{html.escape(body)}</text>'
     )
 
 
@@ -74,7 +83,7 @@ def _open(box: _Box, title: str, desc: str) -> list[str]:
         f'<rect width="100%" height="100%" fill="{BG}"/>',
         f'<rect x="0.5" y="0.5" width="{box.width - 1}" height="{box.height - 1}" '
         f'fill="none" stroke="{GRID}" stroke-width="1"/>',
-        _text(box.left, 28, title, size=15, weight=500),
+        _text(box.left, 28, title, size=15, weight=600, tracking="-0.03em"),
     ]
 
 
@@ -344,10 +353,290 @@ def scaling_svg(root: Path | None = None) -> str | None:
     return "\n".join(parts)
 
 
+def _load(root: Path, rel: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((root / rel).read_text())
+    return data
+
+
+def _svg_open(width: int, height: int, title: str, desc: str) -> list[str]:
+    return [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-labelledby="fig-title fig-desc">',
+        f'<title id="fig-title">{html.escape(title)}</title>',
+        f'<desc id="fig-desc">{html.escape(desc)}</desc>',
+        f'<rect width="100%" height="100%" fill="{BG}"/>',
+        f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" '
+        f'fill="none" stroke="{GRID}" stroke-width="1"/>',
+    ]
+
+
+def _panel(x: float, y: float, w: float, h: float) -> str:
+    return (
+        f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
+        f'fill="{PANEL}" stroke="{GRID}" stroke-width="1"/>'
+    )
+
+
+def _rule(x1: float, x2: float, y: float) -> str:
+    return f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{x2:.1f}" y2="{y:.1f}" stroke="{GRID}"/>'
+
+
+def _arrow(x1: float, x2: float, y: float) -> str:
+    return (
+        f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{x2 - 7:.1f}" y2="{y:.1f}" stroke="{GRID}"/>'
+        f'<path d="M{x2 - 7:.1f} {y - 3.5:.1f} L{x2:.1f} {y:.1f} L{x2 - 7:.1f} {y + 3.5:.1f}" '
+        f'fill="none" stroke="{GRID}"/>'
+    )
+
+
+def _verdict(comparisons: list[dict[str, Any]], baseline: str, metric: str) -> str:
+    found = next(c for c in comparisons if c["b"] == baseline and c["metric"] == metric)
+    verdict = str(found["verdict"])
+    # The figure prints the stored verdict. It does not editorialize it.
+    return verdict
+
+
+def hero_svg(root: Path | None = None) -> str:
+    """Pipeline strip for the README. Readouts are formatted from committed results.
+
+    The test-split slot says ``pending`` until ``results/analysis/headline.json`` exists.
+    After that it shows the stored primary verdict, never a claim that the model beat
+    a baseline.
+    """
+    root = root or repo_root()
+    val = _load(root, "results/analysis/val_summary.json")
+    choice = _load(root, "results/analysis/headline_choice.json")
+    name = str(choice["headline"])
+    crps = float(val["models"][name]["crps_gmean"])
+    n_configs = int(val["n_configs"])
+    params = int(_load(root, f"results/runs/{name}/summary.json")["params_total"])
+    cpu = _load(root, "results/analysis/cpu_study.json")["test"]
+    vs_naive = _verdict(cpu["comparisons"], "seasonal_naive", "crps")
+    vs_arima = _verdict(cpu["comparisons"], "upstream:Auto_Arima", "crps")
+    headline_path = root / "results" / "analysis" / "headline.json"
+    pending = not headline_path.exists()
+    if pending:
+        test_value, test_note, test_fill = "pending", "scored at most once", SIGNAL
+        test_desc = "The test split has not been scored."
+    else:
+        head = _load(root, "results/analysis/headline.json")
+        primary = next(c for c in head["comparisons"] if c.get("primary"))
+        test_value = str(primary["verdict"])
+        test_note = "stored verdict, CRPS vs AutoARIMA"
+        test_fill = INK
+        test_desc = "The test split has a stored verdict."
+    width, height = 1100, 328
+    parts = _svg_open(
+        width,
+        height,
+        "From a pinned corpus to a single test score",
+        "Six stages: pinned corpus, leakage audit, training windows, decoder, "
+        "validation (where the headline is chosen), and the test split. "
+        f"{test_desc} The validation readout and the CPU-model verdicts are read from results.",
+    )
+    parts.append(_text(36, 40, "TSFM", size=26, weight=600, tracking="-0.04em"))
+    parts.append(
+        _text(
+            118,
+            40,
+            "FROM SCRATCH",
+            size=13,
+            fill=MUTED,
+            weight=600,
+            tracking="0.16em",
+        )
+    )
+    parts.append(
+        _text(
+            width - 36,
+            40,
+            "ZERO-SHOT  ·  GIFT-EVAL",
+            size=12,
+            fill=FAINT,
+            anchor="end",
+            weight=600,
+            tracking="0.14em",
+        )
+    )
+    parts.append(_rule(36, width - 36, 58))
+    stages = (
+        ("CORPUS", "Pinned sources"),
+        ("AUDIT", "Copies removed"),
+        ("WINDOWS", "Training only"),
+        ("DECODER", "Plain PyTorch"),
+        ("VALIDATE", "Headline chosen"),
+        ("TEST", "At most once"),
+    )
+    left, right = 36.0, float(width - 36)
+    span = right - left
+    y_line = 108.0
+    parts.append(_rule(left, right, y_line))
+    for i, (label, caption) in enumerate(stages):
+        x = left + span * (i + 0.5) / len(stages)
+        chosen = label == "VALIDATE"
+        parts.append(
+            f'<circle cx="{x:.1f}" cy="{y_line:.1f}" r="4.5" fill="{SIGNAL if chosen else BG}" '
+            f'stroke="{SIGNAL if chosen else GRID}" stroke-width="1"/>'
+        )
+        parts.append(
+            _text(
+                x,
+                86,
+                label,
+                size=13,
+                anchor="middle",
+                weight=600,
+                fill=SIGNAL if chosen else INK,
+                tracking="0.12em",
+            )
+        )
+        parts.append(_text(x, 136, caption, size=13, fill=MUTED, anchor="middle"))
+    parts.append(_rule(36, width - 36, 162))
+    columns = (
+        (
+            "VALIDATION",
+            f"{crps:.3f}×",
+            "CRPS vs Seasonal Naive",
+            f"{name} · {params / 1e6:.1f}M · {n_configs} configurations",
+            SIGNAL,
+        ),
+        ("TEST SPLIT", test_value, test_note, "weights not in this repository", test_fill),
+        ("CPU ON TEST", vs_arima, "vs AutoARIMA", f"{vs_naive} · Seasonal Naive", INK),
+    )
+    col_w = (width - 72) / 3
+    for i, (label, value, note, note2, fill) in enumerate(columns):
+        x = 36 + i * col_w
+        if i:
+            parts.append(
+                f'<line x1="{x:.1f}" y1="178" x2="{x:.1f}" y2="{height - 24}" stroke="{GRID}"/>'
+            )
+        parts.append(_text(x + 20, 198, label, size=12, fill=FAINT, weight=600, tracking="0.16em"))
+        value_size = 28 if len(value) <= 16 else 16
+        parts.append(
+            _text(x + 20, 238, value, size=value_size, fill=fill, weight=600, tracking="-0.03em")
+        )
+        parts.append(_text(x + 20, 266, note, size=14, fill=MUTED))
+        parts.append(_text(x + 20, 288, note2, size=13, fill=FAINT))
+    parts.append("</svg>\n")
+    return "\n".join(parts)
+
+
+def architecture_svg(root: Path | None = None) -> str:
+    """One pre-norm decoder block. No measured quantities."""
+    del root
+    width, height = 1100, 300
+    parts = _svg_open(
+        width,
+        height,
+        "Decoder block",
+        "A pre-norm decoder block: RMSNorm, causal attention with rotary positions, "
+        "a residual add, RMSNorm, SwiGLU, a residual add, then a quantile head or token logits. "
+        "The patch quantile head is the one that was selected.",
+    )
+    parts.append(_text(36, 40, "DECODER", size=22, weight=600, tracking="-0.04em"))
+    parts.append(
+        _text(
+            168,
+            40,
+            "PRE-NORM  ·  PLAIN PYTORCH",
+            size=12,
+            fill=MUTED,
+            weight=600,
+            tracking="0.14em",
+        )
+    )
+    parts.append(_rule(36, width - 36, 58))
+    panels = ((36, 240, "INPUT"), (300, 480, "BLOCK"), (804, 260, "HEAD"))
+    for x, w, _label in panels:
+        parts.append(_panel(x, 80, w, 188))
+    parts.append(_arrow(276, 300, 174))
+    parts.append(_arrow(780, 804, 174))
+    parts.append(_text(52, 108, "INPUT", size=12, fill=FAINT, weight=600, tracking="0.16em"))
+    parts.append(_text(52, 156, "Patch or bin token", size=18, weight=600, tracking="-0.03em"))
+    parts.append(_text(52, 184, "Scaled by the context only.", size=14, fill=MUTED))
+    parts.append(_text(52, 212, "Mean absolute value.", size=14, fill=MUTED))
+    parts.append(_text(316, 108, "ONE BLOCK", size=12, fill=FAINT, weight=600, tracking="0.16em"))
+    rows = (
+        "RMSNorm",
+        "Causal attention with RoPE",
+        "Residual add",
+        "RMSNorm",
+        "SwiGLU",
+        "Residual add",
+    )
+    for i, row in enumerate(rows):
+        y = 136 + i * 20
+        parts.append(_text(316, y, row, size=15, weight=500))
+    parts.append(_text(820, 108, "HEAD", size=12, fill=FAINT, weight=600, tracking="0.16em"))
+    parts.append(
+        _text(820, 150, "Quantile head", size=18, fill=SIGNAL, weight=600, tracking="-0.03em")
+    )
+    parts.append(_text(820, 174, "Selected. Non-crossing.", size=14, fill=MUTED))
+    parts.append(_text(820, 214, "Token logits", size=16, weight=500))
+    parts.append(_text(820, 236, "Bins path. Not scored.", size=14, fill=FAINT))
+    parts.append("</svg>\n")
+    return "\n".join(parts)
+
+
+def integrity_svg(root: Path | None = None) -> str:
+    """Leakage audit strip. Counts are the committed round-1 and final totals."""
+    root = root or repo_root()
+    first = _load(root, "results/data/leakage_round1.json")["totals"]
+    final = _load(root, "results/data/leakage.json")["totals"]
+    flagged = int(first["series_with_hits"])
+    checked = int(first["pretrain_series_checked"])
+    removed = int(final["excluded_series_total"])
+    hits = int(final["series_with_hits"])
+    rechecked = int(final["pretrain_series_checked"])
+    width, height = 1100, 292
+    parts = _svg_open(
+        width,
+        height,
+        "Leakage audit",
+        "Round 1 flagged series in the public pretraining corpus. Those series were "
+        "removed. A re-run on the final corpus reports how many hits remain. "
+        "Counts are read from the committed leakage reports. The check finds exact "
+        "and rescaled copies, not noisy or resampled ones.",
+    )
+    parts.append(_text(36, 40, "AUDIT", size=22, weight=600, tracking="-0.04em"))
+    parts.append(
+        _text(
+            140,
+            40,
+            "EXACT AND RESCALED COPIES",
+            size=12,
+            fill=MUTED,
+            weight=600,
+            tracking="0.14em",
+        )
+    )
+    parts.append(_rule(36, width - 36, 58))
+    columns = (
+        ("ROUND 1", f"{flagged:,}", f"of {checked:,} series", "flagged", INK),
+        ("EXCLUDED", f"{removed:,}", "series removed", "before training", INK),
+        ("RE-RUN", f"{hits:,}", f"hits in {rechecked:,} series", "on the final corpus", SIGNAL),
+    )
+    col_w = (width - 72) / 3
+    for i, (label, value, note, note2, fill) in enumerate(columns):
+        x = 36 + i * col_w
+        parts.append(_panel(x, 80, col_w - 16, 176))
+        parts.append(_text(x + 20, 112, label, size=12, fill=FAINT, weight=600, tracking="0.16em"))
+        parts.append(_text(x + 20, 168, value, size=40, fill=fill, weight=600, tracking="-0.04em"))
+        parts.append(_text(x + 20, 204, note, size=15, fill=MUTED))
+        parts.append(_text(x + 20, 228, note2, size=14, fill=FAINT))
+    parts.append("</svg>\n")
+    return "\n".join(parts)
+
+
 def figure_svgs(root: Path | None = None) -> dict[str, str]:
     """Relative path to SVG text, for every figure the committed results can draw."""
     root = root or repo_root()
-    out = {COVERAGE_REL: coverage_svg(root)}
+    out = {
+        HERO_REL: hero_svg(root),
+        ARCHITECTURE_REL: architecture_svg(root),
+        INTEGRITY_REL: integrity_svg(root),
+        COVERAGE_REL: coverage_svg(root),
+    }
     scaling = scaling_svg(root)
     if scaling is not None:
         out[SCALING_REL] = scaling
@@ -367,6 +656,7 @@ def write_figures(root: Path | None = None) -> list[Path]:
 
 
 def write_coverage_figure(root: Path | None = None) -> Path:
+    """Write the coverage chart and return its path."""
     root = root or repo_root()
     path = root / COVERAGE_REL
     path.parent.mkdir(parents=True, exist_ok=True)

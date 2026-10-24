@@ -36,6 +36,7 @@ REPORTED = {
 
 
 def read_csv(p: Path) -> dict[str, dict[str, Any]]:
+    """Read one evaluation CSV into a dict keyed by dataset name."""
     with open(p, newline="") as f:
         out = {}
         for r in csv.DictReader(f):
@@ -46,6 +47,7 @@ def read_csv(p: Path) -> dict[str, dict[str, Any]]:
 def load_models(
     split: str, *, include_partial: bool = False
 ) -> dict[str, dict[str, dict[str, Any]]]:
+    """Load per-configuration scores for every model under a split."""
     models: dict[str, dict[str, dict[str, Any]]] = {}
     d = results_dir() / "eval" / split
     if d.exists():
@@ -99,6 +101,7 @@ def freq_group(cfg: str) -> str:
 
 
 def summarise(models: dict[str, dict[str, dict[str, Any]]], baseline: str) -> dict[str, Any]:
+    """Geometric means and coverage for each model, divided by a baseline."""
     base = models[baseline]
     keys = sorted(base)
     out: dict[str, Any] = {"n_configs": len(keys), "baseline": baseline, "models": {}}
@@ -150,6 +153,7 @@ def summarise(models: dict[str, dict[str, dict[str, Any]]], baseline: str) -> di
 def compare(
     models: dict[str, dict[str, dict[str, Any]]], a: str, b: str, baseline: str, metric: str
 ) -> dict[str, Any]:
+    """Paired ratio of model ``a`` to model ``b`` on one metric, with a bootstrap interval."""
     keys = sorted(models[baseline])
     col = CRPS if metric == "crps" else MASE
     pa = {k: models[a][k][col] for k in keys}
@@ -174,10 +178,12 @@ def _in_reference_summary(split: str, name: str) -> bool:
 
 
 def reference_models(split: str) -> dict[str, dict[str, dict[str, Any]]]:
+    """Models that belong in the published-reference summary for this split."""
     return {n: rows for n, rows in load_models(split).items() if _in_reference_summary(split, n)}
 
 
 def report(split: str) -> Path:
+    """Write the validation or test summary JSON and return its path."""
     models = reference_models(split)
     baseline = "seasonal_naive" if "seasonal_naive" in models else "upstream:Seasonal_Naive"
     if baseline not in models:

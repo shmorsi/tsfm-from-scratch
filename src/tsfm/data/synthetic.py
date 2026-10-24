@@ -58,6 +58,8 @@ def _const(c: float) -> Kernel:
 
 @dataclass(frozen=True)
 class KernelSpec:
+    """One kernel in the random mixture, with the hyperparameters that built it."""
+
     name: str
     kernel: Kernel
 
@@ -140,6 +142,7 @@ def build_synthetic(
     workers: int | None = None,
     manifest_path: Path | None = None,
 ) -> dict[str, object]:
+    """Write the synthetic train and validation Parquet files and return their stats."""
     from tsfm.data.sources import load_data_config
 
     cfg = load_data_config()["synthetic"]

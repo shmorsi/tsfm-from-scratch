@@ -51,10 +51,13 @@ _KEY_RE = re.compile(r"\[([^\]]+)\]|([^.\[\]]+)")
 
 
 class MissingResult(KeyError):
+    """A template asked for a results file that is not there yet."""
+
     pass
 
 
 def lookup(root: Path, ref: str) -> Any:
+    """Read one value from a results file. ``ref`` is ``path#a.b.0``."""
     file, _, keypath = ref.partition("#")
     path = root / file
     if not path.exists():
@@ -86,6 +89,7 @@ def _format(value: Any, spec: str) -> str:
 
 
 def render_placeholder(expr: str, root: Path) -> str:
+    """Expand one ``{{ ... }}`` expression."""
     parts = [p.strip() for p in expr.split("|")]
     head, filters = parts[0], parts[1:]
     default = next((f.split(":", 1)[1] for f in filters if f.startswith("default:")), None)
@@ -104,6 +108,7 @@ def render_placeholder(expr: str, root: Path) -> str:
 
 
 def render(template: str, root: Path) -> str:
+    """Expand a template. Placeholders inside code are rejected."""
     for rx in (_FENCE_RE, _INLINE_CODE_RE):
         for m in rx.finditer(template):
             if "{{" in m.group(0):

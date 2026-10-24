@@ -110,6 +110,8 @@ PRETTY_NAMES = {
 
 @dataclass(frozen=True)
 class Config:
+    """One official GIFT-Eval configuration."""
+
     name: str  # official config name, e.g. "electricity/15T/short"
     ds_name: str  # upstream Dataset() name / directory, e.g. "electricity/15T"
     term: str
@@ -118,15 +120,18 @@ class Config:
 
     @property
     def key(self) -> str:
+        """Dataset key, the first component of the official name."""
         return self.name.split("/")[0]
 
     @property
     def freq_label(self) -> str:
+        """Frequency label, the second component of the official name."""
         return self.name.split("/")[1]
 
 
 @cache
 def properties() -> dict[str, dict[str, Any]]:
+    """Upstream dataset properties, keyed by dataset name."""
     props: dict[str, dict[str, Any]] = json.loads((VENDOR / "dataset_properties.json").read_text())
     return props
 
@@ -143,6 +148,7 @@ def _config_name(ds_name: str, term: str) -> str:
 
 @cache
 def configs() -> tuple[Config, ...]:
+    """Every official short, medium and long configuration this repo scores."""
     out = []
     for ds in SHORT_DATASETS:
         for term in ("short", "medium", "long"):
@@ -161,6 +167,7 @@ def configs() -> tuple[Config, ...]:
 
 @cache
 def official_config_names() -> frozenset[str]:
+    """Configuration names from upstream's committed CSV."""
     with open(VENDOR / "dataset_configurations.csv", newline="") as f:
         return frozenset(row["dataset"] for row in csv.DictReader(f))
 

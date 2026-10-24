@@ -1,38 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="fig-title fig-desc">
 <title id="fig-title">Validation loss vs training compute</title>
 <desc id="fig-desc">Validation loss plotted against training compute on a logarithmic axis. The line is the fitted power law and the shaded band is the paired bootstrap.</desc>
-<rect width="100%" height="100%" fill="#07090d"/>
+<rect width="100%" height="100%" fill="#000000"/>
 <rect x="0.5" y="0.5" width="719" height="419" fill="none" stroke="#5a626a" stroke-width="1"/>
-<text x="64.0" y="28.0" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="500" fill="#f4f7fb">Validation loss vs training compute</text>
+<text x="64.0" y="28.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#f5f5f7" letter-spacing="-0.03em">Validation loss vs training compute</text>
 <line x1="64" y1="312.2" x2="692" y2="312.2" stroke="#5a626a"/>
-<text x="56.0" y="316.2" text-anchor="end" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">0.15</text>
+<text x="56.0" y="316.2" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">0.15</text>
 <line x1="64" y1="242.9" x2="692" y2="242.9" stroke="#5a626a"/>
-<text x="56.0" y="246.9" text-anchor="end" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">0.20</text>
+<text x="56.0" y="246.9" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">0.20</text>
 <line x1="64" y1="173.7" x2="692" y2="173.7" stroke="#5a626a"/>
-<text x="56.0" y="177.7" text-anchor="end" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">0.25</text>
+<text x="56.0" y="177.7" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">0.25</text>
 <line x1="64" y1="104.5" x2="692" y2="104.5" stroke="#5a626a"/>
-<text x="56.0" y="108.5" text-anchor="end" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">0.30</text>
-<line x1="130.9" y1="362.0" x2="130.9" y2="367.0" stroke="#c5ced8"/>
-<text x="130.9" y="392.0" text-anchor="middle" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">10¹⁴</text>
-<line x1="387.3" y1="362.0" x2="387.3" y2="367.0" stroke="#c5ced8"/>
-<text x="387.3" y="392.0" text-anchor="middle" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">10¹⁵</text>
-<line x1="643.7" y1="362.0" x2="643.7" y2="367.0" stroke="#c5ced8"/>
-<text x="643.7" y="392.0" text-anchor="middle" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#c5ced8">10¹⁶</text>
-<text x="378.0" y="412.0" text-anchor="middle" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="400" fill="#f4f7fb">training compute, FLOPs (6ND)</text>
-<text x="16" y="207" text-anchor="middle" transform="rotate(-90 16 207)" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#f4f7fb">validation loss</text>
-<polygon points="97.6,82.0 109.1,84.7 120.5,87.3 132.0,90.0 143.4,92.6 154.9,95.2 166.3,97.8 177.7,100.3 189.2,102.7 200.6,105.1 212.1,107.6 223.5,110.2 235.0,112.6 246.4,115.0 257.8,117.4 269.3,119.8 280.7,122.3 292.2,124.8 303.6,127.3 315.1,129.7 326.5,132.2 337.9,134.6 349.4,137.0 360.8,139.3 372.3,141.6 383.7,143.9 395.2,146.1 406.6,148.4 418.1,150.7 429.5,152.9 440.9,155.2 452.4,157.5 463.8,159.7 475.3,161.9 486.7,164.1 498.2,166.3 509.6,168.4 521.0,170.5 532.5,172.6 543.9,174.7 555.4,176.8 566.8,178.8 578.3,180.9 589.7,182.9 601.1,184.9 612.6,186.9 624.0,188.9 635.5,191.0 646.9,193.0 658.4,195.0 658.4,332.0 646.9,330.8 635.5,329.7 624.0,328.5 612.6,327.4 601.1,326.2 589.7,325.0 578.3,323.9 566.8,322.7 555.4,321.5 543.9,320.3 532.5,319.1 521.0,317.8 509.6,316.6 498.2,315.5 486.7,314.3 475.3,313.1 463.8,311.9 452.4,310.6 440.9,309.2 429.5,307.9 418.1,306.7 406.6,305.4 395.2,304.2 383.7,302.8 372.3,301.4 360.8,300.1 349.4,298.7 337.9,297.4 326.5,296.2 315.1,294.9 303.6,293.5 292.2,292.1 280.7,290.8 269.3,289.4 257.8,288.1 246.4,286.7 235.0,285.4 223.5,284.0 212.1,282.6 200.6,281.2 189.2,279.7 177.7,278.2 166.3,276.9 154.9,275.6 143.4,274.2 132.0,272.8 120.5,271.3 109.1,269.8 97.6,268.4" fill="#e4c48a" fill-opacity="0.22"/>
-<polyline fill="none" stroke="#e4c48a" stroke-width="1.75" points="97.6,197.8 109.1,199.7 120.5,201.6 132.0,203.5 143.4,205.4 154.9,207.2 166.3,209.1 177.7,210.9 189.2,212.8 200.6,214.6 212.1,216.4 223.5,218.2 235.0,220.0 246.4,221.7 257.8,223.5 269.3,225.3 280.7,227.0 292.2,228.7 303.6,230.5 315.1,232.2 326.5,233.9 337.9,235.6 349.4,237.3 360.8,238.9 372.3,240.6 383.7,242.2 395.2,243.9 406.6,245.5 418.1,247.1 429.5,248.8 440.9,250.4 452.4,252.0 463.8,253.5 475.3,255.1 486.7,256.7 498.2,258.2 509.6,259.8 521.0,261.3 532.5,262.9 543.9,264.4 555.4,265.9 566.8,267.4 578.3,268.9 589.7,270.4 601.1,271.9 612.6,273.3 624.0,274.8 635.5,276.2 646.9,277.7 658.4,279.1"/>
-<circle cx="97.6" cy="193.8" r="4.5" fill="#e4c48a" stroke="#07090d" stroke-width="1.5"/>
-<text x="105.6" y="183.8" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">patch_s0</text>
-<circle cx="367.3" cy="246.4" r="4.5" fill="#e4c48a" stroke="#07090d" stroke-width="1.5"/>
-<text x="375.3" y="236.4" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">patch_s1</text>
-<circle cx="658.4" cy="276.3" r="4.5" fill="#e4c48a" stroke="#07090d" stroke-width="1.5"/>
-<text x="650.4" y="266.3" text-anchor="end" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">patch_s2</text>
-<rect x="504" y="60" width="180" height="62" rx="2" fill="#10141b" stroke="#5a626a"/>
-<line x1="516" y1="76" x2="536" y2="76" stroke="#e4c48a" stroke-width="1.75"/>
-<text x="544.0" y="80.0" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">power-law fit</text>
-<rect x="516" y="90" width="20" height="8" fill="#e4c48a" fill-opacity="0.25"/>
-<text x="544.0" y="98.0" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">95% paired bootstrap</text>
-<circle cx="522" cy="110" r="3.5" fill="#e4c48a"/>
-<text x="544.0" y="114.0" text-anchor="start" font-family="'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="400" fill="#f4f7fb">committed runs</text>
+<text x="56.0" y="108.5" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">0.30</text>
+<line x1="130.9" y1="362.0" x2="130.9" y2="367.0" stroke="#a8a8ad"/>
+<text x="130.9" y="392.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">10¹⁴</text>
+<line x1="387.3" y1="362.0" x2="387.3" y2="367.0" stroke="#a8a8ad"/>
+<text x="387.3" y="392.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">10¹⁵</text>
+<line x1="643.7" y1="362.0" x2="643.7" y2="367.0" stroke="#a8a8ad"/>
+<text x="643.7" y="392.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#a8a8ad">10¹⁶</text>
+<text x="378.0" y="412.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#f5f5f7">training compute, FLOPs (6ND)</text>
+<text x="16" y="207" text-anchor="middle" transform="rotate(-90 16 207)" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#f5f5f7">validation loss</text>
+<polygon points="97.6,82.0 109.1,84.7 120.5,87.3 132.0,90.0 143.4,92.6 154.9,95.2 166.3,97.8 177.7,100.3 189.2,102.7 200.6,105.1 212.1,107.6 223.5,110.2 235.0,112.6 246.4,115.0 257.8,117.4 269.3,119.8 280.7,122.3 292.2,124.8 303.6,127.3 315.1,129.7 326.5,132.2 337.9,134.6 349.4,137.0 360.8,139.3 372.3,141.6 383.7,143.9 395.2,146.1 406.6,148.4 418.1,150.7 429.5,152.9 440.9,155.2 452.4,157.5 463.8,159.7 475.3,161.9 486.7,164.1 498.2,166.3 509.6,168.4 521.0,170.5 532.5,172.6 543.9,174.7 555.4,176.8 566.8,178.8 578.3,180.9 589.7,182.9 601.1,184.9 612.6,186.9 624.0,188.9 635.5,191.0 646.9,193.0 658.4,195.0 658.4,332.0 646.9,330.8 635.5,329.7 624.0,328.5 612.6,327.4 601.1,326.2 589.7,325.0 578.3,323.9 566.8,322.7 555.4,321.5 543.9,320.3 532.5,319.1 521.0,317.8 509.6,316.6 498.2,315.5 486.7,314.3 475.3,313.1 463.8,311.9 452.4,310.6 440.9,309.2 429.5,307.9 418.1,306.7 406.6,305.4 395.2,304.2 383.7,302.8 372.3,301.4 360.8,300.1 349.4,298.7 337.9,297.4 326.5,296.2 315.1,294.9 303.6,293.5 292.2,292.1 280.7,290.8 269.3,289.4 257.8,288.1 246.4,286.7 235.0,285.4 223.5,284.0 212.1,282.6 200.6,281.2 189.2,279.7 177.7,278.2 166.3,276.9 154.9,275.6 143.4,274.2 132.0,272.8 120.5,271.3 109.1,269.8 97.6,268.4" fill="#8ec5ff" fill-opacity="0.22"/>
+<polyline fill="none" stroke="#8ec5ff" stroke-width="1.75" points="97.6,197.8 109.1,199.7 120.5,201.6 132.0,203.5 143.4,205.4 154.9,207.2 166.3,209.1 177.7,210.9 189.2,212.8 200.6,214.6 212.1,216.4 223.5,218.2 235.0,220.0 246.4,221.7 257.8,223.5 269.3,225.3 280.7,227.0 292.2,228.7 303.6,230.5 315.1,232.2 326.5,233.9 337.9,235.6 349.4,237.3 360.8,238.9 372.3,240.6 383.7,242.2 395.2,243.9 406.6,245.5 418.1,247.1 429.5,248.8 440.9,250.4 452.4,252.0 463.8,253.5 475.3,255.1 486.7,256.7 498.2,258.2 509.6,259.8 521.0,261.3 532.5,262.9 543.9,264.4 555.4,265.9 566.8,267.4 578.3,268.9 589.7,270.4 601.1,271.9 612.6,273.3 624.0,274.8 635.5,276.2 646.9,277.7 658.4,279.1"/>
+<circle cx="97.6" cy="193.8" r="4.5" fill="#8ec5ff" stroke="#000000" stroke-width="1.5"/>
+<text x="105.6" y="183.8" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">patch_s0</text>
+<circle cx="367.3" cy="246.4" r="4.5" fill="#8ec5ff" stroke="#000000" stroke-width="1.5"/>
+<text x="375.3" y="236.4" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">patch_s1</text>
+<circle cx="658.4" cy="276.3" r="4.5" fill="#8ec5ff" stroke="#000000" stroke-width="1.5"/>
+<text x="650.4" y="266.3" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">patch_s2</text>
+<rect x="504" y="60" width="180" height="62" rx="2" fill="#0a0a0a" stroke="#5a626a"/>
+<line x1="516" y1="76" x2="536" y2="76" stroke="#8ec5ff" stroke-width="1.75"/>
+<text x="544.0" y="80.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">power-law fit</text>
+<rect x="516" y="90" width="20" height="8" fill="#8ec5ff" fill-opacity="0.25"/>
+<text x="544.0" y="98.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">95% paired bootstrap</text>
+<circle cx="522" cy="110" r="3.5" fill="#8ec5ff"/>
+<text x="544.0" y="114.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#f5f5f7">committed runs</text>
 </svg>

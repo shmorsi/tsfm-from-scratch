@@ -27,6 +27,7 @@ _SHARD_RE = re.compile(r"data-(\d+)-of-(\d+)\.arrow$")
 
 
 def load_data_config(path: Path | None = None) -> dict[str, Any]:
+    """Read ``configs/data.yaml``, or ``path`` when one is given."""
     cfg: dict[str, Any] = yaml.safe_load(
         (path or repo_root() / "configs" / "data.yaml").read_text()
     )
@@ -34,6 +35,7 @@ def load_data_config(path: Path | None = None) -> dict[str, Any]:
 
 
 def lock_path(name: str) -> Path:
+    """Path of the download lock named ``name``."""
     return repo_root() / "locks" / f"{name}.lock.json"
 
 
@@ -86,6 +88,7 @@ def select_pretrain_files(files: list[dict[str, Any]], cfg: dict[str, Any]) -> l
 
 
 def build_locks() -> None:
+    """Rewrite the pretrain and GIFT-Eval lock files from the data config."""
     cfg = load_data_config()
     pc = cfg["pretrain"]
     pre = select_pretrain_files(list_repo_files(pc["repo"], pc["revision"]), cfg)
@@ -102,11 +105,13 @@ def _write_lock(name: str, repo: str, revision: str, files: list[dict[str, Any]]
 
 
 def read_lock(name: str) -> dict[str, Any]:
+    """Load one download lock."""
     lock: dict[str, Any] = json.loads(lock_path(name).read_text())
     return lock
 
 
 def local_dir(name: str) -> Path:
+    """Directory where downloads for ``name`` are stored."""
     return raw_dir() / ("gifteval" if name == "gifteval" else "pretrain")
 
 
@@ -158,6 +163,7 @@ def download(name: str, *, workers: int = 8, only: set[str] | None = None) -> li
 
 
 def verify(name: str) -> list[str]:
+    """Check every file in a lock against the local copy. Return the errors."""
     lock = read_lock(name)
     root = local_dir(name)
     out = []

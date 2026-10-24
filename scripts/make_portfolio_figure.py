@@ -14,13 +14,12 @@ import math
 from pathlib import Path
 from typing import Any
 
+# FAINT is re-exported so this figure and the docs share one palette.
+from tsfm.docs.figures import BG, FONT, GRID, INK, MUTED, PANEL, SECOND, SIGNAL
+from tsfm.docs.figures import FAINT as FAINT
+
 ROOT = Path(__file__).resolve().parents[1]
 W, H = 1600, 1000
-# Same ground, grid and accent as docs/figures. One warm series; comparisons stay neutral.
-BG, PANEL, GRID = "#07090d", "#10141b", "#5a626a"
-INK, SECOND, MUTED, FAINT = "#f4f7fb", "#d5dde6", "#c5ced8", "#8fa0b3"
-SIGNAL = "#e4c48a"
-FONT = "'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
 MONO = FONT
 
 
