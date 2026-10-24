@@ -223,7 +223,7 @@ def build() -> str:
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Time-series foundation model from scratch · Sherif Morsi</title>
   <meta name="description" content="A small time-series foundation model pretrained from scratch and evaluated honestly on GIFT-Eval: leakage audit, pre-registration, scaling runs and a realized-volatility study.">
-  <meta name="theme-color" content="#06080c">
+  <meta name="theme-color" content="#07090d">
   <meta name="color-scheme" content="dark">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://shmorsi.github.io/projects/tsfm.html">
@@ -233,9 +233,105 @@ def build() -> str:
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500&display=swap">
   <link rel="stylesheet" href="../assets/site.css">
   <script src="../assets/site.js" defer></script>
+  <style>
+    :root {{
+      --bg: #07090d;
+      --panel: #10141b;
+      --ink: #f4f7fb;
+      --muted: #c5ced8;
+      --faint: #8fa0b3;
+      --grid: #5a626a;
+      --signal: #e4c48a;
+      --font: "Inter", "Space Grotesk", "Helvetica Neue", Helvetica, ui-sans-serif, system-ui, sans-serif;
+    }}
+    html {{ color-scheme: dark; }}
+    body {{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.6;
+    }}
+    a {{ color: var(--ink); }}
+    .wrap {{ width: min(1080px, calc(100% - 48px)); margin: 0 auto; }}
+    .site-header, .site-footer {{
+      border-color: var(--grid);
+      background: var(--bg);
+    }}
+    .site-header {{ border-bottom: 1px solid var(--grid); }}
+    .header-inner, .site-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 0;
+    }}
+    .site-nav {{ display: flex; gap: 20px; }}
+    .site-nav a, .brand {{ color: var(--muted); text-decoration: none; }}
+    .cs-hero {{ position: relative; padding: 72px 0 32px; overflow: hidden; }}
+    .graticule {{
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(90, 98, 106, 0.55) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(90, 98, 106, 0.55) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+      pointer-events: none;
+    }}
+    h1, h2, h3 {{ font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }}
+    h1 {{ font-size: clamp(40px, 6vw, 64px); margin: 12px 0 20px; }}
+    .cs-question {{ font-size: 22px; max-width: 42rem; }}
+    .cs-summary, .prose p, .prose li {{ color: var(--muted); }}
+    .label.signal, .project-index {{ color: var(--signal); }}
+    .cs-body {{ padding-bottom: 80px; }}
+    .cs-section {{ padding-top: 28px; }}
+    .glance, .readouts {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }}
+    .readout, .callout, .screen {{
+      background: var(--panel);
+      border: 1px solid var(--grid);
+      border-radius: 2px;
+      padding: 16px 18px;
+    }}
+    .readout b {{ display: block; color: var(--ink); font-size: 28px; font-weight: 500; }}
+    .readout span, .miss p {{ color: var(--muted); }}
+    .button {{
+      display: inline-block;
+      margin: 8px 8px 0 0;
+      padding: 10px 16px;
+      border: 1px solid var(--grid);
+      border-radius: 2px;
+      text-decoration: none;
+    }}
+    .button.primary {{ background: var(--signal); color: var(--bg); border-color: var(--signal); }}
+    table {{ width: 100%; border-collapse: collapse; margin: 16px 0 24px; }}
+    th, td {{
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--grid);
+      color: var(--ink);
+    }}
+    caption {{ caption-side: bottom; color: var(--faint); text-align: left; padding-top: 8px; }}
+    td.best {{ color: var(--signal); }}
+    .skip {{
+      position: absolute;
+      left: 12px;
+      top: -40px;
+    }}
+    .skip:focus {{ top: 12px; background: var(--signal); color: var(--bg); padding: 8px; }}
+    @media (prefers-reduced-motion: reduce) {{
+      * {{ scroll-behavior: auto; }}
+    }}
+  </style>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>

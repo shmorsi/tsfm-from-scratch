@@ -289,6 +289,48 @@ def scaling_table(root: Path) -> str:
     return head + "\n\n" + md_table(["run", "body params", "train FLOPs (6ND)", "val loss"], rows)
 
 
+@table("bench")
+def bench_table(root: Path) -> str:
+    """Training-time projection from the committed T4 bench. Not a scoring time."""
+    doc = _load(root, "results/bench/Tesla_T4.json")
+    rows = [
+        [
+            f"`{r['config']}`",
+            f"{r['configured_steps']:,}",
+            f"{r['params_total']:,}",
+            r["precision"],
+            f"{r['seconds_per_step']:.3f}",
+            f"{r['projected_hours']:.2f}",
+            f"{r['peak_memory_gb']:.2f}",
+            f"{r['achieved_tflops_6ND']:.2f}",
+        ]
+        for r in doc["rows"]
+    ]
+    note = (
+        f"Training projection on one {doc['device'].replace('_', ' ')} "
+        f"(`results/bench/{doc['device']}.json`), from {doc['timed_steps']} measured steps "
+        "per configuration. `projected_hours` is the stored field. "
+        "This is not a test-split scoring time. No test-split duration is stored."
+    )
+    return (
+        note
+        + "\n\n"
+        + md_table(
+            [
+                "config",
+                "configured steps",
+                "parameters",
+                "precision",
+                "seconds/step",
+                "projected hours",
+                "peak GB",
+                "TFLOP/s",
+            ],
+            rows,
+        )
+    )
+
+
 @table("tokenizers")
 def tokenizers_table(root: Path) -> str:
     from tsfm.docs.build import MissingResult

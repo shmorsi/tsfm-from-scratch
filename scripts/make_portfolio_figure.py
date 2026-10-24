@@ -16,10 +16,12 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 W, H = 1600, 1000
-BG, PANEL, LINE, INK, INK2, MUTED = "#06080c", "#0d121a", "#1f2a3a", "#eaf0f8", "#b4c0d1", "#8a96a9"
-SIGNAL, ICE = "#ffb547", "#8fd3ff"
-FONT = "'Helvetica Neue', 'Segoe UI', system-ui, sans-serif"
-MONO = "ui-monospace, 'SF Mono', Menlo, Consolas, monospace"
+# Same ground, grid and accent as docs/figures. One warm series; comparisons stay neutral.
+BG, PANEL, GRID = "#07090d", "#10141b", "#5a626a"
+INK, SECOND, MUTED, FAINT = "#f4f7fb", "#d5dde6", "#c5ced8", "#8fa0b3"
+SIGNAL = "#e4c48a"
+FONT = "'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
+MONO = FONT
 
 
 def load(rel: str) -> dict[str, Any]:
@@ -32,7 +34,7 @@ def text(
     y: float,
     s: str,
     size: int = 26,
-    fill: str = INK2,
+    fill: str = SECOND,
     anchor: str = "start",
     weight: int = 400,
     font: str = FONT,
@@ -51,7 +53,7 @@ def scaling_panel(x0: float, y0: float, w: float, h: float) -> str:
             p = load(f"results/runs/{name}/summary.json")["params_total"]
             pts.append((name, p, val[name]["crps_gmean"]))
     out = [
-        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="18" fill="{PANEL}" stroke="{LINE}"/>',
+        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="2" fill="{PANEL}" stroke="{GRID}"/>',
         text(x0 + 40, y0 + 62, "Validation: bigger model, lower error", 30, INK, weight=600),
         text(
             x0 + 40,
@@ -71,21 +73,24 @@ def scaling_panel(x0: float, y0: float, w: float, h: float) -> str:
     for k in range(5):
         yv = ymin + k * (ymax - ymin) / 4
         out.append(
-            f'<line x1="{px0}" x2="{px1}" y1="{fy(yv):.1f}" y2="{fy(yv):.1f}" stroke="{LINE}"/>'
+            f'<line x1="{px0}" x2="{px1}" y1="{fy(yv):.1f}" y2="{fy(yv):.1f}" stroke="{GRID}"/>'
         )
         out.append(text(px0 - 14, fy(yv) + 8, f"{yv:.2f}", 20, MUTED, "end", font=MONO))
     path = " ".join(
         f"{'M' if i == 0 else 'L'}{fx(p):.1f},{fy(c):.1f}" for i, (_, p, c) in enumerate(pts)
     )
-    out.append(f'<path d="{path}" fill="none" stroke="{SIGNAL}" stroke-width="4"/>')
+    out.append(f'<path d="{path}" fill="none" stroke="{SIGNAL}" stroke-width="1.75"/>')
     for _name, p, c in pts:
-        out.append(f'<circle cx="{fx(p):.1f}" cy="{fy(c):.1f}" r="11" fill="{SIGNAL}"/>')
+        out.append(
+            f'<circle cx="{fx(p):.1f}" cy="{fy(c):.1f}" r="7" fill="{SIGNAL}" '
+            f'stroke="{BG}" stroke-width="2"/>'
+        )
         out.append(
             text(fx(p) + 22, fy(c) - 22, f"{c:.3f}", 24, INK, "start", 600, MONO)
             if _name != pts[-1][0]
             else text(fx(p), fy(c) - 26, f"{c:.3f}", 24, INK, "middle", 600, MONO)
         )
-        out.append(text(fx(p), py0 + 44, f"{p / 1e6:.1f}M params", 21, INK2, "middle", font=MONO))
+        out.append(text(fx(p), py0 + 44, f"{p / 1e6:.1f}M params", 21, SECOND, "middle", font=MONO))
     return "".join(out)
 
 
@@ -97,10 +102,10 @@ def test_panel(x0: float, y0: float, w: float, h: float) -> str:
     n = len(head["seed_runs"])
     rows = [
         ("headline", f"Ours, {hl} ({'1 seed' if n == 1 else f'{n} seeds'})", SIGNAL),
-        ("upstream:TimesFM-2.5", "TimesFM-2.5 (reported)", ICE),
-        ("upstream:FlowState-9.1M", "FlowState-9.1M (reported)", ICE),
-        ("upstream:Auto_Arima", "AutoARIMA (reported)", INK2),
-        ("upstream:Auto_ETS", "AutoETS (reported)", INK2),
+        ("upstream:TimesFM-2.5", "TimesFM-2.5 (reported)", SECOND),
+        ("upstream:FlowState-9.1M", "FlowState-9.1M (reported)", SECOND),
+        ("upstream:Auto_Arima", "AutoARIMA (reported)", SECOND),
+        ("upstream:Auto_ETS", "AutoETS (reported)", SECOND),
         ("seasonal_naive", "Seasonal Naive", MUTED),
     ]
     if "headline" not in tm:
@@ -108,7 +113,7 @@ def test_panel(x0: float, y0: float, w: float, h: float) -> str:
     rows = [(k, lab, col) for k, lab, col in rows if k in tm]
     rows.sort(key=lambda r: tm[r[0]]["crps_gmean"])
     out = [
-        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="18" fill="{PANEL}" stroke="{LINE}"/>',
+        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="2" fill="{PANEL}" stroke="{GRID}"/>',
         text(x0 + 40, y0 + 62, "GIFT-Eval test, scored once", 30, INK, weight=600),
         text(
             x0 + 40,
@@ -130,13 +135,13 @@ def test_panel(x0: float, y0: float, w: float, h: float) -> str:
                 y + 2,
                 lab,
                 23,
-                INK if k == "headline" else INK2,
+                INK if k == "headline" else SECOND,
                 weight=600 if k == "headline" else 400,
             )
         )
         bw = (bx1 - bx0) * v / xmax
         out.append(
-            f'<rect x="{bx0}" y="{y + 14}" width="{bw:.1f}" height="{bh - 30}" rx="6" fill="{col}" opacity="{1 if k == "headline" else 0.75}"/>'
+            f'<rect x="{bx0}" y="{y + 14}" width="{bw:.1f}" height="{bh - 30}" rx="2" fill="{col}"/>'
         )
         out.append(text(bx0 + bw + 14, y + 42, f"{v:.3f}", 24, INK, weight=600, font=MONO))
     return "".join(out)
@@ -148,7 +153,7 @@ def val_panel(x0: float, y0: float, w: float, h: float) -> str:
     rows = [(n, n, SIGNAL) for n in ("patch_s2", "patch_s1", "patch_s0") if n in val["models"]]
     rows.append(("seasonal_naive", "Seasonal Naive (baseline)", MUTED))
     out = [
-        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="18" fill="{PANEL}" stroke="{LINE}"/>',
+        f'<rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="2" fill="{PANEL}" stroke="{GRID}"/>',
         text(x0 + 40, y0 + 62, "Zero-shot vs the naive baseline", 30, INK, weight=600),
         text(
             x0 + 40,
@@ -169,20 +174,23 @@ def val_panel(x0: float, y0: float, w: float, h: float) -> str:
                 y,
                 lab,
                 23,
-                INK if k == "patch_s2" else INK2,
+                INK if k == "patch_s2" else SECOND,
                 weight=600 if k == "patch_s2" else 400,
                 font=MONO if k.startswith("patch") else FONT,
             )
         )
         for j, (metric, key, c2) in enumerate(
-            (("CRPS", "crps_gmean", col), ("MASE", "mase_gmean", ICE if col == SIGNAL else MUTED))
+            (
+                ("CRPS", "crps_gmean", col),
+                ("MASE", "mase_gmean", SECOND if col == SIGNAL else MUTED),
+            )
         ):
             v = m[key]
             yy = y + 18 + j * 42
             bw = (bx1 - bx0 - 70) * v / 1.2
             out.append(text(bx0, yy + 26, metric, 18, MUTED, font=MONO))
             out.append(
-                f'<rect x="{bx0 + 70}" y="{yy + 6}" width="{bw:.1f}" height="28" rx="5" fill="{c2}" opacity="0.85"/>'
+                f'<rect x="{bx0 + 70}" y="{yy + 6}" width="{bw:.1f}" height="28" rx="2" fill="{c2}"/>'
             )
             out.append(
                 text(bx0 + 70 + bw + 12, yy + 28, f"{v:.3f}", 22, INK, weight=600, font=MONO)
@@ -214,7 +222,12 @@ def build() -> str:
         label = "Validation CRPS by model size, and zero-shot scores against Seasonal Naive"
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-        f'role="img" aria-label="{html.escape(label)}">' + "".join(body) + "</svg>\n"
+        f'role="img" aria-labelledby="fig-title fig-desc">'
+        f'<title id="fig-title">{html.escape(label)}</title>'
+        f'<desc id="fig-desc">{html.escape(label)}</desc>'
+        + "".join(body)
+        + f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" fill="none" stroke="{GRID}"/>'
+        + "</svg>\n"
     )
 
 

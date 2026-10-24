@@ -23,6 +23,15 @@ _PATCH_S2 = _json("results/runs/patch_s2/summary.json")
 _PATCH_S2_VAL = _json("results/eval/val/patch_s2/run.json")
 PATCH_S2_PARAMS = f"{int(_PATCH_S2['params_total']):,}"
 PATCH_S2_SHA = str(_PATCH_S2_VAL["model_info"]["checkpoint_sha256"])
+# Training projection only. There is no stored test-split scoring duration.
+_BENCH = _json("results/bench/Tesla_T4.json")
+_PATCH_S2_BENCH = next(r for r in _BENCH["rows"] if r["config"] == "patch_s2.yaml")
+BENCH_HOURS = f"{_PATCH_S2_BENCH['projected_hours']:.2f}"
+BENCH_SPS = f"{_PATCH_S2_BENCH['seconds_per_step']:.3f}"
+BENCH_STEPS = f"{int(_PATCH_S2_BENCH['configured_steps']):,}"
+BENCH_MEM = f"{_PATCH_S2_BENCH['peak_memory_gb']:.2f}"
+BENCH_TIMED = str(int(_BENCH["timed_steps"]))
+BENCH_PREC = str(_PATCH_S2_BENCH["precision"])
 
 CELLS: list[tuple[str, str]] = [
     (
@@ -154,6 +163,17 @@ SCORE_INTRO = f"""# Score `patch_s2` on the GIFT-Eval test split (once)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/score_patch_s2_test.ipynb)
 
+**Time, before Run all.** A free Colab T4 can disconnect. Each finished test configuration
+is written to the Drive `WORK` folder, and Run all again continues from those files. A
+completed `all_results.csv` is not scored again.
+
+No test-split duration is stored. `results/bench/Tesla_T4.json` measured {BENCH_TIMED}
+steps and projects **{BENCH_HOURS} hours** to train `patch_s2` ({BENCH_STEPS} configured
+steps, {BENCH_SPS} s/step, peak {BENCH_MEM} GB, {BENCH_PREC}). That is a training
+projection, not a test-split scoring time. The validation score of this checkpoint
+stored a `seconds` field on each configuration in `results/eval/val/patch_s2/run.json`.
+Those values are not a forecast of the test split.
+
 `patch_s2` ({PATCH_S2_PARAMS} parameters) was chosen on the validation split by the rule in
 `PREREGISTRATION.md` section 4. Its checkpoint stayed on Google Drive, so it has no
 test score yet. This notebook gives it the pre-registered one, on a Colab T4. Do not
@@ -191,14 +211,6 @@ records as not run.
 `PREREGISTRATION_CPU.md` does not authorise or forbid this run; the CPU study is a
 separate model with its own test score.
 
-**Session.** A free Colab T4 can disconnect. The score writes each finished configuration
-to the Drive `WORK` folder and a second Run all continues from those files. A completed
-`all_results.csv` is not scored again. No test-split duration is stored in this
-repository. The validation score of this checkpoint stored a `seconds` field on each
-configuration in `results/eval/val/patch_s2/run.json`. That is not a forecast of the
-test split, and the T4 training projection in `results/bench/Tesla_T4.json` is a
-training time, not a scoring time.
-
 **After it finishes, on a local clone of the same commit.** Download
 `harvest_patch_s2.txt` from the Drive `WORK` folder. A copied notebook print can
 truncate, and a truncated file fails the SHA-256 check. Then:
@@ -226,8 +238,15 @@ SCORE_CELLS: list[tuple[str, str]] = [
     ("markdown", SCORE_INTRO),
     (
         "code",
-        """# Parameters
+        f"""# Parameters
 # ============================================================================
+print(
+    "results/bench/Tesla_T4.json training projection for patch_s2: "
+    "{BENCH_HOURS} hours ({BENCH_STEPS} configured steps, {BENCH_SPS} s/step, "
+    "{BENCH_TIMED} timed steps, peak {BENCH_MEM} GB, {BENCH_PREC}). "
+    "Not a test-split scoring time. No test-split duration is stored. "
+    "Finished configurations resume from WORK on Drive."
+)
 # CHECKPOINT_PATH: the patch_s2 run folder on Drive. Set COMMIT as well when the
 # revision to score is not on main yet.
 # ckpt.pt (training checkpoint) or model.pt (inference weights) both work: the

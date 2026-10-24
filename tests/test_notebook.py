@@ -81,6 +81,13 @@ def test_score_notebook_has_one_marked_parameter():
     assert f"{int(summary['params_total']):,}" in md
     assert val["model_info"]["checkpoint_sha256"] in md
     assert "harvest_patch_s2.txt" in md
+    bench = json.loads((ROOT / "results/bench/Tesla_T4.json").read_text())
+    row = next(r for r in bench["rows"] if r["config"] == "patch_s2.yaml")
+    hours = f"{row['projected_hours']:.2f}"
+    assert hours in md
+    assert hours in code[0]
+    assert "Not a test-split scoring time" in code[0]
+    assert "No test-split duration is stored" in md
     assert "results/analysis/headline.json" in md
     runner = _load("colab_runner.ipynb")
     runner_code = "".join("".join(c["source"]) for c in runner["cells"] if c["cell_type"] == "code")

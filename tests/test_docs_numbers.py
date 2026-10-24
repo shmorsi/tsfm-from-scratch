@@ -123,6 +123,10 @@ def test_figures_match_results_and_images_have_alt_text():
     if not (root / "results/analysis/headline.json").exists():
         assert "| pending | pending |" in readme
         assert "## Blocked on owner" in readme
+    assert "This is not a test-split scoring time." in readme
+    card = (root / "MODEL_CARD.md").read_text()
+    assert "This is not a test-split scoring time." in card
+    assert "docs/figures/scaling.svg" in card
 
 
 def test_generated_docs_contain_only_backed_numbers():

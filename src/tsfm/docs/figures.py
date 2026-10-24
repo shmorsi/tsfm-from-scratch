@@ -25,7 +25,7 @@ FAINT = "#8fa0b3"
 GRID = "#5a626a"  # 3.2:1 on BG, so a thin rule still reads
 SIGNAL = "#e4c48a"
 SECOND = "#d5dde6"
-FONT = "'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
+FONT = "'Inter', 'Space Grotesk', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif"
 SERIES_COLORS = (SIGNAL, SECOND, FAINT)
 
 COVERAGE_REL = "docs/figures/coverage.svg"
@@ -139,7 +139,8 @@ def coverage_series(
             if pts:
                 series.append(("test, split-conformal", pts))
         if series:
-            return "GIFT-Eval test coverage", series
+            # Name the model. This chart is the committed CPU study, not the pending headline.
+            return f"GIFT-Eval test coverage, {doc['prefix']}", series
     val = json.loads((root / "results" / "analysis" / "val_summary.json").read_text())
     cov = val["models"]["patch_s2"]["coverage_mean"]
     return (
