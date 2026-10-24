@@ -11,6 +11,7 @@ _REGISTRY: list[Callable[[argparse._SubParsersAction[argparse.ArgumentParser]], 
 
 
 def register(fn: Callable[[argparse._SubParsersAction[argparse.ArgumentParser]], None]) -> None:
+    """Add a subcommand registrar. Each ``tsfm.<area>.cli`` module calls this on import."""
     _REGISTRY.append(fn)
 
 
@@ -50,6 +51,7 @@ def _load_commands() -> None:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Parse ``argv`` (default: the process arguments) and run the selected subcommand."""
     parser = argparse.ArgumentParser(prog="tsfm")
     sub = parser.add_subparsers(dest="cmd", required=True)
     _docs(sub)

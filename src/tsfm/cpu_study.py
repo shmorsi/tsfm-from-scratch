@@ -439,12 +439,11 @@ def stage_attention(study: dict[str, Any]) -> None:
 
 def stage_report() -> None:
     from tsfm.analysis import cpu_study_report
-    from tsfm.docs.figures import write_coverage_figure
+    from tsfm.docs.figures import write_figures
 
     path = cpu_study_report()
     print("wrote", path, flush=True)
-    fig = write_coverage_figure()
-    if fig:
+    for fig in write_figures():
         print("wrote", fig, flush=True)
 
 

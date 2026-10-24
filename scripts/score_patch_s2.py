@@ -207,6 +207,30 @@ def tsfm(*args: str) -> list[str]:
     return [sys.executable, "-m", "tsfm.cli", *args]
 
 
+LOCAL_FOLLOWUP = """
+Local follow-up, from a clone of the same commit. Download the harvest file from Drive
+(a copied notebook print can truncate, and a truncated file fails the SHA-256 check):
+
+    uv run python scripts/harvest_colab_output.py harvest_patch_s2.txt
+    uv run tsfm docs build
+
+Commit the files the harvest script wrote and the docs that command regenerated.
+Do not hand-edit numbers.
+
+The harvest file is what the doc generators read:
+  results/eval/test/patch_s2/all_results.csv
+  results/eval/test/patch_s2/run.json
+  results/eval/test/patch_s2/config.json
+  results/analysis/test_summary.json   (rebuilt by tsfm report; replaces the previous file)
+  results/analysis/headline.json        (new)
+  results/sync_log.json                 (append-only log written by the harvest script)
+
+results/analysis/cpu_study.json is not in the harvest. Ranks in the rebuilt
+test_summary.json include patch_s2. CRPS and MASE for the other models are recomputed
+from the same vendored files.
+"""
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--checkpoint", type=Path, required=True, help="patch_s2 ckpt.pt or model.pt")
@@ -248,6 +272,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"dry run at {sha[:12]}; would link {out} -> {a.work / f'eval_test_{NAME}'} and run:")
         for s in steps:
             print("   tsfm", " ".join(s[3:]))
+        print(LOCAL_FOLLOWUP)
         return 0
 
     # Results go to the checkout's results/ (the test folder is a link to Drive). An
@@ -268,6 +293,7 @@ def main(argv: list[str] | None = None) -> int:
     harvest = a.work / "harvest_patch_s2.txt"
     harvest.write_text(harvest_blocks(ROOT))
     print(f"wrote {harvest} ({len(EXPORT)} files with SHA-256)", flush=True)
+    print(LOCAL_FOLLOWUP, flush=True)
     print("$", "tsfm", " ".join(docs[3:]), flush=True)
     subprocess.run(docs, cwd=ROOT, check=True, env=env)
     return 0

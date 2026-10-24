@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata below.
+type: software
+title: "tsfm: a time-series transformer, written from scratch"
+abstract: >-
+  A decoder-only time-series transformer written in plain PyTorch, pretrained
+  from scratch on a pinned corpus, and scored zero-shot on GIFT-Eval under a
+  pre-registered protocol. Includes a content audit of the public pretraining
+  corpus for overlap with the benchmark.
+authors:
+  - family-names: Morsi
+    given-names: Sherif
+repository-code: https://github.com/shmorsi/tsfm-from-scratch
+url: https://github.com/shmorsi/tsfm-from-scratch
+license: Apache-2.0
+version: 0.1.0
+keywords:
+  - time series
+  - forecasting
+  - transformer
+  - GIFT-Eval

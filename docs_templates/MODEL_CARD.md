@@ -27,7 +27,7 @@ Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary posi
 `patch_s2` was selected on the validation split (CRPS {{ results/analysis/val_summary.json#models.patch_s2.crps_gmean | .3f }}× Seasonal Naive, {{ results/analysis/val_summary.json#n_configs }} configurations, one seed). Its weights are not in this repository. It has no test score. The CPU test numbers above are a different model.
 {{ end }}
 
-Inputs for that run are patches of 32 steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next 64 steps.
+Inputs for that run are patches of {{ results/runs/patch_s2/summary.json#config.model.patch_len }} steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next {{ results/runs/patch_s2/summary.json#config.model.horizon }} steps.
 
 ## Intended use
 
@@ -40,6 +40,34 @@ Research and demonstration of a small model pretrained from scratch on public, l
 ## Evaluation
 
 Test: the {{ results/analysis/cpu_study.json#test.n_configs }} GIFT-Eval configurations, three seeds, raw quantiles and split-conformal quantiles, scored once (`results/analysis/cpu_study.json`). Validation for this study: {{ results/analysis/cpu_study.json#validation.n_configs }} configurations, used to fit conformal expansions and for a positional-encoding ablation. The T4 grid's validation table is a separate study.
+
+## Factors
+
+One series at a time. Multivariate GIFT-Eval entries are split into univariate series before scoring. Datasets and frequencies are in `DATA_CARD.md`. The CPU test average covers the configurations and seeds above. The T4 headline was chosen on the validation split, one seed.
+
+## Metrics
+
+MASE and quantile-loss CRPS, each divided by Seasonal Naive, then a geometric mean over configurations. Coverage at the 50/80/90% levels. The T4 primary comparison is CRPS against upstream AutoARIMA, with a 95% paired bootstrap over configurations (`PREREGISTRATION.md`). The CPU study uses the same metrics (`PREREGISTRATION_CPU.md`).
+
+## Scaling
+
+{{ table:scaling }}
+
+![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
+
+## Compute
+
+{{ table:bench }}
+
+The trainer writes a checkpoint at least every 10 minutes (`ckpt_minutes` in the training loop). `DEVIATIONS.md` records which bench configurations were not trained.
+
+## Ethical considerations
+
+Research and demonstration only. Not a production forecaster, and not an input to a trading or other financial decision. The volatility numbers elsewhere in this repository are statistical scores. Training data is public, with the leakage exclusions in `DATA_CARD.md`.
+
+## Citation
+
+Apache-2.0 (`LICENSE`). Cite this software with `CITATION.cff`.
 
 ## Known limitations
 

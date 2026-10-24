@@ -78,9 +78,9 @@ def build() -> str:
         else ("1 seed" if n_seeds == 1 else f"mean of {n_seeds} seeds")
     )
     labels = {
-        "headline": f"Ours ({hl}, {hsum['params_total'] / 1e6:.0f}M, {seed_txt})",
-        "upstream:TimesFM-2.5": "TimesFM-2.5, 231M (reported)",
-        "upstream:FlowState-9.1M": "FlowState, 9.1M (reported)",
+        "headline": f"Ours ({hl}, {hsum['params_total'] / 1e6:.1f}M, {seed_txt})",
+        "upstream:TimesFM-2.5": "TimesFM-2.5 (reported)",
+        "upstream:FlowState-9.1M": "FlowState-9.1M (reported)",
         "flowstate_9.1m": "FlowState, 9.1M (run by us)",
         "upstream:Auto_Arima": "AutoARIMA (reported)",
         "seasonal_naive": "Seasonal Naive (run by us)",
@@ -123,7 +123,7 @@ def build() -> str:
     scaling_text = ""
     if scaling:
         lo, hi = scaling["b_ci95"]
-        scaling_text = f"<p>Validation loss falls with training compute as a power law with exponent {scaling['b']:.3f} (95% bootstrap interval {lo:.3f} to {hi:.3f}) across {scaling['n_runs']} patch-model sizes.</p>"
+        scaling_text = f"<p>Validation loss falls with training compute as a power law with exponent {scaling['b']:.4f} (95% bootstrap interval {lo:.4f} to {hi:.4f}) across {scaling['n_runs']} patch-model sizes.</p>"
 
     # --- volatility
     vlab = {
@@ -142,7 +142,7 @@ def build() -> str:
             if "wql_ratio_vs_ref" not in g
             else f"{g['wql_ratio_vs_ref']:.3f} [{g['wql_ratio_ci95'][0]:.3f}, {g['wql_ratio_ci95'][1]:.3f}]"
         )
-        volrows.append([lab, ratio, f"{g['cov80']:.2f}"])
+        volrows.append([lab, ratio, f"{g['cov80']:.3f}"])
     vol_table = table(
         "Daily realized volatility, BTC and ETH, 2020-2026 · weighted quantile loss vs random walk [95% CI]",
         ["Model", "Loss ratio", "80% coverage"],
@@ -189,8 +189,8 @@ def build() -> str:
             f"parameters, trained from scratch on one free Colab T4 ({hsum['train_flops_6ND']:.1e} FLOPs)",
         ),
         (
-            "1e-9",
-            "agreement with upstream's Seasonal Naive on all 11 official metrics and 97 configurations",
+            "match",
+            "our Seasonal Naive reproduces upstream on every official metric and configuration (tests/test_eval.py)",
         ),
     ]
     if prim:
@@ -223,7 +223,7 @@ def build() -> str:
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Time-series foundation model from scratch · Sherif Morsi</title>
   <meta name="description" content="A small time-series foundation model pretrained from scratch and evaluated honestly on GIFT-Eval: leakage audit, pre-registration, scaling runs and a realized-volatility study.">
-  <meta name="theme-color" content="#06080c">
+  <meta name="theme-color" content="#07090d">
   <meta name="color-scheme" content="dark">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://shmorsi.github.io/projects/tsfm.html">
@@ -233,9 +233,105 @@ def build() -> str:
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500&display=swap">
   <link rel="stylesheet" href="../assets/site.css">
   <script src="../assets/site.js" defer></script>
+  <style>
+    :root {{
+      --bg: #07090d;
+      --panel: #10141b;
+      --ink: #f4f7fb;
+      --muted: #c5ced8;
+      --faint: #8fa0b3;
+      --grid: #5a626a;
+      --signal: #e4c48a;
+      --font: "Inter", "Space Grotesk", "Helvetica Neue", Helvetica, ui-sans-serif, system-ui, sans-serif;
+    }}
+    html {{ color-scheme: dark; }}
+    body {{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.6;
+    }}
+    a {{ color: var(--ink); }}
+    .wrap {{ width: min(1080px, calc(100% - 48px)); margin: 0 auto; }}
+    .site-header, .site-footer {{
+      border-color: var(--grid);
+      background: var(--bg);
+    }}
+    .site-header {{ border-bottom: 1px solid var(--grid); }}
+    .header-inner, .site-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 0;
+    }}
+    .site-nav {{ display: flex; gap: 20px; }}
+    .site-nav a, .brand {{ color: var(--muted); text-decoration: none; }}
+    .cs-hero {{ position: relative; padding: 72px 0 32px; overflow: hidden; }}
+    .graticule {{
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(90, 98, 106, 0.55) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(90, 98, 106, 0.55) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+      pointer-events: none;
+    }}
+    h1, h2, h3 {{ font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }}
+    h1 {{ font-size: clamp(40px, 6vw, 64px); margin: 12px 0 20px; }}
+    .cs-question {{ font-size: 22px; max-width: 42rem; }}
+    .cs-summary, .prose p, .prose li {{ color: var(--muted); }}
+    .label.signal, .project-index {{ color: var(--signal); }}
+    .cs-body {{ padding-bottom: 80px; }}
+    .cs-section {{ padding-top: 28px; }}
+    .glance, .readouts {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }}
+    .readout, .callout, .screen {{
+      background: var(--panel);
+      border: 1px solid var(--grid);
+      border-radius: 2px;
+      padding: 16px 18px;
+    }}
+    .readout b {{ display: block; color: var(--ink); font-size: 28px; font-weight: 500; }}
+    .readout span, .miss p {{ color: var(--muted); }}
+    .button {{
+      display: inline-block;
+      margin: 8px 8px 0 0;
+      padding: 10px 16px;
+      border: 1px solid var(--grid);
+      border-radius: 2px;
+      text-decoration: none;
+    }}
+    .button.primary {{ background: var(--signal); color: var(--bg); border-color: var(--signal); }}
+    table {{ width: 100%; border-collapse: collapse; margin: 16px 0 24px; }}
+    th, td {{
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--grid);
+      color: var(--ink);
+    }}
+    caption {{ caption-side: bottom; color: var(--faint); text-align: left; padding-top: 8px; }}
+    td.best {{ color: var(--signal); }}
+    .skip {{
+      position: absolute;
+      left: 12px;
+      top: -40px;
+    }}
+    .skip:focus {{ top: 12px; background: var(--signal); color: var(--bg); padding: 8px; }}
+    @media (prefers-reduced-motion: reduce) {{
+      * {{ scroll-behavior: auto; }}
+    }}
+  </style>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -323,7 +419,7 @@ def build() -> str:
             <ul>
               <li>The first GPU run diverged: future patches reach about a million in scaled units when the context is near zero, overflowing half precision. Clipping fixed it; the broken runs are discarded and recorded in the repository.</li>
               <li>Prediction intervals are too narrow, worst at long horizons, because longer forecasts feed back medians.</li>
-              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of five, the second tokenizer trained but not scored, and one seed, so seed-to-seed variation is not measured.{"" if head else " The pre-registered test-split scoring of our model is future work, so no benchmark ranking is claimed."}</li>
+              <li>Scope was cut before test scoring to fit a free GPU and a deadline, and the cuts are recorded in the repository: three model sizes instead of four to six, the second tokenizer trained but not scored, and one seed, so seed-to-seed variation is not measured.{"" if head else " The pre-registered test-split scoring of our model is future work, so no benchmark ranking is claimed."}</li>
               <li>The leakage check finds exact and rescaled copies only, not noisy or re-sampled ones.</li>
             </ul>
           </div>
@@ -381,7 +477,7 @@ def card() -> str:
                 <div class="readout"><b>{r1["series_with_hits"]:,}</b><span>pretraining series found to overlap the benchmark, removed before training</span></div>
                 <div class="readout"><b>{hsum["params_total"] / 1e6:.1f}M</b><span>parameters, every layer written by hand in PyTorch</span></div>
               </div>
-              <div class="miss"><span class="label">What didn't work</span><p>Prediction intervals are too narrow: the 80% interval covers {vh["coverage_mean"]["80"]:.0%} of outcomes, because long forecasts feed back medians. The first GPU run also diverged in half precision until extreme values were clipped.</p></div>
+              <div class="miss"><span class="label">What didn't work</span><p>Prediction intervals are too narrow: the 80% interval covers {vh["coverage_mean"]["80"]:.3f} of outcomes, because long forecasts feed back medians. The first GPU run also diverged in half precision until extreme values were clipped.</p></div>
               <ul class="tags" aria-label="Technologies"><li>Python</li><li>PyTorch</li><li>GluonTS</li><li>statsforecast</li><li>NumPy</li><li>pandas</li><li>pytest</li><li>Hypothesis</li><li>GitHub Actions</li></ul>
               <div class="project-links">
                 <a class="button primary" href="projects/tsfm.html">Case study <span aria-hidden="true">→</span></a>

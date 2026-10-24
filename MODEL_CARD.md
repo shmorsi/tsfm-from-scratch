@@ -46,6 +46,49 @@ Research and demonstration of a small model pretrained from scratch on public, l
 
 Test: the 97 GIFT-Eval configurations, three seeds, raw quantiles and split-conformal quantiles, scored once (`results/analysis/cpu_study.json`). Validation for this study: 14 configurations, used to fit conformal expansions and for a positional-encoding ablation. The T4 grid's validation table is a separate study.
 
+## Factors
+
+One series at a time. Multivariate GIFT-Eval entries are split into univariate series before scoring. Datasets and frequencies are in `DATA_CARD.md`. The CPU test average covers the configurations and seeds above. The T4 headline was chosen on the validation split, one seed.
+
+## Metrics
+
+MASE and quantile-loss CRPS, each divided by Seasonal Naive, then a geometric mean over configurations. Coverage at the 50/80/90% levels. The T4 primary comparison is CRPS against upstream AutoARIMA, with a 95% paired bootstrap over configurations (`PREREGISTRATION.md`). The CPU study uses the same metrics (`PREREGISTRATION_CPU.md`).
+
+## Scaling
+
+Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0508 to 0.0636, paired over validation batches).
+
+| run | body params | train FLOPs (6ND) | val loss |
+|---|---|---|---|
+| patch_s0 | 754,688 | 7.42e+13 | 0.2355 |
+| patch_s1 | 2,656,512 | 8.36e+14 | 0.1975 |
+| patch_s2 | 9,671,680 | 1.14e+16 | 0.1759 |
+
+![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
+
+## Compute
+
+Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time. No test-split duration is stored.
+
+| config | configured steps | parameters | precision | seconds/step | projected hours | peak GB | TFLOP/s |
+|---|---|---|---|---|---|---|---|
+| `bins_s2.yaml` | 800 | 12,293,440 | fp16 | 4.281 | 0.95 | 11.93 | 3.55 |
+| `patch_s0.yaml` | 1,000 | 895,296 | fp16 | 0.618 | 0.17 | 0.48 | 0.12 |
+| `patch_s1.yaml` | 3,200 | 2,879,296 | fp16 | 0.283 | 0.25 | 0.79 | 0.92 |
+| `patch_s2.yaml` | 12,000 | 10,083,392 | fp16 | 0.386 | 1.29 | 1.52 | 2.46 |
+| `patch_s3.yaml` | 38,400 | 31,896,384 | fp16 | 0.672 | 7.17 | 1.80 | 4.55 |
+| `patch_s4.yaml` | 121,000 | 100,442,944 | fp16 | 1.173 | 39.43 | 4.21 | 8.31 |
+
+The trainer writes a checkpoint at least every 10 minutes (`ckpt_minutes` in the training loop). `DEVIATIONS.md` records which bench configurations were not trained.
+
+## Ethical considerations
+
+Research and demonstration only. Not a production forecaster, and not an input to a trading or other financial decision. The volatility numbers elsewhere in this repository are statistical scores. Training data is public, with the leakage exclusions in `DATA_CARD.md`.
+
+## Citation
+
+Apache-2.0 (`LICENSE`). Cite this software with `CITATION.cff`.
+
 ## Known limitations
 
 * On the test split, CRPS against Seasonal Naive has a configuration interval that includes 1. MASE is worse, and both metrics are worse than upstream AutoARIMA.
