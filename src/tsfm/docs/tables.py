@@ -11,6 +11,8 @@ TABLES: dict[str, Callable[[Path], str]] = {}
 
 
 def table(name: str) -> Callable[[Callable[[Path], str]], Callable[[Path], str]]:
+    """Register a Markdown table builder under ``name``."""
+
     def deco(fn: Callable[[Path], str]) -> Callable[[Path], str]:
         TABLES[name] = fn
         return fn
@@ -19,6 +21,7 @@ def table(name: str) -> Callable[[Callable[[Path], str]], Callable[[Path], str]]
 
 
 def md_table(header: list[str], rows: list[list[str]]) -> str:
+    """Render a Markdown table."""
     lines = ["| " + " | ".join(header) + " |", "|" + "|".join("---" for _ in header) + "|"]
     lines += ["| " + " | ".join(r) + " |" for r in rows]
     return "\n".join(lines)
@@ -36,6 +39,7 @@ def _load(root: Path, rel: str) -> dict[str, Any]:
 
 @table("corpus")
 def corpus_table(root: Path) -> str:
+    """One row per converted dataset file."""
     man = _load(root, "results/data/corpus_manifest.json")
     rows = []
     for _rel, e in man["files"].items():
@@ -60,6 +64,7 @@ def corpus_table(root: Path) -> str:
 
 @table("leakage_matches")
 def leakage_matches(root: Path) -> str:
+    """Files that still match GIFT-Eval. A sentence when none do."""
     rep = _load(root, "results/data/leakage.json")
     rows = [
         [
@@ -98,6 +103,7 @@ def _model_rows(summary: dict[str, Any], names: list[str]) -> list[list[str]]:
 
 @table("reported_reference")
 def reported_reference(root: Path) -> str:
+    """Published GIFT-Eval rows recomputed from upstream files, plus our Seasonal Naive."""
     s = _load(root, "results/analysis/test_summary.json")
     names = sorted(
         (n for n in s["models"] if n.startswith("upstream:")),
@@ -225,6 +231,7 @@ def score_map(root: Path) -> str:
 
 @table("headline")
 def headline(root: Path) -> str:
+    """Pre-registered comparisons for the headline test score."""
     h = _load(root, "results/analysis/headline.json")
     rows = [
         [
@@ -242,6 +249,7 @@ def headline(root: Path) -> str:
 
 @table("leakage_inspection")
 def leakage_inspection(root: Path) -> str:
+    """Each flagged corpus dataset beside the GIFT-Eval dataset it matched."""
     s = _load(root, "results/data/leakage_inspection.json")
     rows = [
         [
@@ -271,6 +279,7 @@ def leakage_inspection(root: Path) -> str:
 
 @table("scaling")
 def scaling_table(root: Path) -> str:
+    """Power-law fit and the runs it was fit on."""
     from tsfm.docs.build import MissingResult
 
     s = _load(root, "results/analysis/scaling.json")
@@ -333,6 +342,7 @@ def bench_table(root: Path) -> str:
 
 @table("tokenizers")
 def tokenizers_table(root: Path) -> str:
+    """Patch versus bins on the validation split, when both have been scored."""
     from tsfm.docs.build import MissingResult
 
     s = _load(root, "results/analysis/val_summary.json")
@@ -344,6 +354,7 @@ def tokenizers_table(root: Path) -> str:
 
 @table("val_models")
 def val_models(root: Path) -> str:
+    """Validation scores for the models that were scored, divided by Seasonal Naive."""
     s = _load(root, "results/analysis/val_summary.json")
     names = sorted(s["models"], key=lambda n: s["models"][n]["crps_gmean"])
     rows = _model_rows(s, names)
@@ -378,6 +389,7 @@ def _ratio_cell(g: dict[str, Any]) -> str:
 
 @table("vol_overall")
 def vol_overall(root: Path) -> str:
+    """Pooled volatility scores against the random-walk reference."""
     s = _load(root, "results/finance/summary.json")
     rows = []
     for m in VOL_LABELS:
@@ -410,6 +422,7 @@ def vol_overall(root: Path) -> str:
 
 @table("vol_regimes")
 def vol_regimes(root: Path) -> str:
+    """The same volatility scores split by the pre-registered regimes."""
     s = _load(root, "results/finance/summary.json")
     regs = ["calm", "covid_2020", "terra_3ac_2022", "ftx_2022"]
     rows = []
@@ -506,6 +519,7 @@ def cpu_test(root: Path) -> str:
 
 @table("cpu_val")
 def cpu_val(root: Path) -> str:
+    """CPU-study validation scores, including the conformal row and the position ablation."""
     from tsfm.docs.build import MissingResult
 
     doc = _load(root, "results/analysis/cpu_study.json")
@@ -551,6 +565,7 @@ def cpu_val(root: Path) -> str:
 
 @table("cpu_vs_arima")
 def cpu_vs_arima(root: Path) -> str:
+    """CPU-study ratios to upstream AutoARIMA on the test split."""
     from tsfm.docs.build import MissingResult
 
     doc = _load(root, "results/analysis/cpu_study.json")
@@ -600,6 +615,7 @@ def cpu_vs_arima(root: Path) -> str:
 
 @table("model_card_headline")
 def model_card_headline(root: Path) -> str:
+    """Architecture row for the T4 run that was selected on validation."""
     h = _load(root, "results/analysis/headline_choice.json")
     name = h["headline"]
     s = _load(root, f"results/runs/{name}/summary.json")

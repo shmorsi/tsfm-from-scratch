@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="328" viewBox="0 0 1100 328" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">From a pinned corpus to a single test score</title>
+<desc id="fig-desc">Six stages: pinned corpus, leakage audit, training windows, decoder, validation (where the headline is chosen), and the test split. The test split has a stored verdict. The validation readout and the CPU-model verdicts are read from results.</desc>
+<rect width="100%" height="100%" fill="#000000"/>
+<rect x="0.5" y="0.5" width="1099" height="327" fill="none" stroke="#5a626a" stroke-width="1"/>
+<text x="36.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#f5f5f7" letter-spacing="-0.04em">TSFM</text>
+<text x="118.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#a8a8ad" letter-spacing="0.16em">FROM SCRATCH</text>
+<text x="1064.0" y="40.0" text-anchor="end" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.14em">ZERO-SHOT  ·  GIFT-EVAL</text>
+<line x1="36.0" y1="58.0" x2="1064.0" y2="58.0" stroke="#5a626a"/>
+<line x1="36.0" y1="108.0" x2="1064.0" y2="108.0" stroke="#5a626a"/>
+<circle cx="121.7" cy="108.0" r="4.5" fill="#000000" stroke="#5a626a" stroke-width="1"/>
+<text x="121.7" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#f5f5f7" letter-spacing="0.12em">CORPUS</text>
+<text x="121.7" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">Pinned sources</text>
+<circle cx="293.0" cy="108.0" r="4.5" fill="#000000" stroke="#5a626a" stroke-width="1"/>
+<text x="293.0" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#f5f5f7" letter-spacing="0.12em">AUDIT</text>
+<text x="293.0" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">Copies removed</text>
+<circle cx="464.3" cy="108.0" r="4.5" fill="#000000" stroke="#5a626a" stroke-width="1"/>
+<text x="464.3" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#f5f5f7" letter-spacing="0.12em">WINDOWS</text>
+<text x="464.3" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">Training only</text>
+<circle cx="635.7" cy="108.0" r="4.5" fill="#000000" stroke="#5a626a" stroke-width="1"/>
+<text x="635.7" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#f5f5f7" letter-spacing="0.12em">DECODER</text>
+<text x="635.7" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">Plain PyTorch</text>
+<circle cx="807.0" cy="108.0" r="4.5" fill="#8ec5ff" stroke="#8ec5ff" stroke-width="1"/>
+<text x="807.0" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#8ec5ff" letter-spacing="0.12em">VALIDATE</text>
+<text x="807.0" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">Headline chosen</text>
+<circle cx="978.3" cy="108.0" r="4.5" fill="#000000" stroke="#5a626a" stroke-width="1"/>
+<text x="978.3" y="86.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#f5f5f7" letter-spacing="0.12em">TEST</text>
+<text x="978.3" y="136.0" text-anchor="middle" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#a8a8ad">At most once</text>
+<line x1="36.0" y1="162.0" x2="1064.0" y2="162.0" stroke="#5a626a"/>
+<text x="56.0" y="198.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">VALIDATION</text>
+<text x="56.0" y="238.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="28" font-weight="600" fill="#8ec5ff" letter-spacing="-0.03em">0.605×</text>
+<text x="56.0" y="266.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">CRPS vs Seasonal Naive</text>
+<text x="56.0" y="288.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#8e8e93">patch_s2 · 10.1M · 16 configurations</text>
+<line x1="378.7" y1="178" x2="378.7" y2="304" stroke="#5a626a"/>
+<text x="398.7" y="198.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">TEST SPLIT</text>
+<text x="398.7" y="238.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="28" font-weight="600" fill="#f5f5f7" letter-spacing="-0.03em">better</text>
+<text x="398.7" y="266.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">stored verdict, CRPS vs AutoARIMA</text>
+<text x="398.7" y="288.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#8e8e93">weights not in this repository</text>
+<line x1="721.3" y1="178" x2="721.3" y2="304" stroke="#5a626a"/>
+<text x="741.3" y="198.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">CPU ON TEST</text>
+<text x="741.3" y="238.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="28" font-weight="600" fill="#f5f5f7" letter-spacing="-0.03em">worse</text>
+<text x="741.3" y="266.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">vs AutoARIMA</text>
+<text x="741.3" y="288.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#8e8e93">no detectable difference · Seasonal Naive</text>
+</svg>

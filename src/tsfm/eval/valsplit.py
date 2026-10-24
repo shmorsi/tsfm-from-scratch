@@ -38,6 +38,7 @@ def _vendor() -> Any:
 
 
 def norm_freq(freq: str) -> str:
+    """Canonical frequency string for a pandas offset."""
     from gluonts.time_feature import norm_freq_str
     from pandas.tseries.frequencies import to_offset
 
@@ -45,6 +46,7 @@ def norm_freq(freq: str) -> str:
 
 
 def base_prediction_length(freq: str) -> int:
+    """GIFT-Eval short-term horizon for a frequency."""
     v = _vendor()
     f = norm_freq(freq)
     if f in v.PRED_LENGTH_MAP:
@@ -64,6 +66,8 @@ def period_freq(freq: str) -> str:
 
 @dataclass(frozen=True)
 class ValConfig:
+    """One validation configuration built from a dataset held out of pretraining."""
+
     name: str  # "<dataset>/<freq>/<term>"
     dataset: str
     split_dir: str  # "val"
@@ -118,6 +122,7 @@ class ValDataset:
 
     @cached_property
     def prediction_length(self) -> int:
+        """Forecast horizon for this configuration."""
         mult = {"short": 1, "medium": 10, "long": 15}[self.term]
         return mult * base_prediction_length(self.freq)
 
@@ -143,6 +148,7 @@ class ValDataset:
 
     @cached_property
     def windows(self) -> int:
+        """How many forecast windows this configuration scores."""
         v = _vendor()
         min_len = min(e["target"].size for e in self._entries)
         w = math.ceil(v.TEST_SPLIT * min_len / self.prediction_length)
@@ -150,6 +156,7 @@ class ValDataset:
 
     @property
     def test_data(self) -> Any:
+        """GluonTS test entry for the official evaluator."""
         from gluonts.dataset.split import split
 
         _, tmpl = split(self._entries, offset=-self.prediction_length * self.windows)
@@ -161,4 +168,5 @@ class ValDataset:
 
 
 def load_val(cfg: ValConfig) -> ValDataset:
+    """Load one validation configuration from the converted corpus."""
     return ValDataset(cfg)

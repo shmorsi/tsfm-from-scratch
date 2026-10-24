@@ -21,6 +21,7 @@ from tsfm.cli import register
 
 
 def run_pipeline(config: Path, workdir: Path) -> dict[str, Any]:
+    """Download, convert, train and score the tiny config under ``workdir``."""
     raw = yaml.safe_load(config.read_text())
     pc = raw["pipeline"]
     home = workdir / "home"

@@ -44,6 +44,8 @@ SCHEMA = pa.schema(
 
 @dataclass
 class Rules:
+    """Thresholds that decide whether a series is kept."""
+
     min_observed: int = 12
     max_abs_value: float = 1e12
     drop_constant: bool = True
@@ -78,6 +80,8 @@ class Rules:
 
 @dataclass
 class DatasetStats:
+    """Counts recorded while converting one dataset."""
+
     dataset: str
     split: str
     freqs: Counter[str] = field(default_factory=Counter)
@@ -90,6 +94,7 @@ class DatasetStats:
     dropped: Counter[str] = field(default_factory=Counter)
 
     def as_dict(self) -> dict[str, Any]:
+        """JSON-ready copy of these counts."""
         return {
             "dataset": self.dataset,
             "split": self.split,
@@ -116,6 +121,8 @@ def _list_values(arr: pa.ChunkedArray | pa.Array) -> tuple[np.ndarray, np.ndarra
 
 @dataclass(frozen=True)
 class RawSeries:
+    """One univariate series read from an upstream Arrow shard."""
+
     item_id: str
     freq: str
     start: Any
@@ -263,6 +270,7 @@ def shift_start(start: Any, freq: str, steps: int) -> Any:
 
 
 def dataset_shards(lock: dict[str, Any], root: Path) -> dict[str, list[Path]]:
+    """Map each dataset name to the Arrow shards the lock file lists for it."""
     out: dict[str, list[Path]] = {}
     for e in lock["files"]:
         if re.search(r"/data-\d+-of-\d+\.arrow$", e["path"]):
@@ -271,6 +279,7 @@ def dataset_shards(lock: dict[str, Any], root: Path) -> dict[str, list[Path]]:
 
 
 def build_corpus(only: set[str] | None = None) -> dict[str, Any]:
+    """Convert the locked shards into validated Parquet and return the manifest entries."""
     cfg = load_data_config()
     pc_cfg = cfg["pretrain"]
     rules = Rules(**cfg["validation_rules"])
@@ -310,6 +319,7 @@ def build_corpus(only: set[str] | None = None) -> dict[str, Any]:
 
 
 def write_manifest(entries: dict[str, Any]) -> None:
+    """Write ``results/data/corpus_manifest.json``, keeping entries this run did not touch."""
     import json
 
     p = results_dir() / "data" / "corpus_manifest.json"
@@ -332,6 +342,7 @@ def write_manifest(entries: dict[str, Any]) -> None:
 
 
 def read_series(path: Path) -> pa.Table:
+    """Read a converted Parquet file with the corpus schema."""
     return pq.read_table(path, schema=SCHEMA)
 
 

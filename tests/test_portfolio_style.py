@@ -29,13 +29,17 @@ def _contrast(a: str, b: str) -> float:
 
 def test_portfolio_figure_matches_the_doc_palette():
     svg = fig.build()
+    assert fig.BG == "#000000"
+    assert fig.SIGNAL == "#8ec5ff"
     assert fig.BG in svg
     assert fig.SIGNAL in svg
     assert fig.GRID in svg
+    assert "Inter Tight" in svg
     assert 'role="img"' in svg
     assert "<title" in svg
     assert "#ffb547" not in svg
     assert "#8fd3ff" not in svg
+    assert "#e4c48a" not in svg
     assert _contrast(fig.INK, fig.BG) >= 4.5
     assert _contrast(fig.MUTED, fig.BG) >= 4.5
     assert _contrast(fig.FAINT, fig.BG) >= 4.5
@@ -49,8 +53,11 @@ def test_portfolio_figure_matches_the_doc_palette():
 
 def test_portfolio_page_carries_the_dark_theme():
     html = page.build()
-    assert "--bg: #07090d" in html
-    assert "Inter" in html
+    assert "--bg: #000000" in html
+    assert "Inter Tight" in html
+    assert "Space Grotesk" not in html
     assert "Instrument Sans" not in html
     assert "Unbounded" not in html
+    assert "beats the naive" not in html
+    assert "matches or beats" not in html
     assert html.count("<html") == 1

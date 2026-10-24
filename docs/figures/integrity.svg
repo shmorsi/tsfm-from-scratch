@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="292" viewBox="0 0 1100 292" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Leakage audit</title>
+<desc id="fig-desc">Round 1 flagged series in the public pretraining corpus. Those series were removed. A re-run on the final corpus reports how many hits remain. Counts are read from the committed leakage reports. The check finds exact and rescaled copies, not noisy or resampled ones.</desc>
+<rect width="100%" height="100%" fill="#000000"/>
+<rect x="0.5" y="0.5" width="1099" height="291" fill="none" stroke="#5a626a" stroke-width="1"/>
+<text x="36.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#f5f5f7" letter-spacing="-0.04em">AUDIT</text>
+<text x="140.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#a8a8ad" letter-spacing="0.14em">EXACT AND RESCALED COPIES</text>
+<line x1="36.0" y1="58.0" x2="1064.0" y2="58.0" stroke="#5a626a"/>
+<rect x="36.0" y="80.0" width="326.7" height="176.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<text x="56.0" y="112.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">ROUND 1</text>
+<text x="56.0" y="168.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="40" font-weight="600" fill="#f5f5f7" letter-spacing="-0.04em">801</text>
+<text x="56.0" y="204.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#a8a8ad">of 447,229 series</text>
+<text x="56.0" y="228.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#8e8e93">flagged</text>
+<rect x="378.7" y="80.0" width="326.7" height="176.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<text x="398.7" y="112.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">EXCLUDED</text>
+<text x="398.7" y="168.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="40" font-weight="600" fill="#f5f5f7" letter-spacing="-0.04em">801</text>
+<text x="398.7" y="204.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#a8a8ad">series removed</text>
+<text x="398.7" y="228.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#8e8e93">before training</text>
+<rect x="721.3" y="80.0" width="326.7" height="176.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<text x="741.3" y="112.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">RE-RUN</text>
+<text x="741.3" y="168.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="40" font-weight="600" fill="#8ec5ff" letter-spacing="-0.04em">0</text>
+<text x="741.3" y="204.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#a8a8ad">hits in 446,428 series</text>
+<text x="741.3" y="228.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#8e8e93">on the final corpus</text>
+</svg>

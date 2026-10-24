@@ -25,6 +25,7 @@ from tsfm.provenance import write_result
 
 
 def load_runs(root: Path | None = None) -> list[dict[str, Any]]:
+    """Training summaries under ``root``, one dict per run."""
     root = root or results_dir() / "runs"
     runs = []
     for p in sorted(root.glob("*/summary.json")):
@@ -53,6 +54,7 @@ def fit_power_law(c: np.ndarray, loss: np.ndarray) -> tuple[float, float]:
 
 
 def bootstrap_fit(runs: list[dict[str, Any]], n: int = 2000, seed: int = 0) -> dict[str, Any]:
+    """Fit the power law and a paired bootstrap band over validation batches."""
     c = np.array([r["flops"] for r in runs], dtype=np.float64)
     batches = np.array([r["val_batches"] for r in runs], dtype=np.float64)  # (runs, batches)
     if batches.ndim != 2:
@@ -94,6 +96,7 @@ def bootstrap_fit(runs: list[dict[str, Any]], n: int = 2000, seed: int = 0) -> d
 
 
 def scaling_report(names_prefix: str = "patch_s") -> Path:
+    """Write ``results/analysis/scaling.json`` for runs whose names start with ``names_prefix``."""
     runs = [r for r in load_runs() if r["name"].startswith(names_prefix) and r["seed"] == 0]
     out: dict[str, Any] = {"prefix": names_prefix}
     if len(runs) >= 3:

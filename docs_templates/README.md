@@ -1,26 +1,19 @@
 # tsfm
 
-A time-series foundation model pretrained from scratch. A small transformer in plain PyTorch, on a pinned corpus, scored zero-shot on GIFT-Eval under rules fixed in a git tag before the test split was touched.
+Sherif Morsi. A decoder-only time-series transformer, pretrained from scratch in plain PyTorch on a pinned corpus, and scored zero-shot on GIFT-Eval. The protocol was tagged in git before the test split was opened.
 
 [![Continuous integration](https://github.com/shmorsi/tsfm-from-scratch/actions/workflows/ci.yml/badge.svg)](https://github.com/shmorsi/tsfm-from-scratch/actions/workflows/ci.yml)
-[![License Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-44403c)](LICENSE)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-44403c)](pyproject.toml)
+[![License Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-111111)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-111111)](pyproject.toml)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/score_patch_s2_test.ipynb)
 
 [Case study](https://shmorsi.github.io/projects/tsfm.html) · [Research note](RESEARCH_NOTE.md) · [Data card](DATA_CARD.md) · [Model card](MODEL_CARD.md) · [Deviations](DEVIATIONS.md) · [Development](DEVELOPMENT.md)
 
-```mermaid
-%%{init: {"theme": "dark", "themeVariables": {"darkMode": true, "background": "#07090d", "primaryColor": "#12161d", "primaryTextColor": "#f4f7fb", "primaryBorderColor": "#5a626a", "lineColor": "#c5ced8", "fontFamily": "Inter, Space Grotesk, Helvetica, ui-sans-serif, sans-serif"}}}%%
-flowchart LR
-  corpus[Pinned corpus] --> audit[Leakage audit]
-  audit --> windows[Training windows]
-  windows --> model[Decoder-only transformer]
-  model --> val[Validation split]
-  val --> choice[Headline chosen here]
-  choice --> test[Test split, at most once]
-```
-
-![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
+{{ if exists:results/analysis/headline.json }}
+![Pipeline from a pinned corpus through a leakage audit and a decoder-only transformer. The headline is chosen on the validation split. The test split has a stored verdict.](docs/figures/hero.svg)
+{{ else }}
+![Pipeline from a pinned corpus through a leakage audit and a decoder-only transformer. The headline is chosen on the validation split. The test split is pending.](docs/figures/hero.svg)
+{{ end }}
 
 ## Key results
 
@@ -34,40 +27,7 @@ flowchart LR
 
 Lower is better; 1 equals the reference. Each verdict uses the pre-registered rule: better if the interval is entirely below 1, worse if entirely above, otherwise no detectable difference.
 
-{{ table:scaling | default:*Scaling fit not available.* }}
-
-## Why this matters
-
-The public pretraining corpus, described by its authors as non-leaking, contains copies of benchmark series, some inside the test windows. A content audit flagged {{ results/data/leakage_round1.json#totals.series_with_hits | int }} of {{ results/data/leakage_round1.json#totals.pretrain_series_checked | int }} series. All were excluded. A re-run on the final corpus flags {{ results/data/leakage.json#totals.series_with_hits | int }}.
-
-The CPU model that is actually in the repository does not beat AutoARIMA on the frozen test split. Its CRPS against Seasonal Naive is {{ results/analysis/cpu_study.json#test.summary.crps_gmean | .3f }}× (95% CI [{{ results/analysis/cpu_study.json#test.comparisons.0.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.0.ci95.1 | .3f }}]: {{ results/analysis/cpu_study.json#test.comparisons.0.verdict }}), and against upstream AutoARIMA it is {{ results/analysis/cpu_study.json#test.comparisons.2.ratio | .3f }}× (95% CI [{{ results/analysis/cpu_study.json#test.comparisons.2.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.2.ci95.1 | .3f }}]: {{ results/analysis/cpu_study.json#test.comparisons.2.verdict }}). Raw prediction intervals undercover. Split-conformal adjustment, fit on validation only, pushes test 80% coverage from {{ results/analysis/cpu_study.json#test.summary.coverage_mean.80 | .3f }} to {{ results/analysis/cpu_study.json#test_cqr.summary.coverage_mean.80 | .3f }} and makes CRPS worse.
-
-That is the result. The work around it is a model, a training loop, and an evaluation path written by hand, with the test split gated so a number cannot appear before the protocol allows it.
-
-## Architecture
-
-```mermaid
-%%{init: {"theme": "dark", "themeVariables": {"darkMode": true, "background": "#07090d", "primaryColor": "#12161d", "primaryTextColor": "#f4f7fb", "primaryBorderColor": "#5a626a", "lineColor": "#c5ced8", "fontFamily": "Inter, Space Grotesk, Helvetica, ui-sans-serif, sans-serif"}}}%%
-flowchart TB
-  token[Patch or bin token] --> n1[RMSNorm]
-  n1 --> attn[Causal attention with RoPE]
-  attn --> add1[Residual add]
-  token --> add1
-  add1 --> n2[RMSNorm]
-  n2 --> mlp[SwiGLU]
-  mlp --> add2[Residual add]
-  add1 --> add2
-  add2 --> head[Quantile head or token logits]
-```
-
-Decoder-only, pre-norm, in plain PyTorch: RMSNorm, rotary positions, SwiGLU, a key/value cache, and a non-crossing quantile head. A second tokenizer quantises the scaled series into a fixed vocabulary and is trained with cross-entropy. The head that was selected is the patch head. Details are in `MODEL_CARD.md`.
-
-* **Data.** A pinned subset of GiftEvalPretrain, whole datasets held out for validation, plus Gaussian-process series. A content check removed exact and rescaled copies of GIFT-Eval series (`DATA_CARD.md`).
-* **Committed CPU model.** Patch length {{ results/runs/cpu_s0_seed0/summary.json#config.model.patch_len }}, horizon {{ results/runs/cpu_s0_seed0/summary.json#config.model.horizon }}, width {{ results/runs/cpu_s0_seed0/summary.json#config.model.d_model }}, {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_layers }} layers and {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_heads }} heads. Training is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps, batch {{ results/runs/cpu_s0_seed0/summary.json#config.train.batch_size }}, fp32. Seed 0 finished in {{ results/runs/cpu_s0_seed0/summary.json#session_seconds | .1f }} seconds.
-* **T4 headline.** `patch_s2` uses patch length {{ results/runs/patch_s2/summary.json#config.model.patch_len }} and a horizon of {{ results/runs/patch_s2/summary.json#config.model.horizon }}. The training loop supports mixed precision and resumable checkpoints. The weights are not in this repository.
-* **Evaluation.** GluonTS, the same way upstream scores GIFT-Eval: MASE and quantile-loss CRPS, each divided by Seasonal Naive, geometric mean over configurations, plus 50/80/90% coverage. Our Seasonal Naive reproduces theirs on every configuration.
-
-## Quickstart
+## Quick start
 
 Python 3.12 and [uv](https://docs.astral.sh/uv/). From a fresh clone:
 
@@ -79,21 +39,36 @@ uv run tsfm pipeline --config configs/tiny_cpu.yaml
 
 `uv sync --locked` installs the pinned lockfile, including the CPU PyTorch build. The pipeline downloads a small pinned data subset (network required), then trains and scores a tiny model. It writes to a temporary directory, outside `results/`.
 
-## Reproducibility and integrity
+## Architecture
 
-* **Pre-registration.** `PREREGISTRATION.md` fixes the T4 study (tag `prereg-v1`). `PREREGISTRATION_CPU.md` fixes the CPU study. `PREREGISTRATION_VOL.md` fixes the volatility baselines. `tsfm eval` refuses a second test score, and it refuses a model test score unless `prereg-v1` is in the commit's history.
-* **Deviations.** `DEVIATIONS.md` records what the T4 budget cut, including which sizes and seeds were not trained and that the bins tokenizer was not scored.
-* **Locks.** Download manifests under `locks/` pin source files by SHA-256. The corpus manifest pins the converted training data the same way.
-* **CI.** GitHub Actions runs ruff, the formatter, mypy, the unit tests, the tiny pipeline, and `tsfm docs check`.
-* **Numbers.** `README.md`, the cards, the research note, and `docs/figures/` are generated by `uv run tsfm docs build` from `docs_templates/` and `results/`. The check fails if a generated document shows a number that is not in `results/` or `docs_templates/allowed_numbers.txt`.
+![One pre-norm decoder block: RMSNorm, causal attention with rotary positions, a residual add, RMSNorm, SwiGLU, a residual add, then a quantile head or token logits. The patch quantile head is the one that was selected.](docs/figures/architecture.svg)
 
-## Compute
+Decoder-only, pre-norm, in plain PyTorch: RMSNorm, rotary positions, SwiGLU, a key/value cache, and a non-crossing quantile head. A second tokenizer quantises the scaled series into a fixed vocabulary and is trained with cross-entropy. The head that was selected is the patch head. Details are in `MODEL_CARD.md`.
+
+* **Data.** A pinned subset of GiftEvalPretrain, whole datasets held out for validation, plus Gaussian-process series. A content check removed exact and rescaled copies of GIFT-Eval series (`DATA_CARD.md`).
+* **Committed CPU model.** Patch length {{ results/runs/cpu_s0_seed0/summary.json#config.model.patch_len }}, horizon {{ results/runs/cpu_s0_seed0/summary.json#config.model.horizon }}, width {{ results/runs/cpu_s0_seed0/summary.json#config.model.d_model }}, {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_layers }} layers and {{ results/runs/cpu_s0_seed0/summary.json#config.model.n_heads }} heads. Training is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps, batch {{ results/runs/cpu_s0_seed0/summary.json#config.train.batch_size }}, fp32. Seed 0 finished in {{ results/runs/cpu_s0_seed0/summary.json#session_seconds | .1f }} seconds.
+* **T4 headline.** `patch_s2` uses patch length {{ results/runs/patch_s2/summary.json#config.model.patch_len }} and a horizon of {{ results/runs/patch_s2/summary.json#config.model.horizon }}. The training loop supports mixed precision and resumable checkpoints. The weights are not in this repository.
+* **Evaluation.** GluonTS, the same way upstream scores GIFT-Eval: MASE and quantile-loss CRPS, each divided by Seasonal Naive, geometric mean over configurations, plus 50/80/90% coverage. Our Seasonal Naive reproduces theirs on every configuration.
+
+## Data integrity
+
+![Leakage audit of the public pretraining corpus: series flagged on the first pass, removed, then re-checked. The check finds exact and rescaled copies.](docs/figures/integrity.svg)
+
+The public pretraining corpus, described by its authors as non-leaking, contains copies of benchmark series, some inside the test windows. A content audit flagged {{ results/data/leakage_round1.json#totals.series_with_hits | int }} of {{ results/data/leakage_round1.json#totals.pretrain_series_checked | int }} series. All were excluded. A re-run on the final corpus flags {{ results/data/leakage.json#totals.series_with_hits | int }}.
+
+The CPU model that is actually in the repository does not beat AutoARIMA on the frozen test split. Its CRPS against Seasonal Naive is {{ results/analysis/cpu_study.json#test.summary.crps_gmean | .3f }}× (95% CI [{{ results/analysis/cpu_study.json#test.comparisons.0.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.0.ci95.1 | .3f }}]: {{ results/analysis/cpu_study.json#test.comparisons.0.verdict }}), and against upstream AutoARIMA it is {{ results/analysis/cpu_study.json#test.comparisons.2.ratio | .3f }}× (95% CI [{{ results/analysis/cpu_study.json#test.comparisons.2.ci95.0 | .3f }}, {{ results/analysis/cpu_study.json#test.comparisons.2.ci95.1 | .3f }}]: {{ results/analysis/cpu_study.json#test.comparisons.2.verdict }}). Raw prediction intervals undercover. Split-conformal adjustment, fit on validation only, pushes test 80% coverage from {{ results/analysis/cpu_study.json#test.summary.coverage_mean.80 | .3f }} to {{ results/analysis/cpu_study.json#test_cqr.summary.coverage_mean.80 | .3f }} and makes CRPS worse.
+
+That is the result. The work around it is a model, a training loop, and an evaluation path written by hand, with the test split gated so a number cannot appear before the protocol allows it.
+
+## Results
+
+{{ table:scaling | default:*Scaling fit not available.* }}
+
+![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
 
 {{ table:bench }}
 
 `DEVIATIONS.md` records which of these configurations were not trained. The bench does not change that record, and it is not a forecast of the test-split score.
-
-## Results
 
 {{ if exists:results/analysis/headline.json }}
 ### Test split, `patch_s2`
@@ -155,7 +130,7 @@ Recomputed from upstream's committed GIFT-Eval result files, plus our Seasonal N
 {{ table:reported_reference }}
 {{ end }}
 
-## What I built and learned
+### What the runs showed
 
 {{ if exists:results/analysis/headline.json }}
 I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The {{ results/runs/patch_s2/summary.json#params_total | int }}-parameter run that produced the validation headline never had its checkpoint committed. It was scored on the test split later, from its checkpoint on Drive, with the pre-registered settings.
@@ -171,13 +146,31 @@ Turning rotary positions off, seed 0 only, on the same {{ results/analysis/cpu_s
 
 On one held-out hourly series (`bdg-2_bear`, context {{ results/analysis/attention_cpu_s0.json#context_length }} steps, patches of length {{ results/analysis/attention_cpu_s0.json#profile.patch_len }}), the last query puts {{ results/analysis/attention_cpu_s0.json#profile.mass_last_patch | .3f }} of its attention on the most recent patch and {{ results/analysis/attention_cpu_s0.json#profile.mass_last_4_patches | .3f }} on the last four. The peak is at lag {{ results/analysis/attention_cpu_s0.json#profile.peak_lag_patches }} patches. Entropy is {{ results/analysis/attention_cpu_s0.json#profile.entropy_nats | .3f }} nats against {{ results/analysis/attention_cpu_s0.json#profile.entropy_uniform_nats | .3f }} for a uniform distribution over the patches. The mass is local. The series is hourly and each patch is {{ results/analysis/attention_cpu_s0.json#profile.patch_len }} steps, so a day is not patch-aligned and I am not reading a daily cycle out of that peak.
 
-## Market volatility baselines
+### Market volatility baselines
 
 Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in `PREREGISTRATION_VOL.md`. Statistical forecast scores only. Our model was not run on this study.
 
 {{ table:vol_overall }}
 
-## What I'd do next
+## Reproducibility
+
+* **Pre-registration.** `PREREGISTRATION.md` fixes the T4 study (tag `prereg-v1`). `PREREGISTRATION_CPU.md` fixes the CPU study. `PREREGISTRATION_VOL.md` fixes the volatility baselines. `tsfm eval` refuses a second test score, and it refuses a model test score unless `prereg-v1` is in the commit's history.
+* **Deviations.** `DEVIATIONS.md` records what the T4 budget cut, including which sizes and seeds were not trained and that the bins tokenizer was not scored.
+* **Locks.** Download manifests under `locks/` pin source files by SHA-256. The corpus manifest pins the converted training data the same way.
+* **CI.** GitHub Actions runs ruff, the formatter, mypy, the unit tests, the tiny pipeline, and `tsfm docs check`.
+* **Numbers.** `README.md`, the cards, the research note, and `docs/figures/` are generated by `uv run tsfm docs build` from `docs_templates/` and `results/`. The check fails if a generated document shows a number that is not in `results/` or `docs_templates/allowed_numbers.txt`.
+
+## Limitations
+
+{{ if exists:results/analysis/headline.json }}
+The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` has a test score from one seed only, so its interval covers configurations, not training seeds. Nothing here measures economic value.
+{{ else }}
+The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
+{{ end }}
+
+The leakage check finds exact and rescaled copies, not noisy or resampled ones. The scaling fit describes the runs that were trained. The bins tokenizer was trained and not scored (`DEVIATIONS.md`).
+
+## Next steps
 
 None of this has been run. It is not a result.
 
@@ -208,14 +201,6 @@ uv run tsfm docs build
 6. Commit the files the harvest script wrote and the docs `tsfm docs build` regenerated. Do not hand-edit numbers.
 
 That harvest file is what the doc generators read. It contains `results/eval/test/patch_s2/` (`all_results.csv`, `run.json`, `config.json`), a rebuilt `results/analysis/test_summary.json`, and a new `results/analysis/headline.json`. The harvest script appends `results/sync_log.json`. `results/analysis/cpu_study.json` is not in the file. Ranks in the rebuilt summary include `patch_s2`. CRPS and MASE for the other models are recomputed from the same vendored files.
-
-## Limits
-
-{{ if exists:results/analysis/headline.json }}
-The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` has a test score from one seed only, so its interval covers configurations, not training seeds. Nothing here measures economic value.
-{{ else }}
-The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
-{{ end }}
 
 ## License
 

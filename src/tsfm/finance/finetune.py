@@ -24,6 +24,7 @@ from tsfm.train.objective import compute_loss, draw_context
 def model_forecaster(
     model: TSModel, max_context: int = 2048, n_samples: int = 20, seed: int = 0
 ) -> Any:
+    """A callable that forecasts with a trained model, patch or bins."""
     gen = torch.Generator(next(model.parameters()).device).manual_seed(seed)
 
     def fn(hist: list[np.ndarray], h: int) -> np.ndarray:
@@ -42,6 +43,7 @@ def _window(model: TSModel) -> int:
 
 
 def pooled_wql(rows: list[dict[str, Any]]) -> float:
+    """Pooled weighted quantile loss: total loss divided by total absolute target."""
     num = sum(r["wql_num"] for r in rows if np.isfinite(r["wql"]))
     den = sum(r["abs_y"] for r in rows if np.isfinite(r["wql"]))
     return float(num / den)
@@ -57,6 +59,7 @@ def finetune(
     eval_every: int = 25,
     seed: int = 0,
 ) -> tuple[TSModel, list[dict[str, float]]]:
+    """Continue training on realized volatility and return the run summary."""
     dev = next(model.parameters()).device
     w = _window(model)
     train = [s.values[: s.index(TRAIN_END) + 1] for s in series]

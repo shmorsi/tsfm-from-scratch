@@ -166,7 +166,7 @@ def build() -> str:
     if ahead:
         published_txt += f"Published foundation models trained with far more data and compute score better on CRPS ({', '.join(ahead)}). "
     if behind:
-        published_txt += f"It matches or beats the reported CRPS of {', '.join(behind)}. "
+        published_txt += f"Its CRPS is at or below the reported CRPS of {', '.join(behind)}. "
     has_ft = "both/all_test" in vol.get("tsfm_finetuned", {})
     has_zs = "both/all_test" in vol.get("tsfm_zero_shot", {})
     first = (
@@ -204,7 +204,7 @@ def build() -> str:
         )
     else:
         results_html = (
-            f"<p>Every model was scored zero-shot on {val['n_configs']} configurations built from datasets held out of pretraining entirely, with the official GIFT-Eval scoring code. Error falls steadily with model size: the largest model, <code>{esc(hl)}</code>, has CRPS {vh['crps_gmean']:.3f} and MASE {vh['mase_gmean']:.3f} relative to Seasonal Naive, so it beats the naive baseline on both, and the pre-registered rule selects it.</p>"
+            f"<p>Every model was scored zero-shot on {val['n_configs']} configurations built from datasets held out of pretraining entirely, with the official GIFT-Eval scoring code. Error falls steadily with model size: the largest model, <code>{esc(hl)}</code>, has CRPS {vh['crps_gmean']:.3f} and MASE {vh['mase_gmean']:.3f} relative to Seasonal Naive, so it is below Seasonal Naive on both, and the pre-registered rule selects it.</p>"
             + val_table
             + scaling_text
             + "<p>For context, the published GIFT-Eval leaderboard results of other models are below, recomputed from upstream's result files. They are other models' scores on the benchmark's test split, not ours; scoring our model there is pre-registered future work.</p>"
@@ -225,7 +225,7 @@ def build() -> str:
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Time-series foundation model from scratch · Sherif Morsi</title>
   <meta name="description" content="A small time-series foundation model pretrained from scratch and evaluated honestly on GIFT-Eval: leakage audit, pre-registration, scaling runs and a realized-volatility study.">
-  <meta name="theme-color" content="#07090d">
+  <meta name="theme-color" content="#000000">
   <meta name="color-scheme" content="dark">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://shmorsi.github.io/projects/tsfm.html">
@@ -235,19 +235,19 @@ def build() -> str:
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../assets/site.css">
   <script src="../assets/site.js" defer></script>
   <style>
     :root {{
-      --bg: #07090d;
-      --panel: #10141b;
-      --ink: #f4f7fb;
-      --muted: #c5ced8;
-      --faint: #8fa0b3;
+      --bg: #000000;
+      --panel: #0a0a0a;
+      --ink: #f5f5f7;
+      --muted: #a8a8ad;
+      --faint: #8e8e93;
       --grid: #5a626a;
-      --signal: #e4c48a;
-      --font: "Inter", "Space Grotesk", "Helvetica Neue", Helvetica, ui-sans-serif, system-ui, sans-serif;
+      --signal: #8ec5ff;
+      --font: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }}
     html {{ color-scheme: dark; }}
     body {{
@@ -285,7 +285,7 @@ def build() -> str:
       mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
       pointer-events: none;
     }}
-    h1, h2, h3 {{ font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }}
+    h1, h2, h3 {{ font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; }}
     h1 {{ font-size: clamp(40px, 6vw, 64px); margin: 12px 0 20px; }}
     .cs-question {{ font-size: 22px; max-width: 42rem; }}
     .cs-summary, .prose p, .prose li {{ color: var(--muted); }}

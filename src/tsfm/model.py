@@ -48,21 +48,25 @@ class ModelConfig:
 
     @property
     def d_ff(self) -> int:
+        """SwiGLU hidden size, rounded to a multiple of 64."""
         return int(64 * round(self.ffn_mult * self.d_model / 64))
 
     @property
     def head_dim(self) -> int:
+        """Per-head width. Raises if ``d_model`` is not divisible by ``n_heads``."""
         if self.d_model % self.n_heads:
             raise ValueError("d_model must be divisible by n_heads")
         return self.d_model // self.n_heads
 
     def to_dict(self) -> dict[str, Any]:
+        """JSON-ready config, with quantiles as a list."""
         d = asdict(self)
         d["quantiles"] = list(self.quantiles)
         return d
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> ModelConfig:
+        """Rebuild a config from :meth:`to_dict`."""
         d = dict(d)
         if "quantiles" in d:
             d["quantiles"] = tuple(d["quantiles"])
@@ -78,6 +82,7 @@ class RMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(d))
 
     def forward(self, x: Tensor) -> Tensor:
+        """Root-mean-square normalize the last dimension and apply the learned scale."""
         xf = x.float()
         out = xf * torch.rsqrt(xf.pow(2).mean(-1, keepdim=True) + self.eps)
         return out.to(x.dtype) * self.weight
@@ -148,6 +153,7 @@ class KVCache:
 
     @staticmethod
     def bytes_per_row(cfg: ModelConfig, length: int, dtype: torch.dtype) -> int:
+        """Bytes of key and value state for one sequence of ``length``."""
         elem = torch.empty((), dtype=dtype).element_size()
         return 2 * cfg.n_layers * length * cfg.d_model * elem
 
@@ -190,6 +196,7 @@ class Attention(nn.Module):
         start: int,
         attn_out: list[Tensor] | None = None,
     ) -> Tensor:
+        """One causal attention layer. Writes into ``cache`` when one is passed."""
         b, t, _ = x.shape
         h, dh = self.cfg.n_heads, self.cfg.head_dim
         q, k, v = self.qkv(x).view(b, t, 3, h, dh).permute(2, 0, 3, 1, 4)
@@ -221,6 +228,7 @@ class SwiGLU(nn.Module):
         self.down = nn.Linear(cfg.d_ff, cfg.d_model, bias=False)
 
     def forward(self, x: Tensor) -> Tensor:
+        """SiLU-gated linear unit."""
         g, u = self.gate_up(x).chunk(2, dim=-1)
         return self.down(F.silu(g) * u)
 
@@ -247,6 +255,7 @@ class Block(nn.Module):
         start: int,
         attn_out: list[Tensor] | None = None,
     ) -> Tensor:
+        """Pre-norm attention residual, then pre-norm SwiGLU residual."""
         x = x + self.drop(self.attn(self.n1(x), cos, sin, mask, cache, layer, start, attn_out))
         return x + self.drop(self.mlp(self.n2(x)))
 
@@ -261,6 +270,7 @@ class PatchEmbed(nn.Module):
         self.skip = nn.Linear(2 * patch_len, d_model)
 
     def forward(self, values: Tensor, observed: Tensor) -> Tensor:
+        """Embed one patch of scaled values and its observed mask."""
         z = torch.cat([values, observed.to(values.dtype)], dim=-1)
         return self.out(F.silu(self.hidden(z))) + self.skip(z)
 
@@ -306,6 +316,7 @@ class TSModel(nn.Module):
             nn.init.normal_(m.weight, std=0.02)
 
     def num_params(self, body_only: bool = False) -> int:
+        """Parameter count. ``body_only`` counts the transformer blocks."""
         if body_only:
             return sum(p.numel() for p in self.blocks.parameters())
         return sum(p.numel() for p in self.parameters())

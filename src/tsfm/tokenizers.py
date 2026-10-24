@@ -59,23 +59,29 @@ def mean_scale(x: Tensor, observed: Tensor | None = None, min_scale: float = 1e-
 
 @dataclass(frozen=True)
 class BinTokenizer:
+    """Mean-scaled bin vocabulary. Special tokens sit in front of the bins."""
+
     n_bins: int = 4094
     limit: float = 15.0
 
     @property
     def vocab_size(self) -> int:
+        """Bins plus the special tokens."""
         return self.n_bins + N_SPECIAL
 
     @property
     def bin_width(self) -> float:
+        """Width of one bin on the scaled axis."""
         return 2 * self.limit / (self.n_bins - 1)
 
     def centers(self, device: torch.device | None = None) -> Tensor:
+        """Bin centres, from ``-limit`` to ``limit``."""
         return torch.linspace(
             -self.limit, self.limit, self.n_bins, dtype=torch.float64, device=device
         )
 
     def edges(self, device: torch.device | None = None) -> Tensor:
+        """Boundaries between adjacent bin centres."""
         c = self.centers(device)
         return (c[1:] + c[:-1]) / 2
 
@@ -98,6 +104,8 @@ class BinTokenizer:
 
 @dataclass(frozen=True)
 class PatchTokenizer:
+    """Splits a scaled series into fixed-length patches and an observed mask."""
+
     patch_len: int = 32
 
     def encode(self, x: Tensor, scale: Tensor) -> tuple[Tensor, Tensor, Tensor]:
