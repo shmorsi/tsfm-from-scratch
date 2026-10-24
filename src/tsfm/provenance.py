@@ -23,6 +23,7 @@ CHUNK = 1 << 20
 
 
 def sha256_file(path: str | Path) -> str:
+    """Hex SHA-256 of a file, read in chunks."""
     h = hashlib.sha256()
     with open(path, "rb") as f:
         while chunk := f.read(CHUNK):
@@ -31,6 +32,7 @@ def sha256_file(path: str | Path) -> str:
 
 
 def sha256_bytes(data: bytes) -> str:
+    """Hex SHA-256 of ``data``."""
     return hashlib.sha256(data).hexdigest()
 
 
@@ -40,6 +42,7 @@ def canonical_json(obj: Any) -> str:
 
 
 def config_hash(cfg: Mapping[str, Any]) -> str:
+    """Short hash of a config's canonical JSON."""
     return sha256_bytes(canonical_json(cfg).encode())[:16]
 
 
@@ -54,12 +57,14 @@ def _git(*args: str) -> str | None:
 
 
 def git_state() -> dict[str, Any]:
+    """HEAD sha and whether tracked files are dirty."""
     sha = _git("rev-parse", "HEAD")
     status = _git("status", "--porcelain", "--untracked-files=no")
     return {"git_sha": sha, "git_dirty": bool(status) if status is not None else None}
 
 
 def environment() -> dict[str, str]:
+    """Python, platform, package version and the versions of the scoring stack."""
     env = {
         "python": platform.python_version(),
         "platform": platform.platform(),

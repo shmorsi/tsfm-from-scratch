@@ -33,6 +33,8 @@ from tsfm.train.objective import compute_loss, draw_context
 
 @dataclass
 class TrainConfig:
+    """Optimizer, schedule, precision and checkpoint settings."""
+
     steps: int = 1000
     batch_size: int = 64
     micro_batch: int = 64
@@ -52,6 +54,8 @@ class TrainConfig:
 
 @dataclass
 class DataConfig:
+    """Corpora, window length and the validation-batch settings."""
+
     corpora: list[dict[str, Any]] = field(default_factory=list)  # {path, synthetic}
     val: list[dict[str, Any]] = field(default_factory=list)
     window: int = 512
@@ -66,6 +70,8 @@ class DataConfig:
 
 @dataclass
 class RunConfig:
+    """One training run: name, seed, model, data and trainer settings."""
+
     name: str
     seed: int
     model: ModelConfig
@@ -74,11 +80,13 @@ class RunConfig:
 
     @classmethod
     def load(cls, path: str | Path) -> RunConfig:
+        """Read a run YAML."""
         raw = yaml.safe_load(Path(path).read_text())
         return cls.from_dict(raw)
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> RunConfig:
+        """Build a run config from a parsed YAML mapping."""
         t = dict(raw.get("train", {}))
         if "betas" in t:
             t["betas"] = tuple(t["betas"])
@@ -94,6 +102,7 @@ class RunConfig:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        """JSON-ready copy, with betas as a list."""
         from dataclasses import asdict
 
         return {
@@ -106,6 +115,7 @@ class RunConfig:
 
 
 def pick_device(name: str) -> torch.device:
+    """Resolve ``auto`` to CUDA when it is available, else CPU."""
     if name != "auto":
         return torch.device(name)
     if torch.cuda.is_available():
@@ -114,6 +124,7 @@ def pick_device(name: str) -> torch.device:
 
 
 def lr_at(step: int, cfg: TrainConfig) -> float:
+    """Learning rate at ``step``: linear warmup, then cosine decay."""
     if step < cfg.warmup:
         return cfg.lr * (step + 1) / cfg.warmup
     progress = min(1.0, (step - cfg.warmup) / max(1, cfg.steps - cfg.warmup))
@@ -122,6 +133,7 @@ def lr_at(step: int, cfg: TrainConfig) -> float:
 
 
 def make_optimizer(model: TSModel, cfg: TrainConfig) -> torch.optim.AdamW:
+    """AdamW with decay on matrices and none on biases and norms."""
     decay = [p for n, p in model.named_parameters() if p.ndim >= 2 and "embed" not in n]
     no_decay = [p for n, p in model.named_parameters() if p.ndim < 2 or "embed" in n]
     return torch.optim.AdamW(
@@ -136,6 +148,7 @@ def make_optimizer(model: TSModel, cfg: TrainConfig) -> torch.optim.AdamW:
 
 
 def autocast(device: torch.device, precision: str) -> Any:
+    """Autocast context for the configured precision, or a no-op for fp32."""
     if precision == "fp32":
         return nullcontext()
     dtype = torch.float16 if precision == "fp16" else torch.bfloat16
@@ -143,12 +156,14 @@ def autocast(device: torch.device, precision: str) -> Any:
 
 
 def open_corpora(entries: list[dict[str, Any]]) -> tuple[list[Packed], list[bool]]:
+    """Memory-map each packed corpus. The flags say which entries are synthetic."""
     root = Path(os.environ.get("TSFM_PACKED", processed_dir() / "packed"))
     packs = [Packed.open(root / e["path"]) for e in entries]
     return packs, [bool(e.get("synthetic", False)) for e in entries]
 
 
 def window_len(rc: RunConfig) -> int:
+    """Training window length. Patch runs must be a multiple of the patch length."""
     w = rc.data.window
     if rc.model.tokenizer == "patch" and w % rc.model.patch_len:
         raise ValueError("data.window must be a multiple of patch_len")
@@ -162,6 +177,7 @@ def window_len(rc: RunConfig) -> int:
 def batch_tensors(
     sampler: MixtureSampler, rc: RunConfig, rng: np.random.Generator, n: int, device: torch.device
 ) -> tuple[torch.Tensor, torch.Tensor]:
+    """Sample one batch and move it to ``device``."""
     w = window_len(rc)
     x = sampler.sample(rng, n, w)
     ctx = draw_context(rng, x, rc.data.min_context, rc.data.max_context or (w - 1))
@@ -169,12 +185,15 @@ def batch_tensors(
 
 
 def tokens_per_window(rc: RunConfig) -> int:
+    """Tokens the loss counts in one window."""
     w = rc.data.window
     return w // rc.model.patch_len if rc.model.tokenizer == "patch" else w - 1
 
 
 @dataclass
 class Trainer:
+    """The training loop: resume, step, checkpoint, validate, write the summary."""
+
     rc: RunConfig
     run_dir: Path
 
@@ -203,6 +222,7 @@ class Trainer:
 
     # ------------------------------------------------------------------ state
     def state(self) -> dict[str, Any]:
+        """Checkpoint payload: step, weights, optimizer and RNG."""
         return {
             "step": self.step,
             "model": self.model.state_dict(),
@@ -213,12 +233,14 @@ class Trainer:
         }
 
     def save(self) -> None:
+        """Atomically write the checkpoint."""
         self.run_dir.mkdir(parents=True, exist_ok=True)
         tmp = self.ckpt_path.with_suffix(".pt.tmp")
         torch.save(self.state(), tmp)
         os.replace(tmp, self.ckpt_path)
 
     def try_resume(self) -> bool:
+        """Load the checkpoint when one exists."""
         if not self.ckpt_path.exists():
             return False
         st = torch.load(self.ckpt_path, map_location=self.device, weights_only=False)
@@ -243,12 +265,14 @@ class Trainer:
         self.metrics_path.write_text("".join(ln + "\n" for ln in keep))
 
     def log(self, rec: dict[str, Any]) -> None:
+        """Append one metrics record."""
         self.run_dir.mkdir(parents=True, exist_ok=True)
         with open(self.metrics_path, "a") as f:
             f.write(json.dumps(rec) + "\n")
 
     # ------------------------------------------------------------------ steps
     def train_step(self) -> dict[str, float]:
+        """One optimizer step, accumulated over micro-batches."""
         tc = self.rc.train
         if tc.batch_size % tc.micro_batch:
             raise ValueError("batch_size must be a multiple of micro_batch")
@@ -316,6 +340,7 @@ class Trainer:
 
     @torch.no_grad()
     def val_loss(self) -> float | None:
+        """Mean validation loss, or None when no validation data is configured."""
         b = self.val_losses()
         return float(np.mean(b)) if b is not None else None
 
@@ -339,6 +364,7 @@ class Trainer:
     def run(
         self, *, max_steps_this_session: int | None = None, time_budget_min: float | None = None
     ) -> dict[str, Any]:
+        """Train until the step count or the session budget, and return the summary."""
         resumed = self.try_resume()
         if not resumed and self.metrics_path.exists():
             self.metrics_path.unlink()  # a fresh start must not append to an old log
@@ -385,6 +411,7 @@ class Trainer:
         return summary
 
     def compute_summary(self) -> dict[str, Any]:
+        """Parameter counts, tokens seen and an estimated FLOP count."""
         n_body = self.model.num_params(body_only=True)
         tokens = self.step * self.rc.train.batch_size * tokens_per_window(self.rc)
         seq = tokens_per_window(self.rc)
@@ -402,6 +429,7 @@ class Trainer:
         }
 
     def finalize(self, summary: dict[str, Any]) -> None:
+        """Write ``model.pt`` and ``summary.json``."""
         torch.save(
             {"model": self.model.state_dict(), "config": self.rc.to_dict()},
             self.run_dir / "model.pt",
@@ -421,12 +449,14 @@ class Trainer:
 
 
 def train(config: str | Path, run_dir: Path | None = None, **kw: Any) -> dict[str, Any]:
+    """Train the run named in ``config`` and return its summary."""
     rc = RunConfig.load(config)
     run_dir = run_dir or runs_dir() / rc.name
     return Trainer(rc, run_dir).run(**kw)
 
 
 def iter_metrics(run_dir: Path) -> Iterator[dict[str, Any]]:
+    """Yield each logged metrics record."""
     p = run_dir / "metrics.jsonl"
     if p.exists():
         for ln in p.read_text().splitlines():

@@ -123,10 +123,37 @@ def test_figures_match_results_and_images_have_alt_text():
     if not (root / "results/analysis/headline.json").exists():
         assert "| pending | pending |" in readme
         assert "## Blocked on owner" in readme
+        assert ">pending<" in svgs["docs/figures/hero.svg"]
     assert "This is not a test-split scoring time." in readme
+    assert "docs/figures/hero.svg" in readme
+    assert "docs/figures/architecture.svg" in readme
+    assert "docs/figures/integrity.svg" in readme
+    assert "## Quick start" in readme
+    assert "## Data integrity" in readme
+    assert "## Limitations" in readme
+    assert "## Next steps" in readme
+    assert "```mermaid" not in readme
+    assert "beat" not in svgs["docs/figures/hero.svg"].lower()
     card = (root / "MODEL_CARD.md").read_text()
     assert "This is not a test-split scoring time." in card
     assert "docs/figures/scaling.svg" in card
+
+
+def test_diagram_text_uses_only_backed_numbers():
+    """Hero, architecture and integrity text nodes cite results, not invented figures."""
+    import re
+
+    from tsfm.docs.figures import ARCHITECTURE_REL, HERO_REL, INTEGRITY_REL, figure_svgs
+
+    root = repo_root()
+    values = collect_result_values(_result_files(root))
+    allow = load_allowlist(root / TEMPLATE_DIR / "allowed_numbers.txt")
+    svgs = figure_svgs(root)
+    problems = []
+    for rel in (HERO_REL, ARCHITECTURE_REL, INTEGRITY_REL):
+        text = " ".join(re.findall(r"<text\b[^>]*>(.*?)</text>", svgs[rel]))
+        problems += [f"{rel}: {n.text}" for n in unverified_numbers(text, values, allow)]
+    assert problems == [], "diagram numbers not found in results files:\n" + "\n".join(problems)
 
 
 def test_generated_docs_contain_only_backed_numbers():

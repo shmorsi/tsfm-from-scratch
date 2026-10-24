@@ -45,6 +45,7 @@ class CQR:
     expansion: dict[int, float]  # interval name -> additive shift in scaled units
 
     def to_dict(self) -> dict[str, object]:
+        """JSON-ready expansions, keyed by interval level."""
         return {
             "levels": list(self.levels),
             "expansion_scaled": {str(k): float(v) for k, v in sorted(self.expansion.items())},
@@ -52,6 +53,7 @@ class CQR:
 
     @classmethod
     def from_dict(cls, d: dict[str, object]) -> CQR:
+        """Rebuild a CQR object from :meth:`to_dict`."""
         raw = d["expansion_scaled"]
         if not isinstance(raw, dict):
             raise TypeError("expansion_scaled must be a dict")

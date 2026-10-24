@@ -43,6 +43,8 @@ _URL_RE = re.compile(r"\]\([^)]*\)|https?://\S+|<!--.*?-->", re.S)
 
 @dataclass(frozen=True)
 class DocNumber:
+    """One number found in a generated document, at the precision it was printed."""
+
     text: str
     value: float
     decimals: int
@@ -63,6 +65,7 @@ def strip_unchecked(text: str) -> str:
 
 
 def extract_numbers(text: str) -> list[DocNumber]:
+    """Numbers in prose. Code, URLs and comments are ignored."""
     text = strip_unchecked(text)
     out: list[DocNumber] = []
     for m in NUMBER_RE.finditer(text):
@@ -101,6 +104,7 @@ def _numeric_leaves(obj: object) -> Iterator[float]:
 
 
 def collect_result_values(paths: Iterable[Path]) -> list[float]:
+    """Every finite number stored in the given JSON and CSV files."""
     vals: list[float] = []
     for p in paths:
         if p.suffix == ".json":
@@ -135,6 +139,7 @@ def _matches(n: DocNumber, v: float) -> bool:
 
 
 def load_allowlist(path: Path) -> set[str]:
+    """Literals that may appear in a document without a results-file backing."""
     allowed: set[str] = set()
     if not path.exists():
         return allowed

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="300" viewBox="0 0 1100 300" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Decoder block</title>
+<desc id="fig-desc">A pre-norm decoder block: RMSNorm, causal attention with rotary positions, a residual add, RMSNorm, SwiGLU, a residual add, then a quantile head or token logits. The patch quantile head is the one that was selected.</desc>
+<rect width="100%" height="100%" fill="#000000"/>
+<rect x="0.5" y="0.5" width="1099" height="299" fill="none" stroke="#5a626a" stroke-width="1"/>
+<text x="36.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#f5f5f7" letter-spacing="-0.04em">DECODER</text>
+<text x="168.0" y="40.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#a8a8ad" letter-spacing="0.14em">PRE-NORM  ·  PLAIN PYTORCH</text>
+<line x1="36.0" y1="58.0" x2="1064.0" y2="58.0" stroke="#5a626a"/>
+<rect x="36.0" y="80.0" width="240.0" height="188.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<rect x="300.0" y="80.0" width="480.0" height="188.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<rect x="804.0" y="80.0" width="260.0" height="188.0" fill="#0a0a0a" stroke="#5a626a" stroke-width="1"/>
+<line x1="276.0" y1="174.0" x2="293.0" y2="174.0" stroke="#5a626a"/><path d="M293.0 170.5 L300.0 174.0 L293.0 177.5" fill="none" stroke="#5a626a"/>
+<line x1="780.0" y1="174.0" x2="797.0" y2="174.0" stroke="#5a626a"/><path d="M797.0 170.5 L804.0 174.0 L797.0 177.5" fill="none" stroke="#5a626a"/>
+<text x="52.0" y="108.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">INPUT</text>
+<text x="52.0" y="156.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#f5f5f7" letter-spacing="-0.03em">Patch or bin token</text>
+<text x="52.0" y="184.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">Scaled by the context only.</text>
+<text x="52.0" y="212.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">Mean absolute value.</text>
+<text x="316.0" y="108.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">ONE BLOCK</text>
+<text x="316.0" y="136.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">RMSNorm</text>
+<text x="316.0" y="156.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">Causal attention with RoPE</text>
+<text x="316.0" y="176.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">Residual add</text>
+<text x="316.0" y="196.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">RMSNorm</text>
+<text x="316.0" y="216.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">SwiGLU</text>
+<text x="316.0" y="236.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#f5f5f7">Residual add</text>
+<text x="820.0" y="108.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#8e8e93" letter-spacing="0.16em">HEAD</text>
+<text x="820.0" y="150.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#8ec5ff" letter-spacing="-0.03em">Quantile head</text>
+<text x="820.0" y="174.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#a8a8ad">Selected. Non-crossing.</text>
+<text x="820.0" y="214.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#f5f5f7">Token logits</text>
+<text x="820.0" y="236.0" text-anchor="start" font-family="'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#8e8e93">Bins path. Not scored.</text>
+</svg>

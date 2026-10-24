@@ -53,15 +53,19 @@ def regime_of(origin: date) -> str:
 
 @dataclass
 class Series:
+    """One symbol's daily realized-volatility series."""
+
     sym: str
     dates: list[date]
     values: np.ndarray
 
     def index(self, d: date) -> int:
+        """Row index of calendar date ``d``."""
         return (d - self.dates[0]).days
 
 
 def load_all() -> list[Series]:
+    """Realized-volatility series for every symbol in the study."""
     return [Series(s, *load_rvol(s)) for s in SYMBOLS]
 
 
@@ -104,6 +108,7 @@ def score(y: np.ndarray, q: np.ndarray) -> dict[str, float]:
 def evaluate(
     fn: ForecastFn, series: list[Series], start: date, end: date, step: int = 1, batch: int = 256
 ) -> list[dict[str, Any]]:
+    """Score one forecaster on every origin and return the per-origin rows."""
     rows = []
     for s in series:
         idx = origins(s, start, end, step)
@@ -175,6 +180,7 @@ class HAR:
         self._cache: dict[tuple[int, int], tuple[np.ndarray, np.ndarray]] = {}
 
     def fit(self, lx: np.ndarray, h: int) -> list[tuple[np.ndarray, np.ndarray]]:
+        """Least-squares coefficients and residuals for each step of the horizon."""
         f = _har_features(lx)
         out = []
         for k in range(1, h + 1):
@@ -263,6 +269,7 @@ def summarise(
 
 
 def save(name: str, rows: list[dict[str, Any]], info: dict[str, Any]) -> Path:
+    """Write one model's volatility rows and return the path."""
     d = results_dir() / "finance" / name
     d.mkdir(parents=True, exist_ok=True)
     keys = [
@@ -295,6 +302,7 @@ def save(name: str, rows: list[dict[str, Any]], info: dict[str, Any]) -> Path:
 
 
 def load_rows(name: str) -> list[dict[str, Any]]:
+    """Read the rows written by :func:`save`."""
     p = results_dir() / "finance" / name / "per_origin.csv"
     rows = []
     with open(p, newline="") as f:
@@ -312,6 +320,7 @@ def load_rows(name: str) -> list[dict[str, Any]]:
 
 
 def report(models: list[str], ref: str = "random_walk") -> Path:
+    """Write the pooled and regime summaries and return the path."""
     refrows = load_rows(ref)
     out = {m: summarise(load_rows(m), None if m == ref else refrows) for m in models}
     return write_result(
@@ -327,6 +336,7 @@ def report(models: list[str], ref: str = "random_walk") -> Path:
 
 
 def baseline_runs() -> None:
+    """Score the random-walk and HAR baselines and write their reports."""
     series = load_all()
     end = series[0].dates[-1]
     for name, fn in (("random_walk", random_walk), ("har", HAR())):

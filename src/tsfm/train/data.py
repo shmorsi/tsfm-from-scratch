@@ -63,6 +63,8 @@ def pack(parquet_files: list[Path], out_dir: Path) -> dict[str, Any]:
 
 @dataclass
 class Packed:
+    """One memory-mapped corpus: values, offsets and dataset names."""
+
     values: np.ndarray  # memmap float32
     offsets: np.ndarray
     dataset: np.ndarray
@@ -91,9 +93,11 @@ class Packed:
 
     @property
     def lengths(self) -> np.ndarray:
+        """Length of each series."""
         return np.diff(self.offsets)
 
     def series(self, i: int) -> np.ndarray:
+        """Values of series ``i``."""
         return np.asarray(self.values[self.offsets[i] : self.offsets[i + 1]])
 
 
@@ -136,6 +140,7 @@ class MixtureSampler:
         self.probs = w / w.sum()
 
     def group_names(self) -> list[str]:
+        """Dataset name of each sampling group."""
         return [self.corpora[ci].names[di] for ci, di, _, _ in self._groups]
 
     def sample(self, rng: np.random.Generator, batch: int, length: int) -> np.ndarray:
@@ -163,4 +168,5 @@ class MixtureSampler:
 
 
 def step_rng(seed: int, step: int, micro: int, stream: int = 0) -> np.random.Generator:
+    """Generator unique to one seed, step, micro-batch and stream."""
     return np.random.default_rng([seed, step, micro, stream])

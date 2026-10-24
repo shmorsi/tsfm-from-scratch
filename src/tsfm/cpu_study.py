@@ -52,11 +52,13 @@ TRAIN_DATASETS = (
 
 
 def load_study(path: Path) -> dict[str, Any]:
+    """Read a CPU-study YAML file."""
     raw: dict[str, Any] = yaml.safe_load(path.read_text())
     return raw
 
 
 def run_name(prefix: str, seed: int, *, position: str = "rope", cqr: bool = False) -> str:
+    """Directory name for one seed, the no-position ablation, or a conformal run."""
     if position == "none":
         return f"{prefix}_norope"
     name = f"{prefix}_seed{seed}"
@@ -184,6 +186,7 @@ def _write_run_yaml(rc: dict[str, Any], dest: Path) -> Path:
 
 
 def stage_train(study: dict[str, Any], only_seed: int | None) -> None:
+    """Train each requested seed. Existing runs are left in place."""
     from tsfm.paths import results_dir
     from tsfm.train.loop import train
 
@@ -281,6 +284,7 @@ def _eval_one(
 
 
 def stage_val(study: dict[str, Any], only_seed: int | None) -> None:
+    """Score the raw models on the validation split."""
     prefix = str(study["name"])
     names = [run_name(prefix, int(s)) for s in study["seeds"]]
     names.append(run_name(prefix, 0, position="none"))
@@ -357,6 +361,7 @@ def fit_cqr_for_model(study: dict[str, Any], name: str) -> Path:
 
 
 def stage_calibrate(study: dict[str, Any], only_seed: int | None) -> None:
+    """Fit one split-conformal expansion per seed on validation forecasts."""
     prefix = str(study["name"])
     for seed in study["seeds"]:
         if only_seed is not None and int(seed) != only_seed:
@@ -365,6 +370,7 @@ def stage_calibrate(study: dict[str, Any], only_seed: int | None) -> None:
 
 
 def stage_val_cqr(study: dict[str, Any], only_seed: int | None) -> None:
+    """Score the conformalised validation forecasts. This is not a held-out check."""
     prefix = str(study["name"])
     for seed in study["seeds"]:
         if only_seed is not None and int(seed) != only_seed:
@@ -438,6 +444,7 @@ def stage_attention(study: dict[str, Any]) -> None:
 
 
 def stage_report() -> None:
+    """Write the CPU-study summary and redraw the figures that depend on it."""
     from tsfm.analysis import cpu_study_report
     from tsfm.docs.figures import write_figures
 
@@ -448,6 +455,7 @@ def stage_report() -> None:
 
 
 def run_stages(study_path: Path, stage: str, only_seed: int | None) -> None:
+    """Run one named stage of the CPU study, or every stage."""
     import torch
 
     torch.set_num_threads(max(1, os.cpu_count() or 1))

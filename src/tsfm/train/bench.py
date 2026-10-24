@@ -18,6 +18,7 @@ from tsfm.train.loop import RunConfig, Trainer, tokens_per_window
 
 
 def bench_config(path: Path, steps: int, precision: str | None, run_root: Path) -> dict[str, Any]:
+    """Time a few steps of one config and return the measured row."""
     rc = RunConfig.load(path)
     if precision:
         rc.train.precision = precision
@@ -55,6 +56,7 @@ def bench_config(path: Path, steps: int, precision: str | None, run_root: Path) 
 
 
 def run_bench(paths: list[Path], steps: int, precision: str | None, run_root: Path) -> Path:
+    """Bench every config and write the device JSON."""
     dev = "cpu"
     if torch.cuda.is_available():
         dev = torch.cuda.get_device_name(0).replace(" ", "_")

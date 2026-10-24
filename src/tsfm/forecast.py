@@ -27,6 +27,8 @@ from tsfm.tokenizers import N_SPECIAL, PatchTokenizer, before_first, mean_scale
 
 @dataclass
 class Forecast:
+    """Quantile forecasts for a batch, plus the predictive mean and the levels."""
+
     quantiles: np.ndarray  # (B, H, Q)
     mean: np.ndarray  # (B, H)
     levels: tuple[float, ...]

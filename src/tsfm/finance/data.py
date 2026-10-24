@@ -37,6 +37,7 @@ MIN_BARS = 274  # 95% of 288
 
 
 def months(first: tuple[int, int], last: tuple[int, int]) -> list[tuple[int, int]]:
+    """Year-month pairs from ``first`` through ``last``, inclusive."""
     y, m = first
     out = []
     while (y, m) <= last:
@@ -46,14 +47,17 @@ def months(first: tuple[int, int], last: tuple[int, int]) -> list[tuple[int, int
 
 
 def file_name(sym: str, y: int, m: int) -> str:
+    """Binance Vision monthly kline zip name."""
     return f"{sym}-{INTERVAL}-{y:04d}-{m:02d}.zip"
 
 
 def lock_path() -> Path:
+    """Path of the Binance download lock."""
     return repo_root() / "locks" / "binance.lock.json"
 
 
 def local_dir() -> Path:
+    """Directory of the downloaded kline zips."""
     return raw_dir() / "binance"
 
 
@@ -180,6 +184,7 @@ def build() -> dict[str, Any]:
 
 
 def load_rvol(sym: str) -> tuple[list[date], np.ndarray]:
+    """Daily dates and realized volatility for one symbol."""
     p = repo_root() / "results" / "finance" / f"rvol_{sym}.csv"
     dates, vals = [], []
     with open(p, newline="") as f:

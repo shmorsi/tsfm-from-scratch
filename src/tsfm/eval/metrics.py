@@ -21,6 +21,7 @@ import numpy as np
 
 
 def seasonal_error(past: np.ndarray, m: int) -> float:
+    """Mean absolute seasonal difference of ``past``, the MASE scale."""
     past = np.asarray(past, np.float64)
     if past.size <= m:
         m = 1
@@ -32,6 +33,7 @@ def seasonal_error(past: np.ndarray, m: int) -> float:
 def mase(
     ys: Sequence[np.ndarray], medians: Sequence[np.ndarray], pasts: Sequence[np.ndarray], m: int
 ) -> float:
+    """Mean absolute error divided by :func:`seasonal_error`."""
     num, cnt = 0.0, 0
     for y, f, p in zip(ys, medians, pasts, strict=True):
         s = seasonal_error(p, m)
@@ -45,6 +47,7 @@ def mase(
 def weighted_quantile_loss(
     ys: Sequence[np.ndarray], qf: Sequence[dict[float, np.ndarray]], levels: Sequence[float]
 ) -> float:
+    """Quantile loss averaged over levels and time, the CRPS estimator used here."""
     out = []
     for q in levels:
         loss, scale = 0.0, 0.0
@@ -59,6 +62,7 @@ def weighted_quantile_loss(
 
 
 def gmean(x: Sequence[float]) -> float:
+    """Geometric mean. Raises if any value is non-positive or non-finite."""
     a = np.asarray(x, np.float64)
     if (a <= 0).any() or not np.isfinite(a).all():
         raise ValueError("geometric mean needs positive finite values")

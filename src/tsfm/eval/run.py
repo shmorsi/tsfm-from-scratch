@@ -89,6 +89,7 @@ def official_metrics() -> list[Any]:
 def statsforecast_predictor(
     kind: str, prediction_length: int, season: int, freq: str, **kw: Any
 ) -> Any:
+    """A GluonTS predictor wrapping one statsforecast model."""
     if str(VENDOR) not in sys.path:
         sys.path.insert(0, str(VENDOR))
     from statsforecast.models import AutoARIMA, AutoETS, AutoTheta, Naive, SeasonalNaive
@@ -138,6 +139,7 @@ class TSFMPredictor:
     forecast_kwargs: dict[str, Any] | None = None
 
     def predict(self, dataset: Any, **_: Any) -> Iterator[Any]:
+        """Quantile forecasts for one GluonTS batch."""
         from gluonts.dataset.util import forecast_start
         from gluonts.model.forecast import QuantileForecast
 
@@ -197,6 +199,7 @@ class Recorder:
         self.forecasts: list[Any] = []
 
     def predict(self, dataset: Any, **kw: Any) -> Iterator[Any]:
+        """Run ``inner`` and keep the forecasts and the future targets."""
         for f in self.inner.predict(dataset, **kw):
             self.forecasts.append(f)
             yield official_view(f)
@@ -229,6 +232,7 @@ PredictorFactory = Callable[[Any, int, int, str], Any]  # (dataset, prediction_l
 
 
 def evaluate_one(name: str, ds: Any, test_data: Any, factory: PredictorFactory) -> dict[str, Any]:
+    """Score one dataset configuration and return MASE, CRPS, coverage and timing."""
     from gluonts.model import evaluate_model
     from gluonts.time_feature import get_seasonality
 
@@ -256,6 +260,7 @@ def evaluate_one(name: str, ds: Any, test_data: Any, factory: PredictorFactory) 
 
 
 def git_tag_contains_head(tag: str) -> bool:
+    """True when ``tag`` is an ancestor of HEAD."""
     try:
         subprocess.run(
             ["git", "merge-base", "--is-ancestor", tag, "HEAD"],
@@ -269,6 +274,7 @@ def git_tag_contains_head(tag: str) -> bool:
 
 
 def output_dir(model_name: str, split: str, exploratory: bool) -> Path:
+    """Directory for one model's scores on one split."""
     if exploratory:
         return (
             results_dir()
@@ -280,6 +286,7 @@ def output_dir(model_name: str, split: str, exploratory: bool) -> Path:
 
 
 def check_test_discipline(model_name: str, split: str, exploratory: bool) -> None:
+    """Refuse a second test score, and refuse a model test score before the pre-registration tag."""
     if split != "test" or exploratory:
         return
     out = output_dir(model_name, split, False)

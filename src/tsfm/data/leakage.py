@@ -182,6 +182,7 @@ def _gifteval_series() -> Any:
 def build_gifteval_index(
     test_lengths: dict[str, int],
 ) -> tuple[HashIndex, HashIndex, dict[str, Any]]:
+    """Hash every GIFT-Eval window at native frequency and as daily means."""
     names: list[str] = []
     native: dict[str, list[np.ndarray]] = defaultdict(list)
     daily: dict[str, list[np.ndarray]] = defaultdict(list)
@@ -233,6 +234,7 @@ def _corpus_files() -> list[Path]:
 
 
 def check_corpus(native: HashIndex, daily: HashIndex) -> dict[str, Any]:
+    """Compare the built corpus to the GIFT-Eval hash indexes and return the report."""
     per_file: dict[str, Any] = {}
     leaking: list[dict[str, Any]] = []
     for path in _corpus_files():
@@ -301,10 +303,12 @@ def check_corpus(native: HashIndex, daily: HashIndex) -> dict[str, Any]:
 
 
 def exclusions_path() -> Path:
+    """Path of the committed leakage-exclusion list."""
     return repo_root() / "locks" / "leakage_exclusions.json"
 
 
 def load_exclusions() -> set[str]:
+    """Item ids removed from the corpus. Empty if the file is absent."""
     p = exclusions_path()
     if not p.exists():
         return set()

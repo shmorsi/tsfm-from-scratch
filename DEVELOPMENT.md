@@ -20,7 +20,7 @@ The pipeline needs a network connection. It writes to a temporary directory, out
 Edit `docs_templates/*.md`, then run `uv run tsfm docs build`. These files are outputs:
 
 * `README.md`, `DATA_CARD.md`, `MODEL_CARD.md`, `RESEARCH_NOTE.md`
-* `docs/figures/coverage.svg` and `docs/figures/scaling.svg`
+* `docs/figures/hero.svg`, `docs/figures/architecture.svg`, `docs/figures/integrity.svg`, `docs/figures/coverage.svg`, and `docs/figures/scaling.svg`
 
 `uv run tsfm docs check` fails if any of them drift, and if a generated document shows a number that is not in `results/` or `docs_templates/allowed_numbers.txt`. Placeholders are not allowed inside code fences, so a diagram cannot smuggle a measured value past the check.
 
