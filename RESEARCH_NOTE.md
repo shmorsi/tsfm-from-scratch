@@ -53,7 +53,14 @@ Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0
 
 ### Zero-shot GIFT-Eval (test split)
 
-`patch_s2`, the T4 headline, was not scored on the test split. Its checkpoint is not in the repository (`DEVIATIONS.md`). No test number is claimed for it.
+`patch_s2`, the T4 headline, was scored once on the test split after the deadline, from its checkpoint on Drive (`notebooks/score_patch_s2_test.ipynb`), with the pre-registered settings and one seed (`DEVIATIONS.md`). The first row is the primary comparison.
+
+| model | vs | metric | ratio | 95% CI | verdict |
+|---|---|---|---|---|---|
+| headline | upstream:Auto_Arima | crps | 0.688 | [0.624, 0.757] | better |
+| headline | upstream:Auto_Arima | mase | 0.851 | [0.684, 0.986] | better |
+| headline | seasonal_naive | crps | 0.628 | [0.569, 0.692] | better |
+| headline | seasonal_naive | mase | 0.914 | [0.848, 0.989] | better |
 
 A smaller model was pre-registered separately (`PREREGISTRATION_CPU.md`) and scored once, three seeds, on all 97 official configurations. Seed-averaged CRPS is 1.109× Seasonal Naive (95% configuration interval [0.978, 1.265], no detectable difference) and 1.217× upstream AutoARIMA (interval entirely above 1, worse).
 
@@ -132,9 +139,9 @@ study is a separate pre-registration. It did score its own model once.
 
 Things this project does **not** show, whatever the numbers above say:
 
-* A test score for `patch_s2`. The test numbers in this note are the CPU model
-  (833,440 parameters). On that
-  model, CRPS against Seasonal Naive is not distinguishable from 1, and both CRPS and
+* That the two test results describe one model. The CPU model
+  (833,440 parameters) is separate;
+  on it, CRPS against Seasonal Naive is not distinguishable from 1, and both CRPS and
   MASE are worse than upstream AutoARIMA.
 * That the CPU result would survive a larger training budget. It is 2,000 steps on CPU.
 * That the model is useful for any real forecasting or trading decision. Nothing here

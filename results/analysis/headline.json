@@ -1,0 +1,78 @@
+{
+  "_meta": {
+    "created_utc": "2026-10-24T02:30:39+00:00",
+    "env": {
+      "gluonts": "0.15.1",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "statsforecast": "2.1.1",
+      "torch": "2.14.1+cu126",
+      "tsfm": "0.1.0"
+    },
+    "git_dirty": true,
+    "git_sha": "89c8087593c112aee5b4dcd5020265f7d495a100",
+    "label": "M7-headline",
+    "split": "test"
+  },
+  "comparisons": [
+    {
+      "a": "headline",
+      "b": "upstream:Auto_Arima",
+      "ci95": [
+        0.6235557884852769,
+        0.7565564926709726
+      ],
+      "metric": "crps",
+      "primary": true,
+      "ratio": 0.6882908443335406,
+      "verdict": "better"
+    },
+    {
+      "a": "headline",
+      "b": "upstream:Auto_Arima",
+      "ci95": [
+        0.6839374447945358,
+        0.9856226892484798
+      ],
+      "metric": "mase",
+      "primary": false,
+      "ratio": 0.8509839872982753,
+      "verdict": "better"
+    },
+    {
+      "a": "headline",
+      "b": "seasonal_naive",
+      "ci95": [
+        0.5689091066865342,
+        0.6922609889125748
+      ],
+      "metric": "crps",
+      "primary": false,
+      "ratio": 0.6275046472723682,
+      "verdict": "better"
+    },
+    {
+      "a": "headline",
+      "b": "seasonal_naive",
+      "ci95": [
+        0.8480862260850106,
+        0.9887444611861302
+      ],
+      "metric": "mase",
+      "primary": false,
+      "ratio": 0.9136345611316717,
+      "verdict": "better"
+    }
+  ],
+  "ratio_vs_auto_arima_per_seed": {
+    "patch_s2": {
+      "crps": 0.6882908443335405,
+      "mase": 0.8509839872982754
+    }
+  },
+  "seed_runs": [
+    "patch_s2"
+  ]
+}

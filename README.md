@@ -25,12 +25,12 @@ flowchart LR
 
 ## Key results
 
-`patch_s2` (10.1M parameters) reaches CRPS 0.605× Seasonal Naive on the validation split (16 held-out configurations, one seed). Its test score is pending. The weights are not in this repository. Steps are under [Blocked on owner](#blocked-on-owner).
+`patch_s2` (10.1M parameters) on the test split, one seed: CRPS 0.688× upstream AutoARIMA (95% CI [0.624, 0.757], better). Its validation CRPS was 0.605× Seasonal Naive.
 
 | model | parameters | split | seeds | CRPS vs Seasonal Naive [95% CI] | CRPS vs AutoARIMA [95% CI] (primary) |
 |---|---|---|---|---|---|
 | `patch_s2` (T4) | 10,083,392 | validation, 16 configurations | 1 | 0.605 (no interval computed) | AutoARIMA not run on validation |
-| `patch_s2` (T4) | 10,083,392 | test | 1 | pending | pending |
+| `patch_s2` (T4) | 10,083,392 | test, 97 configurations | 1 | 0.628 [0.569, 0.692], better | 0.688 [0.624, 0.757], better |
 | `cpu_s0` (CPU) | 833,440 | test, 97 configurations | 3 | 1.109 [0.978, 1.265], no detectable difference | 1.217 [1.091, 1.362], worse |
 
 Lower is better; 1 equals the reference. Each verdict uses the pre-registered rule: better if the interval is entirely below 1, worse if entirely above, otherwise no detectable difference.
@@ -111,11 +111,22 @@ Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 mea
 
 ## Results
 
+### Test split, `patch_s2`
+
+Scored once from its Drive checkpoint (`notebooks/score_patch_s2_test.ipynb`), one seed, the settings fixed in `PREREGISTRATION.md`. The first row is the pre-registered primary comparison.
+
+| model | vs | metric | ratio | 95% CI | verdict |
+|---|---|---|---|---|---|
+| headline | upstream:Auto_Arima | crps | 0.688 | [0.624, 0.757] | better |
+| headline | upstream:Auto_Arima | mase | 0.851 | [0.684, 0.986] | better |
+| headline | seasonal_naive | crps | 0.628 | [0.569, 0.692] | better |
+| headline | seasonal_naive | mase | 0.914 | [0.848, 0.989] | better |
+
 ### Test split, CPU model
 
 On the frozen test split, the committed CPU model (833,440 parameters, 3 seeds, 97 configurations) has CRPS 1.109× Seasonal Naive (95% CI over configurations [0.978, 1.265]: no detectable difference) and 1.217× upstream AutoARIMA (95% CI [1.091, 1.362]: worse). MASE is 1.835× Seasonal Naive (95% CI [1.565, 2.173]: worse).
 
-![Empirical coverage against nominal coverage for the committed CPU model on the GIFT-Eval test split. Raw quantiles and split-conformal adjustment, averaged across seeds. The dashed line is perfect calibration. The headline test score is pending.](docs/figures/coverage.svg)
+![Empirical coverage against nominal coverage for the committed CPU model on the GIFT-Eval test split. Raw quantiles and split-conformal adjustment, averaged across seeds. The dashed line is perfect calibration.](docs/figures/coverage.svg)
 
 Nominal coverage against empirical coverage on the test split, after averaging the three seeds. Raw quantiles cover 0.401 / 0.642 / 0.730 at the 50/80/90% levels. Split-conformal adjustment, fit on the validation split only, covers 0.713 / 0.932 / 0.975. A calibrated model would sit on the diagonal. The conformal 80% point is above the diagonal, and the CRPS comparison below is worse.
 
@@ -145,7 +156,7 @@ uv run tsfm cpu-study --config configs/cpu_study.yaml
 
 ### Validation split, the study that selected `patch_s2`
 
-The 0.605× Seasonal Naive CRPS for `patch_s2` is a validation result: 16 held-out configurations, one seed, 10,083,392 parameters. Those weights are not in this repository, so that checkpoint has no test score.
+The 0.605× Seasonal Naive CRPS for `patch_s2` is a validation result: 16 held-out configurations, one seed, 10,083,392 parameters. Its test score is in the table above and in `results/analysis/headline.json`. Its weights are not in this repository.
 
 Three sizes, pretrained from scratch on a free Colab T4, scored zero-shot on datasets held out of pretraining. This table is the validation split. It is how `patch_s2` was chosen. It is not a test-set result.
 
@@ -172,22 +183,23 @@ Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853 
 
 ### Published reference points (other models)
 
-Recomputed from upstream's committed GIFT-Eval result files, plus our Seasonal Naive run. These rows are not this repository's model.
+Recomputed from upstream's committed GIFT-Eval result files, plus our Seasonal Naive and `patch_s2` runs. The other rows are other people's models.
 
-Geometric mean over the 97 configurations of each metric divided by Seasonal Naive; rank = mean CRPS rank among the models in this table. Upstream rows are computed by us from upstream's committed result files (`src/tsfm/eval/_vendor/upstream_results`); coverage needs quantiles that those files do not contain.
+GIFT-Eval test split, 97 configurations; geometric mean of each metric divided by Seasonal Naive (lower is better). All rows except ours and Seasonal Naive are computed from upstream's committed result files; coverage needs quantiles those files do not contain.
 
 | model | MASE | CRPS | rank | 80% coverage |
 |---|---|---|---|---|
-| TimesFM-2.5 | 0.705 | 0.490 | 1.59 | n/a |
-| FlowState-9.1M | 0.726 | 0.502 | 1.74 | n/a |
-| Auto_Arima | 1.074 | 0.912 | 3.84 | n/a |
-| Auto_Theta | 1.090 | 1.244 | 4.77 | n/a |
-| Auto_ETS | 1.212 | 7.489 | 4.73 | n/a |
-| Seasonal Naive (run by us; equals upstream on all metrics) | 1.000 | 1.000 | 4.33 | 0.899 |
+| TimesFM-2.5 | 0.705 | 0.490 | 1.63 | n/a |
+| FlowState-9.1M | 0.726 | 0.502 | 1.89 | n/a |
+| **patch_s2 (ours, pretrained from scratch)** | 0.914 | 0.628 | 3.33 | 0.668 |
+| Auto_Arima | 1.074 | 0.912 | 4.69 | n/a |
+| Seasonal Naive (run by us) | 1.000 | 1.000 | 5.25 | 0.899 |
+| Auto_Theta | 1.090 | 1.244 | 5.61 | n/a |
+| Auto_ETS | 1.212 | 7.489 | 5.61 | n/a |
 
 ## What I built and learned
 
-I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The 10,083,392-parameter run that produced the validation headline never had its checkpoint committed, so I did not invent a test number for it.
+I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The 10,083,392-parameter run that produced the validation headline never had its checkpoint committed. It was scored on the test split later, from its checkpoint on Drive, with the pre-registered settings.
 
 Seed-averaged validation CRPS is 0.988× Seasonal Naive (14 configurations, 95% CI [0.729, 1.353]). The same statistic on the test split is 1.109×. The three seed-level test ratios are 0.935, 1.045 and 1.275. Their mean is 1.085, and the 95% Student-t interval on that mean is [0.654, 1.516]. That interval belongs to the mean of the three seed-level geometric means. It is not the interval on the seed-averaged ratio in the table, which is a paired bootstrap over configurations. I kept all three seeds.
 
@@ -240,7 +252,7 @@ That harvest file is what the doc generators read. It contains `results/eval/tes
 
 ## Limits
 
-The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
+The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` has a test score from one seed only, so its interval covers configurations, not training seeds. Nothing here measures economic value.
 
 ## License
 
