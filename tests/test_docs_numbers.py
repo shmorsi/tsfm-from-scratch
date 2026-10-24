@@ -120,10 +120,15 @@ def test_figures_match_results_and_images_have_alt_text():
         for alt, src in images:
             assert alt.strip(), f"{out} image {src} has no alt text"
     readme = (root / "README.md").read_text()
-    if not (root / "results/analysis/headline.json").exists():
-        assert "| pending | pending |" in readme
-        assert "## Blocked on owner" in readme
-        assert ">pending<" in svgs["docs/figures/hero.svg"]
+    card = (root / "MODEL_CARD.md").read_text()
+    note = (root / "RESEARCH_NOTE.md").read_text()
+    _assert_patch_s2_test_copy(
+        readme,
+        card,
+        note,
+        svgs["docs/figures/hero.svg"],
+        headline=root / "results/analysis/headline.json",
+    )
     assert "This is not a test-split scoring time." in readme
     assert "docs/figures/hero.svg" in readme
     assert "docs/figures/architecture.svg" in readme
@@ -134,9 +139,89 @@ def test_figures_match_results_and_images_have_alt_text():
     assert "## Next steps" in readme
     assert "```mermaid" not in readme
     assert "beat" not in svgs["docs/figures/hero.svg"].lower()
-    card = (root / "MODEL_CARD.md").read_text()
     assert "This is not a test-split scoring time." in card
     assert "docs/figures/scaling.svg" in card
+
+
+def _linked_results(tmp_path: Path, *, headline: bool) -> Path:
+    """Repo-shaped root whose results are symlinks, optionally without the headline file."""
+    root = tmp_path / "repo"
+    src = repo_root() / "results"
+    for path in src.rglob("*"):
+        rel = path.relative_to(src)
+        if not headline and rel.as_posix() == "analysis/headline.json":
+            continue
+        dest = root / "results" / rel
+        if path.is_dir():
+            dest.mkdir(parents=True, exist_ok=True)
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.symlink_to(path)
+    return root
+
+
+def _rendered_docs(root: Path) -> tuple[str, str, str, str]:
+    from tsfm.docs.figures import hero_svg
+
+    docs = {
+        name: render((repo_root() / TEMPLATE_DIR / name).read_text(), root)
+        for name in ("README.md", "MODEL_CARD.md", "RESEARCH_NOTE.md")
+    }
+    return docs["README.md"], docs["MODEL_CARD.md"], docs["RESEARCH_NOTE.md"], hero_svg(root)
+
+
+def _assert_patch_s2_test_copy(
+    readme: str, card: str, note: str, hero: str, *, headline: Path
+) -> None:
+    """Pending patch_s2 copy is shown only until the harvested test score exists.
+
+    The bench timing note stays in either case: those columns are a training projection,
+    not the test-split score.
+    """
+    assert "This is not a test-split scoring time." in readme
+    assert "This is not a test-split scoring time." in card
+    if not headline.exists():
+        assert "## Blocked on owner" in readme
+        assert "The `patch_s2` test score is pending." in readme
+        assert "Its test score is pending." in readme
+        assert "| pending | pending |" in readme
+        assert "The headline test score is pending." in readme
+        assert ">pending<" in hero
+        assert "No test-split duration is stored." in readme
+        assert "No test-split duration is stored." in card
+        assert "has no test score" in card
+        assert "`patch_s2`, the T4 headline, was not scored on the test split." in note
+        assert "no test-split scoring of `patch_s2`" in note
+        return
+    stored = json.loads(headline.read_text())["comparisons"][0]
+    ratio = f"{stored['ratio']:.3f}"
+    verdict = str(stored["verdict"])
+    for doc in (readme, card, note):
+        assert ratio in doc
+        assert verdict in doc
+    assert "## Blocked on owner" not in readme
+    assert "test score is pending" not in readme
+    assert "| pending | pending |" not in readme
+    assert "The headline test score is pending." not in readme
+    assert ">pending<" not in hero
+    assert "pending" not in hero
+    assert "No test-split duration is stored." not in readme
+    assert "No test-split duration is stored." not in card
+    assert "has no test score" not in card
+    assert "`patch_s2`, the T4 headline, was not scored on the test split." not in note
+    assert "no test-split scoring of `patch_s2`" not in note
+
+
+def test_patch_s2_pending_copy_tracks_headline_json(tmp_path: Path):
+    """Both gates are rendered: pending text without the file, the stored score with it."""
+    missing = _linked_results(tmp_path / "missing", headline=False)
+    _assert_patch_s2_test_copy(
+        *_rendered_docs(missing), headline=missing / "results/analysis/headline.json"
+    )
+    present = _linked_results(tmp_path / "present", headline=True)
+    _assert_patch_s2_test_copy(
+        *_rendered_docs(present), headline=present / "results/analysis/headline.json"
+    )
 
 
 def test_diagram_text_uses_only_backed_numbers():

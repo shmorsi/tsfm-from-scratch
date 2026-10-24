@@ -319,8 +319,12 @@ def bench_table(root: Path) -> str:
         f"Training projection on one {doc['device'].replace('_', ' ')} "
         f"(`results/bench/{doc['device']}.json`), from {doc['timed_steps']} measured steps "
         "per configuration. `projected_hours` is the stored field. "
-        "This is not a test-split scoring time. No test-split duration is stored."
+        "This is not a test-split scoring time."
     )
+    # The timing columns are a training projection. A test duration is stored only once
+    # the headline test run exists.
+    if not (root / "results" / "analysis" / "headline.json").exists():
+        note += " No test-split duration is stored."
     return (
         note
         + "\n\n"

@@ -68,7 +68,7 @@ Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0
 
 ## Compute
 
-Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time. No test-split duration is stored.
+Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time.
 
 | config | configured steps | parameters | precision | seconds/step | projected hours | peak GB | TFLOP/s |
 |---|---|---|---|---|---|---|---|

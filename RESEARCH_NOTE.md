@@ -130,10 +130,7 @@ performance, and none is claimed.
 
 ## Scope
 
-`DEVIATIONS.md` records, before any T4 model was scored on the test split, what was
-cut from that pre-registered plan: three model sizes instead of four to six, no
-tokenizer conclusion, one seed, and no test-split scoring of `patch_s2`. The later CPU
-study is a separate pre-registration. It did score its own model once.
+`DEVIATIONS.md` records what the T4 budget cut before the test split was scored: three model sizes instead of four to six, no tokenizer conclusion, and one seed. `patch_s2` was scored once afterwards, from its Drive checkpoint: CRPS 0.688× upstream AutoARIMA (95% CI [0.624, 0.757], better; `results/analysis/headline.json`). The CPU study is a separate pre-registration and scored its own model once.
 
 ## Not established
 
