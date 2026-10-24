@@ -10,16 +10,16 @@ Sherif Morsi. A decoder-only time-series transformer, pretrained from scratch in
 
 [Case study](https://shmorsi.github.io/projects/tsfm.html) · [Research note](RESEARCH_NOTE.md) · [Data card](DATA_CARD.md) · [Model card](MODEL_CARD.md) · [Deviations](DEVIATIONS.md) · [Development](DEVELOPMENT.md)
 
-![Pipeline from a pinned corpus through a leakage audit and a decoder-only transformer. The headline is chosen on the validation split. The test split is pending.](docs/figures/hero.svg)
+![Pipeline from a pinned corpus through a leakage audit and a decoder-only transformer. The headline is chosen on the validation split. The test split has a stored verdict.](docs/figures/hero.svg)
 
 ## Key results
 
-`patch_s2` (10.1M parameters) reaches CRPS 0.605× Seasonal Naive on the validation split (16 held-out configurations, one seed). Its test score is pending. The weights are not in this repository. Steps are under [Blocked on owner](#blocked-on-owner).
+`patch_s2` (10.1M parameters) on the test split, one seed: CRPS 0.688× upstream AutoARIMA (95% CI [0.624, 0.757], better). Its validation CRPS was 0.605× Seasonal Naive.
 
 | model | parameters | split | seeds | CRPS vs Seasonal Naive [95% CI] | CRPS vs AutoARIMA [95% CI] (primary) |
 |---|---|---|---|---|---|
 | `patch_s2` (T4) | 10,083,392 | validation, 16 configurations | 1 | 0.605 (no interval computed) | AutoARIMA not run on validation |
-| `patch_s2` (T4) | 10,083,392 | test | 1 | pending | pending |
+| `patch_s2` (T4) | 10,083,392 | test, 97 configurations | 1 | 0.628 [0.569, 0.692], better | 0.688 [0.624, 0.757], better |
 | `cpu_s0` (CPU) | 833,440 | test, 97 configurations | 3 | 1.109 [0.978, 1.265], no detectable difference | 1.217 [1.091, 1.362], worse |
 
 Lower is better; 1 equals the reference. Each verdict uses the pre-registered rule: better if the interval is entirely below 1, worse if entirely above, otherwise no detectable difference.
@@ -69,7 +69,7 @@ Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0
 
 ![Validation loss against training compute for the patch models. The line is the fitted power law and the band is its paired bootstrap, both read from the committed scaling fit.](docs/figures/scaling.svg)
 
-Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time. No test-split duration is stored.
+Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time.
 
 | config | configured steps | parameters | precision | seconds/step | projected hours | peak GB | TFLOP/s |
 |---|---|---|---|---|---|---|---|
@@ -82,11 +82,22 @@ Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 mea
 
 `DEVIATIONS.md` records which of these configurations were not trained. The bench does not change that record, and it is not a forecast of the test-split score.
 
+### Test split, `patch_s2`
+
+Scored once from its Drive checkpoint (`notebooks/score_patch_s2_test.ipynb`), one seed, the settings fixed in `PREREGISTRATION.md`. The first row is the pre-registered primary comparison.
+
+| model | vs | metric | ratio | 95% CI | verdict |
+|---|---|---|---|---|---|
+| headline | upstream:Auto_Arima | crps | 0.688 | [0.624, 0.757] | better |
+| headline | upstream:Auto_Arima | mase | 0.851 | [0.684, 0.986] | better |
+| headline | seasonal_naive | crps | 0.628 | [0.569, 0.692] | better |
+| headline | seasonal_naive | mase | 0.914 | [0.848, 0.989] | better |
+
 ### Test split, CPU model
 
 On the frozen test split, the committed CPU model (833,440 parameters, 3 seeds, 97 configurations) has CRPS 1.109× Seasonal Naive (95% CI over configurations [0.978, 1.265]: no detectable difference) and 1.217× upstream AutoARIMA (95% CI [1.091, 1.362]: worse). MASE is 1.835× Seasonal Naive (95% CI [1.565, 2.173]: worse).
 
-![Empirical coverage against nominal coverage for the committed CPU model on the GIFT-Eval test split. Raw quantiles and split-conformal adjustment, averaged across seeds. The dashed line is perfect calibration. The headline test score is pending.](docs/figures/coverage.svg)
+![Empirical coverage against nominal coverage for the committed CPU model on the GIFT-Eval test split. Raw quantiles and split-conformal adjustment, averaged across seeds. The dashed line is perfect calibration.](docs/figures/coverage.svg)
 
 Nominal coverage against empirical coverage on the test split, after averaging the three seeds. Raw quantiles cover 0.401 / 0.642 / 0.730 at the 50/80/90% levels. Split-conformal adjustment, fit on the validation split only, covers 0.713 / 0.932 / 0.975. A calibrated model would sit on the diagonal. The conformal 80% point is above the diagonal, and the CRPS comparison below is worse.
 
@@ -116,7 +127,7 @@ uv run tsfm cpu-study --config configs/cpu_study.yaml
 
 ### Validation split, the study that selected `patch_s2`
 
-The 0.605× Seasonal Naive CRPS for `patch_s2` is a validation result: 16 held-out configurations, one seed, 10,083,392 parameters. Those weights are not in this repository, so that checkpoint has no test score.
+The 0.605× Seasonal Naive CRPS for `patch_s2` is a validation result: 16 held-out configurations, one seed, 10,083,392 parameters. Its test score is in the table above and in `results/analysis/headline.json`. Its weights are not in this repository.
 
 Three sizes, pretrained from scratch on a free Colab T4, scored zero-shot on datasets held out of pretraining. This table is the validation split. It is how `patch_s2` was chosen. It is not a test-set result.
 
@@ -143,22 +154,23 @@ Positional encoding, seed 0, same 14 validation configurations: RoPE CRPS 0.853 
 
 ### Published reference points (other models)
 
-Recomputed from upstream's committed GIFT-Eval result files, plus our Seasonal Naive run. These rows are not this repository's model.
+Recomputed from upstream's committed GIFT-Eval result files, plus our Seasonal Naive and `patch_s2` runs. The other rows are other people's models.
 
-Geometric mean over the 97 configurations of each metric divided by Seasonal Naive; rank = mean CRPS rank among the models in this table. Upstream rows are computed by us from upstream's committed result files (`src/tsfm/eval/_vendor/upstream_results`); coverage needs quantiles that those files do not contain.
+GIFT-Eval test split, 97 configurations; geometric mean of each metric divided by Seasonal Naive (lower is better). All rows except ours and Seasonal Naive are computed from upstream's committed result files; coverage needs quantiles those files do not contain.
 
 | model | MASE | CRPS | rank | 80% coverage |
 |---|---|---|---|---|
-| TimesFM-2.5 | 0.705 | 0.490 | 1.59 | n/a |
-| FlowState-9.1M | 0.726 | 0.502 | 1.74 | n/a |
-| Auto_Arima | 1.074 | 0.912 | 3.84 | n/a |
-| Auto_Theta | 1.090 | 1.244 | 4.77 | n/a |
-| Auto_ETS | 1.212 | 7.489 | 4.73 | n/a |
-| Seasonal Naive (run by us; equals upstream on all metrics) | 1.000 | 1.000 | 4.33 | 0.899 |
+| TimesFM-2.5 | 0.705 | 0.490 | 1.63 | n/a |
+| FlowState-9.1M | 0.726 | 0.502 | 1.89 | n/a |
+| **patch_s2 (ours, pretrained from scratch)** | 0.914 | 0.628 | 3.33 | 0.668 |
+| Auto_Arima | 1.074 | 0.912 | 4.69 | n/a |
+| Seasonal Naive (run by us) | 1.000 | 1.000 | 5.25 | 0.899 |
+| Auto_Theta | 1.090 | 1.244 | 5.61 | n/a |
+| Auto_ETS | 1.212 | 7.489 | 5.61 | n/a |
 
 ### What the runs showed
 
-I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The 10,083,392-parameter run that produced the validation headline never had its checkpoint committed, so I did not invent a test number for it.
+I wrote the model, the training loop, and the GIFT-Eval scoring path in plain PyTorch, then trained a smaller model whose weights are in the repository. The 10,083,392-parameter run that produced the validation headline never had its checkpoint committed. It was scored on the test split later, from its checkpoint on Drive, with the pre-registered settings.
 
 Seed-averaged validation CRPS is 0.988× Seasonal Naive (14 configurations, 95% CI [0.729, 1.353]). The same statistic on the test split is 1.109×. The three seed-level test ratios are 0.935, 1.045 and 1.275. Their mean is 1.085, and the 95% Student-t interval on that mean is [0.654, 1.516]. That interval belongs to the mean of the three seed-level geometric means. It is not the interval on the seed-averaged ratio in the table, which is a paired bootstrap over configurations. I kept all three seeds.
 
@@ -187,7 +199,7 @@ Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in 
 
 ## Limitations
 
-The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
+The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` has a test score from one seed only, so its interval covers configurations, not training seeds. Nothing here measures economic value.
 
 The leakage check finds exact and rescaled copies, not noisy or resampled ones. The scaling fit describes the runs that were trained. The bins tokenizer was trained and not scored (`DEVIATIONS.md`).
 
@@ -200,28 +212,6 @@ None of this has been run. It is not a result.
 * **Language-conditioned forecasting.** I would condition the same decoder on a short text description of the series, such as domain and frequency, and I would score that only under a new pre-registration. That conditioner has not been built.
 * **Agents.** I would expose the forecaster as a tool a caller can ask for a context, a frequency, and a baseline, and I would keep every test score behind the same pre-registered gate.
 
-## Blocked on owner
-
-One item. The `patch_s2` test score is pending. The validation run's weights are not in this repository, and giving them the pre-registered test score needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
-
-The weights file recorded with the validation run has SHA-256 85c46256cefa665b7eb0822f9877831563df85e22345670b40c4a115c16d0fd2.
-
-No test-split duration is stored. The validation score of this checkpoint stored a `seconds` field on each of its configurations in `results/eval/val/patch_s2/run.json`. That file is not a forecast of the test split, and the T4 training projection in `results/bench/Tesla_T4.json` is not a scoring time. Finished test configurations are written to the Drive work folder. Run all again after a disconnect and the score continues from those files. A completed `all_results.csv` is not scored a second time.
-
-1. Merge this commit to `main`, or set `COMMIT` in the notebook to the branch that contains it. The notebook clones `COMMIT` (default `main`) and scores that revision. The badge at the top opens the notebook on `main`.
-2. Put the checkpoint on Google Drive at `/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt`, with `model.pt` beside it. `ckpt.pt` or `model.pt` both work. The script scores the file with the SHA-256 above.
-3. Open `notebooks/score_patch_s2_test.ipynb`, choose a T4 GPU runtime, then Runtime -> Run all. The notebook checks that the GPU is a T4 and that the checkpoint is `patch_s2` before it touches the test split.
-4. Download `/content/drive/MyDrive/tsfm/score_patch_s2/harvest_patch_s2.txt`. A copied notebook print can truncate, and a truncated file fails the SHA-256 check.
-5. On a local clone of the same commit:
-
-```bash
-uv run python scripts/harvest_colab_output.py harvest_patch_s2.txt
-uv run tsfm docs build
-```
-
-6. Commit the files the harvest script wrote and the docs `tsfm docs build` regenerated. Do not hand-edit numbers.
-
-That harvest file is what the doc generators read. It contains `results/eval/test/patch_s2/` (`all_results.csv`, `run.json`, `config.json`), a rebuilt `results/analysis/test_summary.json`, and a new `results/analysis/headline.json`. The harvest script appends `results/sync_log.json`. `results/analysis/cpu_study.json` is not in the file. Ranks in the rebuilt summary include `patch_s2`. CRPS and MASE for the other models are recomputed from the same vendored files.
 
 ## License
 

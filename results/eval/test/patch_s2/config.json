@@ -1,0 +1,7 @@
+{
+    "model": "patch_s2",
+    "model_type": "zero-shot",
+    "model_dtype": "float32",
+    "testdata_leakage": "No",
+    "replication_code_available": "Yes"
+}

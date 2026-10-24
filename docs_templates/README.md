@@ -179,6 +179,8 @@ None of this has been run. It is not a result.
 * **Language-conditioned forecasting.** I would condition the same decoder on a short text description of the series, such as domain and frequency, and I would score that only under a new pre-registration. That conditioner has not been built.
 * **Agents.** I would expose the forecaster as a tool a caller can ask for a context, a frequency, and a baseline, and I would keep every test score behind the same pre-registered gate.
 
+{{ if exists:results/analysis/headline.json }}
+{{ else }}
 ## Blocked on owner
 
 One item. The `patch_s2` test score is pending. The validation run's weights are not in this repository, and giving them the pre-registered test score needs a Colab T4. Do not run `notebooks/colab_runner.ipynb` for it: that queue can resume a discarded partial test run, and it would also start the volatility-model stages that `DEVIATIONS.md` records as not run.
@@ -201,6 +203,7 @@ uv run tsfm docs build
 6. Commit the files the harvest script wrote and the docs `tsfm docs build` regenerated. Do not hand-edit numbers.
 
 That harvest file is what the doc generators read. It contains `results/eval/test/patch_s2/` (`all_results.csv`, `run.json`, `config.json`), a rebuilt `results/analysis/test_summary.json`, and a new `results/analysis/headline.json`. The harvest script appends `results/sync_log.json`. `results/analysis/cpu_study.json` is not in the file. Ranks in the rebuilt summary include `patch_s2`. CRPS and MASE for the other models are recomputed from the same vendored files.
+{{ end }}
 
 ## License
 

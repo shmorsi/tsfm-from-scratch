@@ -62,6 +62,8 @@ def build() -> str:
 
     # --- headline test table: our seed-averaged model, references
     tm = test["models"]
+    if head and "headline" not in tm:
+        tm = dict(tm, headline=tm[hl])
     order = [
         "headline",
         "upstream:TimesFM-2.5",

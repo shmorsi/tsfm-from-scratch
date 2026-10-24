@@ -30,7 +30,7 @@ Decoder-only transformer written in plain PyTorch: pre-norm RMSNorm, rotary posi
 | training compute (6ND) | 1.14e+16 FLOPs |
 | precision / hardware | fp16 on one Colab T4 |
 
-`patch_s2` was selected on the validation split (CRPS 0.605× Seasonal Naive, 16 configurations, one seed). Its weights are not in this repository. It has no test score. The CPU test numbers above are a different model.
+`patch_s2` was selected on the validation split (CRPS 0.605× Seasonal Naive, 16 configurations, one seed). Its weights are not in this repository. It was scored once on the test split from its Drive checkpoint, one seed: CRPS 0.688× upstream AutoARIMA (better; `results/analysis/headline.json`). The CPU test numbers above are a different model.
 
 Inputs for that run are patches of 32 steps, clipped at 100 times the context scale in magnitude. The head predicts 13 non-crossing quantiles of the next 64 steps.
 
@@ -68,7 +68,7 @@ Power-law fit L = a * C^(-b) over 3 runs: b = 0.0578 (95% bootstrap interval 0.0
 
 ## Compute
 
-Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time. No test-split duration is stored.
+Training projection on one Tesla T4 (`results/bench/Tesla_T4.json`), from 10 measured steps per configuration. `projected_hours` is the stored field. This is not a test-split scoring time.
 
 | config | configured steps | parameters | precision | seconds/step | projected hours | peak GB | TFLOP/s |
 |---|---|---|---|---|---|---|---|
@@ -97,4 +97,4 @@ Apache-2.0 (`LICENSE`). Cite this software with `CITATION.cff`.
 * The no-position ablation was scored on validation only.
 * No comparison against Chronos, TimesFM, or FlowState was run for this model. Upstream files for other models are context, not a claim that this model beat them.
 * Univariate only. Values beyond the clipping range of the T4 patch head cannot be represented by that head.
-* `patch_s2` still has no test score.
+* `patch_s2` has a test score from one seed only.
