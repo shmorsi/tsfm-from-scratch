@@ -11,7 +11,7 @@ authors:
   - family-names: Morsi
     given-names: Sherif
 repository-code: https://github.com/shmorsi/tsfm-from-scratch
-url: https://github.com/shmorsi/tsfm-from-scratch
+url: https://shmorsi.github.io/
 license: Apache-2.0
 version: 0.1.0
 keywords:
