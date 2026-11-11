@@ -7,7 +7,10 @@ eval each), and the published FlowState-9.1M checkpoint on the test split.
 Phase B: needs ``results/analysis/headline_choice.json`` committed in the repo (the
 pre-registered selection, made on the validation split). Trains seeds 1 and 2 of the
 headline config, scores the three seeds on the test split (once), then runs the
-realized-volatility study for the seed-0 checkpoint (zero-shot and fine-tuned).
+realized-volatility study for the seed-0 checkpoint (zero-shot and fine-tuned). A test
+score or a volatility run that the checked-out commit already holds is skipped: the
+seed-0 test score came from ``notebooks/score_patch_s2_test.ipynb``, and the volatility
+study has ``notebooks/vol_study_patch_s2.ipynb``.
 
 Every stage leaves ``<drive>/queue/<stage>.done``; re-running skips finished stages and
 training resumes from its checkpoint, so a disconnected session just runs the cell again.
@@ -100,6 +103,12 @@ def export_run(drive: Path, name: str) -> None:
 def stage(drive: Path, name: str) -> bool:
     """True if the stage still has to run."""
     return not (drive / "queue" / f"{name}.done").exists()
+
+
+def in_checkout(rel: str) -> bool:
+    """True if the checked-out commit already holds this results file. A result that is
+    in the repository was scored once already and is not produced a second time here."""
+    return (ROOT / rel).is_file()
 
 
 def done(drive: Path, name: str) -> None:
@@ -264,6 +273,9 @@ def main() -> int:
         for name in names:
             if not stage(drive, f"test_{name}"):
                 continue
+            if in_checkout(f"results/eval/test/{name}/all_results.csv"):
+                say(f"{name} already has its test score in this commit; not scoring it again")
+                continue
             status(drive, stage=f"test_{name}")
             sh(
                 f'uv run tsfm eval --model "{drive}/runs/{name}" --name {name} --split test --device cuda',
@@ -275,6 +287,9 @@ def main() -> int:
         # zero-shot and fine-tuned, on the realized-volatility test period.
         for vname, flag in (("tsfm_zero_shot", ""), ("tsfm_finetuned", "--finetune")):
             if not stage(drive, f"vol_{vname}"):
+                continue
+            if in_checkout(f"results/finance/{vname}/run.json"):
+                say(f"{vname} is already in this commit; not running it again")
                 continue
             status(drive, stage=f"vol_{vname}")
             sh(

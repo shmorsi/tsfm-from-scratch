@@ -3,6 +3,8 @@
 * ``notebooks/colab_runner.ipynb``: the resumable GPU queue (training, validation scoring).
 * ``notebooks/score_patch_s2_test.ipynb``: the one pre-registered test-split score of
   the T4 headline model, from its checkpoint on Google Drive.
+* ``notebooks/vol_study_patch_s2.ipynb``: the pre-registered realized-volatility study
+  for the same checkpoint, zero-shot and fine-tuned, once.
 """
 
 from __future__ import annotations
@@ -32,6 +34,15 @@ BENCH_STEPS = f"{int(_PATCH_S2_BENCH['configured_steps']):,}"
 BENCH_MEM = f"{_PATCH_S2_BENCH['peak_memory_gb']:.2f}"
 BENCH_TIMED = str(int(_BENCH["timed_steps"]))
 BENCH_PREC = str(_PATCH_S2_BENCH["precision"])
+# Whether the test score exists yet, so the score notebook says what is true today.
+_HEADLINE = ROOT / "results" / "analysis" / "headline.json"
+SCORED_UTC = (
+    json.loads(_HEADLINE.read_text())["_meta"]["created_utc"][:16].replace("T", " ")
+    if _HEADLINE.exists()
+    else ""
+)
+# The volatility study: origins scored by the committed baselines.
+VOL_ORIGINS = f"{int(_json('results/finance/har/run.json')['n_rows']):,}"
 
 CELLS: list[tuple[str, str]] = [
     (
@@ -43,11 +54,12 @@ files go to Google Drive; if the session disconnects, run all cells again and th
 continues where it stopped (training resumes exactly from the last checkpoint, written
 every <= 10 minutes).
 
-This is not the remaining `patch_s2` test score. Use
-`notebooks/score_patch_s2_test.ipynb` for that. Phase B of this queue can resume the
-discarded partial test outputs from 2026-10-15, and it also starts the volatility-model
-stages that `DEVIATIONS.md` records as not run. Run all does nothing until `CONFIRM`
-below is set.
+This is not the `patch_s2` test score (`notebooks/score_patch_s2_test.ipynb`) and not
+the volatility study (`notebooks/vol_study_patch_s2.ipynb`). Phase B of this queue can
+resume the discarded partial test outputs from 2026-10-15, and it also starts the
+volatility-model stages that `DEVIATIONS.md` records as not run. It skips either one
+when the checked-out commit already holds that result. Run all does nothing until
+`CONFIRM` below is set.
 
 * Phase **A**: throughput benchmark, scaling grid and bins model (train + validation
   eval each), FlowState-9.1M on the test split.
@@ -159,11 +171,29 @@ if not test_only:
 ]
 
 
+SCORE_STATUS = (
+    f"""**Status: done.** This notebook has been run. `patch_s2` has its one test score
+(`results/analysis/headline.json`, written {SCORED_UTC} UTC), and `tsfm eval` refuses a
+second one. The notebook is kept as the record of how that score was produced; the text
+below describes that run.
+
+"""
+    if SCORED_UTC
+    else ""
+)
+SCORE_STATE = (
+    """Its checkpoint stayed on Google Drive, so the score could not be computed from a
+clone. This notebook gave it the pre-registered one, on a Colab T4. Do not"""
+    if SCORED_UTC
+    else """Its checkpoint stayed on Google Drive, so it has no
+test score yet. This notebook gives it the pre-registered one, on a Colab T4. Do not"""
+)
+
 SCORE_INTRO = f"""# Score `patch_s2` on the GIFT-Eval test split (once)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/score_patch_s2_test.ipynb)
 
-**Time, before Run all.** A free Colab T4 can disconnect. Each finished test configuration
+{SCORE_STATUS}**Time, before Run all.** A free Colab T4 can disconnect. Each finished test configuration
 is written to the Drive `WORK` folder, and Run all again continues from those files. A
 completed `all_results.csv` is not scored again.
 
@@ -175,8 +205,7 @@ stored a `seconds` field on each configuration in `results/eval/val/patch_s2/run
 Those values are not a forecast of the test split.
 
 `patch_s2` ({PATCH_S2_PARAMS} parameters) was chosen on the validation split by the rule in
-`PREREGISTRATION.md` section 4. Its checkpoint stayed on Google Drive, so it has no
-test score yet. This notebook gives it the pre-registered one, on a Colab T4. Do not
+`PREREGISTRATION.md` section 4. {SCORE_STATE}
 paste in outputs from another machine. The parameter count and the checkpoint hash
 below are read from the committed validation run when this notebook is generated.
 
@@ -207,7 +236,8 @@ It is not a second look: the 2026-10-15 attempt disconnected partway and its par
 outputs were never inspected. This notebook writes to a new folder and never reads them.
 Do not use `notebooks/colab_runner.ipynb` for this score. That queue can resume those
 partial outputs, and it would also start the volatility-model stages that the same file
-records as not run.
+records as not run. Those stages have their own notebook,
+`notebooks/vol_study_patch_s2.ipynb`.
 `PREREGISTRATION_CPU.md` does not authorise or forbid this run; the CPU study is a
 separate model with its own test score.
 
@@ -345,6 +375,211 @@ print(open(f"{WORK}/harvest_patch_s2.txt").read())
 ]
 
 
+VOL_INTRO = f"""# Run the volatility study for `patch_s2` (once)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shmorsi/tsfm-from-scratch/blob/main/notebooks/vol_study_patch_s2.ipynb)
+
+`PREREGISTRATION_VOL.md` (tag `prereg-vol-v1`) names four models for the realized-volatility
+study. The two baselines, a random walk and HAR-RV, were scored before the deadline. The
+other two were not (`DEVIATIONS.md`): the headline model `patch_s2` zero-shot, and the same
+weights after fine-tuning. Its checkpoint stayed on Google Drive, so they cannot be run
+from a clone. This notebook runs both, once, on the series and with the study code that
+scored the baselines.
+
+**Time, before Run all.** No duration is stored for this study, so none is promised here.
+The work is small next to pretraining: {VOL_ORIGINS} forecast origins of 22 days for each
+run, and at most 300 fine-tuning steps on short windows. The run also installs the pinned
+environment and, with `VERIFY_RAW` on, downloads the Binance archives again. A free Colab
+runtime can disconnect: each finished run is written to the Drive `WORK` folder, and Run all
+again continues from there. A finished run is not run a second time.
+
+**Before Run all**
+
+1. Merge the commit you want to run, or set `COMMIT` below to that branch. The notebook
+   clones `COMMIT` (default `main`).
+2. Runtime -> Change runtime type -> T4 GPU.
+3. Leave `CHECKPOINT_PATH` when the run folder is already at the default Drive path. It
+   has to be that `patch_s2` run, not a neighbour such as `bins_s2`. The weights that are
+   used are the ones whose SHA-256 was recorded with the validation run:
+   `{PATCH_S2_SHA}`.
+
+**What the pre-registration fixes, and this notebook follows**
+
+* Data: daily realized volatility of BTCUSDT and ETHUSDT. The two series are the files in
+  `results/finance/`, and they must hash to the values in `results/finance/rvol_summary.json`,
+  the files the baselines were scored on. With `VERIFY_RAW` on, the Binance archives are
+  also downloaded again, checked against Binance's published checksums and
+  `locks/binance.lock.json`, and must rebuild those two files byte for byte.
+* Test period: every day from 2020-01-01 is a forecast origin, 22 days ahead.
+* Model 3: the checkpoint chosen in `PREREGISTRATION.md`, seed 0, zero-shot.
+* Model 4: the same weights fine-tuned on data up to 2019-06-30 with the pretraining
+  objective (AdamW, learning rate 1e-4, batch 64, at most 300 steps). The step with the
+  lowest weighted quantile loss on the validation period (2019-07-01 to 2019-12-31,
+  origins every 5 days) is kept.
+* Scores: pooled weighted quantile loss over both symbols and all test origins, as a ratio
+  to the random walk with a 95% moving-block bootstrap interval (blocks of 22 origins).
+* Primary comparisons: fine-tuned against zero-shot, and each against HAR-RV. One model is
+  better than another only if the whole interval of its loss ratio lies below 1.
+* Scored once. The script stops if the checked-out commit already holds either run, and
+  `scripts/harvest_colab_output.py` refuses to replace a committed run with different rows.
+
+**Where the code is more specific than the protocol.** Nothing is changed for this run.
+These are stated so that the write-up can state them too.
+
+* The model reads at most the last 2,048 days before an origin, the inference setting of
+  `PREREGISTRATION.md` section 5. The protocol says the context is all data up to the
+  origin. From 2023 the history is longer than 2,048 days.
+* During fine-tuning the validation loss is measured every 25 steps, so the kept step is
+  the best of steps 0, 25, 50 and so on. If step 0 is the best, the fine-tuned model is
+  the zero-shot model and the two runs give the same rows.
+* AdamW runs with betas 0.9 and 0.95 and no weight decay. The protocol names only AdamW.
+
+**What this run is not.** It is one checkpoint, seed 0. It measures statistical forecast
+scores only. No trading or economic-value claim of any kind is made from it.
+
+**After it finishes.** The last cell prints where the harvest file is. Download
+`harvest_vol_patch_s2.txt` from the Drive `WORK` folder (a copied notebook print can
+truncate, and a truncated file fails the SHA-256 check). Then, on a local clone of the
+same commit:
+
+    uv run python scripts/harvest_colab_output.py harvest_vol_patch_s2.txt
+    uv run tsfm docs build
+
+Commit the files the harvest script wrote and the docs that command regenerated, and add a
+dated entry to `DEVIATIONS.md`, whose 2026-10-15 table says the model was not run on this
+study. Do not hand-edit numbers. The harvest file holds:
+
+* `results/finance/summary.json` (rebuilt by `tsfm vol report`; this replaces the previous file)
+* `results/finance/tsfm_zero_shot/` and `results/finance/tsfm_finetuned/`: `run.json` and
+  `per_origin.csv` each. The rows travel packed against the random-walk rows already in
+  the repository, and the harvest script restores the exact files.
+
+The same folder gets `release/tsfm_patch_s2_seed0_model.pt`, a copy of the weights that
+were scored, with their SHA-256 beside them. Attach that file to a GitHub release if the
+weights should be public.
+"""
+
+VOL_CELLS: list[tuple[str, str]] = [
+    ("markdown", VOL_INTRO),
+    (
+        "code",
+        """# Parameters
+# ============================================================================
+# CHECKPOINT_PATH: the patch_s2 run folder on Drive. ckpt.pt (training checkpoint) or
+# model.pt (inference weights) both work: the script checks the run config and the
+# parameter count, then uses the file whose SHA-256 matches the validation run.
+CHECKPOINT_PATH = "/content/drive/MyDrive/tsfm/runs/patch_s2/ckpt.pt"
+# VERIFY_RAW: download the Binance archives again and require them to rebuild the
+# committed series exactly. Set to False only if that download fails; the harvest file
+# then records that the re-check was skipped.
+VERIFY_RAW = True
+# ============================================================================
+REPO = "shmorsi/tsfm-from-scratch"
+COMMIT = "main"  # or a full commit SHA, or a branch name
+WORK = "/content/drive/MyDrive/tsfm/vol_study"  # finished runs, harvest file, weights copy""",
+    ),
+    (
+        "code",
+        """# 1. Mount Drive (checkpoint in, finished runs and the harvest file out)
+import os
+
+from google.colab import drive
+
+drive.mount("/content/drive")
+assert os.path.isfile(CHECKPOINT_PATH), f"CHECKPOINT_PATH not found: {CHECKPOINT_PATH}"
+os.makedirs(WORK, exist_ok=True)""",
+    ),
+    (
+        "code",
+        """# 2. Clone the repo at COMMIT, with tags (the script checks for prereg-vol-v1)
+import os
+import subprocess
+
+if not os.path.exists("/content/tsfm"):
+    subprocess.run(["git", "clone", "-q", f"https://github.com/{REPO}.git", "/content/tsfm"], check=True)
+subprocess.run(["git", "-C", "/content/tsfm", "fetch", "-q", "--force", "--tags", "origin"], check=True)
+remote = f"origin/{COMMIT}"
+known = subprocess.run(["git", "-C", "/content/tsfm", "rev-parse", "-q", "--verify", remote], capture_output=True)
+ref = remote if known.returncode == 0 else COMMIT
+subprocess.run(["git", "-C", "/content/tsfm", "checkout", "-q", "--force", "--detach", ref], check=True)
+print(subprocess.run(["git", "-C", "/content/tsfm", "log", "-1", "--oneline"], capture_output=True, text=True).stdout)
+tagged = subprocess.run(["git", "-C", "/content/tsfm", "merge-base", "--is-ancestor", "prereg-vol-v1", "HEAD"])
+assert tagged.returncode == 0, "prereg-vol-v1 is not in this commit's history; nothing is run"
+""",
+    ),
+    (
+        "code",
+        """# 3. Install (uv, locked dependencies, CUDA 12.6 PyTorch build)
+!curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null
+import os
+
+os.environ["PATH"] = os.path.expanduser("~/.local/bin") + ":" + os.environ["PATH"]
+os.environ["TSFM_HOME"] = "/content/tsfm_home"
+%cd /content/tsfm
+!uv sync --locked --extra cu126 -q
+""",
+    ),
+    (
+        "code",
+        """# 4. GPU check with the PyTorch this repo pins (not Colab's preinstalled build)
+import subprocess
+
+smi = subprocess.run(["nvidia-smi"], capture_output=True, text=True)
+print(smi.stdout)
+probe = subprocess.run(
+    [
+        "uv",
+        "run",
+        "python",
+        "-c",
+        "import torch; name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else ''; print(torch.__version__); print(torch.cuda.is_available()); print(name)",
+    ],
+    check=True,
+    capture_output=True,
+    text=True,
+)
+print(probe.stdout)
+lines = probe.stdout.splitlines()
+assert len(lines) >= 3, "GPU probe did not print version, availability and device name"
+assert lines[1] == "True", "No GPU: Runtime -> Change runtime type -> T4 GPU\"""",
+    ),
+    (
+        "code",
+        """# 5. Check the checkpoint, the tag, the inputs and that nothing was run before
+!uv run python scripts/run_vol_study.py --checkpoint "{CHECKPOINT_PATH}" --work "{WORK}" --dry-run""",
+    ),
+    (
+        "code",
+        """# 6. Run once: input re-check, zero-shot, fine-tuned, tsfm vol report, harvest file,
+#    weights copy, tsfm docs build. Re-run after a disconnect.
+RAW = "" if VERIFY_RAW else "--skip-raw-check"
+!uv run python scripts/run_vol_study.py --checkpoint "{CHECKPOINT_PATH}" --work "{WORK}" --device cuda {RAW}""",
+    ),
+    (
+        "code",
+        """# 7. What to download. Take WORK/harvest_vol_patch_s2.txt from Drive (do not copy a
+#    truncated print). On a local clone of this COMMIT:
+#    uv run python scripts/harvest_colab_output.py harvest_vol_patch_s2.txt
+#    uv run tsfm docs build
+import os
+
+harvest = f"{WORK}/harvest_vol_patch_s2.txt"
+print("download this file from Drive:", harvest, f"({os.path.getsize(harvest):,} bytes)")
+for name in sorted(os.listdir(f"{WORK}/parts")):
+    size = os.path.getsize(os.path.join(WORK, "parts", name))
+    print("  the same blocks in parts:", f"{WORK}/parts/{name}", f"({size:,} bytes)")
+with open(harvest) as f:
+    for line in f:
+        if line.startswith("==="):
+            break
+        print(line, end="")
+print("weights that were scored, for a GitHub release:")
+print(open(f"{WORK}/release/tsfm_patch_s2_seed0_model.pt.sha256").read())
+!git -C /content/tsfm status --short""",
+    ),
+]
+
+
 def build(
     cells_src: list[tuple[str, str]] | None = None, prefix: str = "cell"
 ) -> dict[str, object]:
@@ -376,6 +611,7 @@ def build(
 NOTEBOOKS: dict[str, tuple[list[tuple[str, str]], str]] = {
     "colab_runner.ipynb": (CELLS, "cell"),
     "score_patch_s2_test.ipynb": (SCORE_CELLS, "score"),
+    "vol_study_patch_s2.ipynb": (VOL_CELLS, "vol"),
 }
 
 

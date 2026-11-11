@@ -77,9 +77,27 @@ realized volatility of BTCUSDT and ETHUSDT from Binance Vision 5-minute klines
 (CC BY-NC-SA 4.0), 22-day forecasts from every day of the test period, pooled weighted
 quantile loss with moving-block bootstrap intervals.
 
+{{ if exists:results/finance/tsfm_finetuned/run.json }}
+The baselines were scored before the deadline; our model was not (`DEVIATIONS.md`).
+`patch_s2` (seed 0) was scored afterwards from its Drive checkpoint
+(`notebooks/vol_study_patch_s2.ipynb`), by the same study code as the baselines:
+zero-shot, and again after fine-tuning with the pretraining objective on the period the
+protocol sets aside for it. Fine-tuning kept step
+{{ results/finance/tsfm_finetuned/run.json#info.finetune_kept_step }}, the evaluated step
+with the lowest validation loss.
+
+{{ table:vol_overall }}
+
+The pre-registered comparisons pool both symbols and every test origin. A model is
+better than another only if the whole 95% moving-block bootstrap interval of its loss
+ratio lies below 1; an interval entirely above 1 is reported as worse.
+
+{{ table:vol_comparisons }}
+{{ else }}
 Our model was not run on this study before the deadline; the baselines were.
 
 {{ table:vol_overall | default:*not available* }}
+{{ end }}
 
 By regime (labelled by forecast origin; "calm" excludes any origin whose 22-day window
 touches a break):

@@ -31,7 +31,7 @@ def _cmd(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
         elif a.action == "baselines":
             study.baseline_runs()
         elif a.action == "model":
-            from tsfm.finance.finetune import finetune, model_forecaster
+            from tsfm.finance.finetune import finetune, kept, model_forecaster
             from tsfm.forecast import load_model
             from tsfm.provenance import sha256_file
             from tsfm.train.loop import pick_device
@@ -43,6 +43,9 @@ def _cmd(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
             if a.finetune:
                 model, log = finetune(model, series)
                 info["finetune_log"] = log
+                best = kept(log)
+                info["finetune_kept_step"] = int(best["step"])
+                info["finetune_kept_val_wql"] = float(best["val_wql"])
             rows = study.evaluate(
                 model_forecaster(model), series, study.TEST_START, series[0].dates[-1]
             )

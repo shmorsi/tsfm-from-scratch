@@ -189,6 +189,20 @@ On one held-out hourly series (`bdg-2_bear`, context {{ results/analysis/attenti
 
 </details>
 
+{{ if exists:results/finance/tsfm_finetuned/run.json }}
+<details>
+<summary><b>Market volatility: the baselines and our model</b></summary>
+
+Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in `PREREGISTRATION_VOL.md`. Statistical forecast scores only. `patch_s2` (seed 0, from its Drive checkpoint) was scored zero-shot, and again after fine-tuning on the period the protocol sets aside for it. Fine-tuning kept step {{ results/finance/tsfm_finetuned/run.json#info.finetune_kept_step }}, the evaluated step with the lowest validation loss.
+
+{{ table:vol_overall }}
+
+The pre-registered comparisons pool both symbols and every test origin. A model is better than another only if the whole 95% moving-block bootstrap interval of its loss ratio lies below 1; an interval entirely above 1 is reported as worse.
+
+{{ table:vol_comparisons }}
+
+</details>
+{{ else }}
 <details>
 <summary><b>Market volatility baselines</b></summary>
 
@@ -197,6 +211,7 @@ Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in 
 {{ table:vol_overall }}
 
 </details>
+{{ end }}
 
 ## Reproducibility
 
