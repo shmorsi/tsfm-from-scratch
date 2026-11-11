@@ -135,7 +135,9 @@ Things this project does **not** show, whatever the numbers above say:
 {{ end }}
 * That the CPU result would survive a larger training budget. It is {{ results/runs/cpu_s0_seed0/summary.json#config.train.steps | int }} steps on CPU.
 * That the model is useful for any real forecasting or trading decision. Nothing here
-  measures economic value, and no trading performance is claimed.
+  measures economic value, and no trading performance is claimed. A separate pre-registered
+  test of whether its volatility forecasts help a long-only investor lives in
+  deep-portfolio-constructor (`docs/risk_protocol.md` there).
 * That scaling trends continue beyond the sizes trained: the fit describes three runs.
 * That the T4 headline holds across training seeds: `patch_s2` was scored with one seed.
   The CPU study has three seeds. Their test CRPS ratios are
