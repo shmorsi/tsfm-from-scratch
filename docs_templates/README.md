@@ -224,7 +224,7 @@ Daily realized volatility of BTCUSDT and ETHUSDT, 22-day forecasts, designed in 
 ## Limitations
 
 {{ if exists:results/analysis/headline.json }}
-Beyond the caveat under Key results: the CPU model's CRPS against Seasonal Naive is not distinguishable from 1, raw intervals undercover, and pooled conformal overshoots and hurts CRPS. The leakage check finds exact and rescaled copies, not noisy or resampled ones. The scaling fit describes only the runs that were trained. Nothing here measures economic value.
+Beyond the caveat under Key results: the CPU model's CRPS against Seasonal Naive is not distinguishable from 1, raw intervals undercover, and pooled conformal overshoots and hurts CRPS. The leakage check finds exact and rescaled copies, not noisy or resampled ones. The scaling fit describes only the runs that were trained. Nothing in this repository measures economic value: whether the model's volatility forecasts help a long-only investor is tested separately, under its own pre-registration, in the [risk study of deep-portfolio-constructor](https://github.com/shmorsi/deep-portfolio-constructor#risk-study-does-a-forecasting-models-volatility-forecast-help-the-portfolio).
 {{ else }}
 The CPU model does not beat AutoARIMA on the test split, and its CRPS against Seasonal Naive is not distinguishable from 1 under the pre-registered configuration interval. Raw intervals undercover. Pooled conformal overshoots and hurts CRPS. `patch_s2` still has no test score. Nothing here measures economic value.
 
