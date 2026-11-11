@@ -33,6 +33,14 @@ REGIMES = {
     "ftx_2022": (date(2022, 11, 1), date(2022, 12, 31)),
 }
 BLOCK = 22  # moving-block bootstrap block length (origins)
+PRIMARY_GROUP = "both/all_test"  # both symbols, every test origin
+# PREREGISTRATION_VOL.md, "Comparisons and decision rule": fine-tuned vs zero-shot, and
+# each vs HAR-RV. Each pair is (model, the model it is compared with).
+COMPARISONS = (
+    ("tsfm_finetuned", "tsfm_zero_shot"),
+    ("tsfm_zero_shot", "har"),
+    ("tsfm_finetuned", "har"),
+)
 
 # forecast_fn(histories, h) -> quantiles (B, h, len(LEVELS)) on the original scale
 ForecastFn = Callable[[list[np.ndarray], int], np.ndarray]
@@ -268,6 +276,41 @@ def summarise(
     return out
 
 
+def verdict(ci95: list[float]) -> str:
+    """The pre-registered rule for a loss ratio "model over X" and its 95% interval.
+
+    "Better than X" requires the whole interval to lie below 1. An interval entirely
+    above 1 is the same statement with the roles swapped (X is better than the model),
+    reported as "worse". Anything else is "no detectable difference".
+    """
+    lo, hi = ci95
+    if hi < 1:
+        return "better"
+    if lo > 1:
+        return "worse"
+    return "no detectable difference"
+
+
+def compare(
+    rows: list[dict[str, Any]], other: list[dict[str, Any]], n_boot: int = 2000, seed: int = 0
+) -> dict[str, Any]:
+    """Pooled weighted quantile loss of ``rows`` over ``other`` on the test origins both
+    scored (both symbols), with the moving-block bootstrap interval and the verdict.
+
+    This is :func:`summarise` with ``other`` as the reference instead of the random walk,
+    so a ratio to HAR-RV is computed exactly as the ratios to the random walk are.
+    """
+    g = summarise(rows, other, n_boot=n_boot, seed=seed).get(PRIMARY_GROUP, {})
+    if "wql_ratio_vs_ref" not in g:
+        raise ValueError(f"fewer than {BLOCK} paired origins: no interval can be computed")
+    return {
+        "origins": g["origins"],
+        "wql_ratio": g["wql_ratio_vs_ref"],
+        "ci95": g["wql_ratio_ci95"],
+        "verdict": verdict(g["wql_ratio_ci95"]),
+    }
+
+
 def save(name: str, rows: list[dict[str, Any]], info: dict[str, Any]) -> Path:
     """Write one model's volatility rows and return the path."""
     d = results_dir() / "finance" / name
@@ -320,18 +363,27 @@ def load_rows(name: str) -> list[dict[str, Any]]:
 
 
 def report(models: list[str], ref: str = "random_walk") -> Path:
-    """Write the pooled and regime summaries and return the path."""
-    refrows = load_rows(ref)
-    out = {m: summarise(load_rows(m), None if m == ref else refrows) for m in models}
+    """Write the pooled and regime summaries, plus the pre-registered comparisons between
+    our model's runs and HAR-RV when those runs exist, and return the path."""
+    rows = {m: load_rows(m) for m in models}
+    refrows = rows[ref] if ref in rows else load_rows(ref)
+    out = {m: summarise(rows[m], None if m == ref else refrows) for m in models}
+    payload: dict[str, Any] = {
+        "reference": ref,
+        "regimes": {k: [a.isoformat(), b.isoformat()] for k, (a, b) in REGIMES.items()},
+        "models": out,
+    }
+    # The pre-registered comparisons, for the pairs whose runs are both in ``models``.
+    # With the baselines alone there is none, and the file keeps its earlier shape.
+    comps = [
+        {"model": a, "versus": b, **compare(rows[a], rows[b])}
+        for a, b in COMPARISONS
+        if a in rows and b in rows
+    ]
+    if comps:
+        payload["comparisons"] = comps
     return write_result(
-        results_dir() / "finance" / "summary.json",
-        {
-            "reference": ref,
-            "regimes": {k: [a.isoformat(), b.isoformat()] for k, (a, b) in REGIMES.items()},
-            "models": out,
-        },
-        split="test",
-        label="M8-M9-summary",
+        results_dir() / "finance" / "summary.json", payload, split="test", label="M8-M9-summary"
     )
 
 

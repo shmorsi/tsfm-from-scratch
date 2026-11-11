@@ -49,6 +49,12 @@ def pooled_wql(rows: list[dict[str, Any]]) -> float:
     return float(num / den)
 
 
+def kept(log: list[dict[str, float]]) -> dict[str, float]:
+    """The log entry whose weights :func:`finetune` keeps: the first evaluated step with
+    the lowest validation loss (a later step replaces it only if it is strictly lower)."""
+    return min(log, key=lambda r: r["val_wql"])
+
+
 def finetune(
     model: TSModel,
     series: list[Series],

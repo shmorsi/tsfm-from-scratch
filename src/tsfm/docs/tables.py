@@ -424,6 +424,44 @@ def vol_overall(root: Path) -> str:
     )
 
 
+VOL_SHORT = {
+    "har": "HAR-RV",
+    "tsfm_zero_shot": "zero-shot",
+    "tsfm_finetuned": "fine-tuned",
+}
+
+
+@table("vol_comparisons")
+def vol_comparisons(root: Path) -> str:
+    """The pre-registered comparisons between our model's runs and HAR-RV.
+
+    ``tsfm vol report`` writes them only once the model runs exist, so until then this
+    table is a missing result (templates gate it on the run files).
+    """
+    from tsfm.docs.build import MissingResult
+
+    s = _load(root, "results/finance/summary.json")
+    comps = s.get("comparisons")
+    if not comps:
+        raise MissingResult("results/finance/summary.json#comparisons")
+    rows = []
+    for c in comps:
+        lo, hi = c["ci95"]
+        a, b = VOL_SHORT[c["model"]], VOL_SHORT[c["versus"]]
+        rows.append(
+            [
+                f"{a[0].upper()}{a[1:]} against {b}",
+                f"{c['origins']:,}",
+                f"{c['wql_ratio']:.3f}",
+                f"[{lo:.3f}, {hi:.3f}]",
+                c["verdict"],
+            ]
+        )
+    return md_table(
+        ["comparison", "origins", "loss ratio", "95% CI", "verdict for the first-named"], rows
+    )
+
+
 @table("vol_regimes")
 def vol_regimes(root: Path) -> str:
     """The same volatility scores split by the pre-registered regimes."""

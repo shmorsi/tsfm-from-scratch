@@ -1,0 +1,11 @@
+tsfm
+Copyright 2026 Sherif Morsi
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The files under results/finance/ derived from Binance Vision data are licensed
+CC BY-NC-SA 4.0, with attribution "Data: Binance Vision" (see results/finance/README.md).
+
+src/tsfm/eval/_vendor/ contains files from SalesforceAIResearch/gift-eval,
+Copyright (c) 2024 Salesforce, Inc., Apache License 2.0
+(see src/tsfm/eval/_vendor/GIFT_EVAL_LICENSE.txt and src/tsfm/eval/_vendor/README.md).
