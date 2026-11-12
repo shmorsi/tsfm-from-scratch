@@ -3,6 +3,7 @@
 ## Checks
 
 - [ ] `uv run ruff check .` and `uv run ruff format --check .`
+- [ ] `uv run mypy`
 - [ ] `uv run pytest -m "not slow and not network and not data"`
 - [ ] `uv run tsfm docs check`
 

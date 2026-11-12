@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import zipfile
 from datetime import date, timedelta
 from pathlib import Path
@@ -39,7 +38,6 @@ def test_read_closes_handles_microseconds_and_header(tmp_path: Path):
     ts, cl = D.read_closes(p)
     assert ts.tolist() == [1735689600000, 1735689900000]
     assert cl.tolist() == [2.5, 2.6]
-    _ = io  # keep import for clarity of fixture construction
 
 
 def test_months_range():

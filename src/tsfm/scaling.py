@@ -4,8 +4,9 @@ Each run's ``summary.json`` holds its training compute (``train_flops_6ND``) and
 on the same fixed validation batches. We fit a power law ``L = a * C**(-b)`` by least
 squares in log-log space and get 95% intervals for ``a``, ``b`` and the fitted curve by a
 *paired* bootstrap over validation batches (every resample uses the same batches for all
-runs, so the runs stay comparable). With 4-6 points this is a description of these runs,
-not an extrapolation claim; the write-up says so.
+runs, so the runs stay comparable). With so few points (the fit needs at least three
+runs) this is a description of these runs, not an extrapolation claim; the write-up says
+so.
 
 Losses are only comparable within one tokenizer (pinball vs cross-entropy), so the fit
 is done per tokenizer; the tokenizer comparison uses forecast metrics on the validation
