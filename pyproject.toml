@@ -41,7 +41,9 @@ serve = [
     "uvicorn>=0.38",
 ]
 track = [
+    "alembic>=1.16",
     "mlflow-skinny>=3.5",
+    "sqlalchemy>=2.0",
 ]
 
 [project.scripts]

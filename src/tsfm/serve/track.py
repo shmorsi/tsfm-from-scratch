@@ -3,7 +3,7 @@
 Logs one run with the model's configuration as parameters, the export parity and the serving
 benchmark as metrics, and the checkpoint, ONNX graphs and result files as artifacts; then
 registers the fp32 ONNX graph as a new version of the model ``tsfm-cpu`` and tags the version
-with the git commit. The store is a local directory (``mlruns/``, git-ignored), the same calls
+with the git commit. The store is a local SQLite file (``mlruns.db``, artifacts in ``mlruns/``, both git-ignored); the same calls
 work against an MLflow tracking server through ``MLFLOW_TRACKING_URI``.
 """
 
@@ -51,10 +51,14 @@ def register(
             mlflow.log_metrics({k.replace("/", "_"): v for k, v in metrics.items()})
             mlflow.log_artifact(str(f), "results")
         mlflow.log_artifact(str(checkpoint), "checkpoint")
-        for g in ("model.onnx", "model.int8.onnx"):
-            mlflow.log_artifact(str(artifacts / g), "onnx")
-        uri_model = f"runs:/{run.info.run_id}/onnx/model.onnx"
-        version = mlflow.register_model(uri_model, name)
+        import mlflow.onnx
+        import onnx
+
+        mlflow.log_artifact(str(artifacts / "model.int8.onnx"), "onnx")
+        info = mlflow.onnx.log_model(
+            onnx.load(str(artifacts / "model.onnx")), name="model", registered_model_name=name
+        )
+        version = mlflow.MlflowClient().get_model_version(name, str(info.registered_model_version))
         client = mlflow.MlflowClient()
         client.set_model_version_tag(name, version.version, "git_commit", sha)
         client.set_registered_model_alias(name, "candidate", version.version)
