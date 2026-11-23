@@ -59,6 +59,8 @@ uv run tsfm pipeline --config configs/tiny_cpu.yaml
 
 The committed CPU model behind an HTTP API: `uvicorn tsfm.serve.app:app` (FastAPI), or `docker build -t tsfm-serve . && docker run -p 8000:8000 tsfm-serve`. `POST /forecast` takes `{"series": [[...]], "horizon": 24}` (missing values as `null`) and returns the quantiles and the backend that computed them. CI builds the image and calls the running container.
 
+* **Image.** A two-stage build: the first stage runs the export in the locked research environment, the second carries only what serving imports (NumPy, CPU PyTorch, ONNX Runtime, FastAPI). Merges to `main` publish it to `ghcr.io/shmorsi/tsfm-serve` (`.github/workflows/image.yml`).
+* **Kubernetes.** `kubectl apply -k deploy/k8s`: a two-replica Deployment with readiness and liveness probes on `/health`, Prometheus scrape annotations for `/metrics`, a non-root security context, a Service, and a CPU autoscaler from 2 to 8 replicas. `tests/test_deploy.py` checks that the manifests agree with the image and the app (port, probe and metrics paths, names, user id).
 * **ONNX export.** `tsfm serve export` writes the model's forward pass as an ONNX graph with dynamic batch and length. On contexts of several lengths it matches PyTorch to 1.9e-06 (largest absolute difference). Horizons past the model's own (32 steps) need the roll-out with a KV cache, which stays in PyTorch.
 * **Latency.** One thread, a context of 512 points, horizon 32, median of 30 calls, pre-processing included (`tsfm serve bench`):
 
@@ -82,7 +84,8 @@ src/tsfm/data/           pinned corpus download, conversion, synthetic series, l
 src/tsfm/eval/           GIFT-Eval scoring (GluonTS), test-split gate, vendored upstream results
 src/tsfm/calibrate.py    split-conformal intervals fit on validation only
 src/tsfm/finance/        realized-volatility baselines (BTCUSDT, ETHUSDT)
-src/tsfm/serve/          ONNX export, FastAPI service, latency and int8 benchmark (Dockerfile at the root)
+src/tsfm/serve/          ONNX export, FastAPI service, monitoring, MLflow registry, latency and int8 benchmark
+deploy/k8s/              Kubernetes Deployment, Service and autoscaler for the service (Dockerfile at the root)
 src/tsfm/docs/           generator for this README, the cards, the note and the figures
 configs/                 data, pilot, scaling and CPU-study configurations
 results/                 every committed number the documents cite
