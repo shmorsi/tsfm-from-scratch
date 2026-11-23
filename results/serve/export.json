@@ -1,0 +1,24 @@
+{
+  "checkpoint": "results/runs/cpu_s0_seed0/model.pt",
+  "checkpoint_sha256": "d41b77fd19881097a4d8fc400b4f198a8edbf242a6691147308d5ce2f4a08a91",
+  "parameters": 833440,
+  "fp32": {
+    "file": "model.onnx",
+    "bytes": 3883273,
+    "sha256": "a23ffa89f48a8b65c29b1983c9b65a69e43f12e84f2e0d0e1b395e5a637c62de",
+    "parity": {
+      "max_abs": 1.9073486328125e-06,
+      "max_rel": 9.34559284360148e-05
+    }
+  },
+  "int8": {
+    "file": "model.int8.onnx",
+    "bytes": 1372087,
+    "sha256": "bd0cd2fdfe66e524fe7296211e129c9125e1c2b13083dea9da1a5324a0122707",
+    "parity": {
+      "max_abs": 0.16770315170288086,
+      "max_rel": 23.655437469482422
+    }
+  },
+  "torch": "2.14.1+cpu"
+}

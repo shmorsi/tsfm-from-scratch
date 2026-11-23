@@ -32,6 +32,17 @@ Repository = "https://github.com/shmorsi/tsfm-from-scratch"
 [project.optional-dependencies]
 cpu = ["torch==2.14.1"]
 cu126 = ["torch==2.14.1"]
+serve = [
+    "fastapi>=0.120",
+    "httpx>=0.28",
+    "onnx>=1.19",
+    "onnxruntime>=1.23",
+    "onnxscript>=0.5",
+    "uvicorn>=0.38",
+]
+track = [
+    "mlflow-skinny>=3.5",
+]
 
 [project.scripts]
 tsfm = "tsfm.cli:main"

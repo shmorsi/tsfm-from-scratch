@@ -13,3 +13,6 @@ __pycache__/
 # Inference weights for the CPU study are small and are the only way to re-score it.
 !results/runs/*/model.pt
 .DS_Store
+/artifacts/
+mlruns/
+mlruns.db

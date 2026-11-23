@@ -55,6 +55,14 @@ uv run tsfm pipeline --config configs/tiny_cpu.yaml
 
 `uv sync --locked` installs the pinned lockfile, including the CPU PyTorch build. The pipeline downloads a small pinned data subset (network required), then trains and scores a tiny model. It writes to a temporary directory, outside `results/`.
 
+## Serving
+
+The committed CPU model behind an HTTP API: `uvicorn tsfm.serve.app:app` (FastAPI), or `docker build -t tsfm-serve . && docker run -p 8000:8000 tsfm-serve`. `POST /forecast` takes `{"series": [[...]], "horizon": 24}` (missing values as `null`) and returns the quantiles and the backend that computed them. CI builds the image and calls the running container.
+
+* **ONNX export.** `tsfm serve export` writes the model's forward pass as an ONNX graph with dynamic batch and length. On contexts of several lengths it matches PyTorch to 1.9e-06 (largest absolute difference). Horizons past the model's own (32 steps) need the roll-out with a KV cache, which stays in PyTorch.
+* **Monitoring.** `GET /metrics` serves request counts, errors and a latency histogram in the Prometheus text format; `GET /drift` compares recent inputs with a reference set (length, share missing, level, autocorrelation of changes) by the population stability index, and says *stable*, *moderate shift* or *shift*.
+* **Tracking and registry.** `tsfm serve register` logs the configuration, parity and benchmark metrics and the artifacts to MLflow, registers the ONNX graph as a new version of `tsfm-cpu` tagged with the git commit, and points the `candidate` alias at it (local store by default, any tracking server through `MLFLOW_TRACKING_URI`).
+
 ## Repository map
 
 ```text
@@ -65,6 +73,7 @@ src/tsfm/data/           pinned corpus download, conversion, synthetic series, l
 src/tsfm/eval/           GIFT-Eval scoring (GluonTS), test-split gate, vendored upstream results
 src/tsfm/calibrate.py    split-conformal intervals fit on validation only
 src/tsfm/finance/        realized-volatility baselines (BTCUSDT, ETHUSDT)
+src/tsfm/serve/          ONNX export, FastAPI service, latency and int8 benchmark (Dockerfile at the root)
 src/tsfm/docs/           generator for this README, the cards, the note and the figures
 configs/                 data, pilot, scaling and CPU-study configurations
 results/                 every committed number the documents cite
