@@ -42,6 +42,7 @@ def _load_commands() -> None:
         "tsfm.pipeline",
         "tsfm.finance.cli",
         "tsfm.cpu_study",
+        "tsfm.serve.cli",
     ):
         try:
             importlib.import_module(mod)

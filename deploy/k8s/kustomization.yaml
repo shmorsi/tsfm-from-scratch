@@ -1,0 +1,2 @@
+# kubectl apply -k deploy/k8s
+resources: [deployment.yaml, service.yaml, hpa.yaml]

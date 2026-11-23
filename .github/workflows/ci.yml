@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.12"
           enable-cache: true
-      - run: uv sync --locked --extra cpu
+      - run: uv sync --locked --extra cpu --extra serve
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy
@@ -23,3 +23,17 @@ jobs:
       - name: tiny end-to-end pipeline (must finish in < 5 min)
         run: timeout 300 uv run tsfm pipeline --config configs/tiny_cpu.yaml
       - run: uv run tsfm docs check
+  serve-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t tsfm-serve .
+      - name: smoke test the running container
+        run: |
+          docker run -d --name tsfm -p 8000:8000 tsfm-serve
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 2; done
+          curl -sf localhost:8000/forecast -H 'content-type: application/json' \
+            -d '{"series": [[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]], "horizon": 8}' \
+            | python3 -c "import json,sys; b=json.load(sys.stdin); assert b['backend']=='onnx' and len(b['median'][0])==8; print(b['backend'], b['milliseconds'])"
+          docker rm -f tsfm
